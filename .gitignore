@@ -1,0 +1,8 @@
+/venv/*.*
+/venv/
+/.idea/workspace.xml
+/__pycache__
+/.idea/.gitignore
+/states/__pycache__/*.pyc
+*.pyc
+/data/high_scores.txt
