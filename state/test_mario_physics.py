@@ -8,7 +8,7 @@ class TestMarioPhysics(GameState):
         super().__init__(input_state)
 
         self.mario = Mario(input_state)
-        self.font = pygame.font.SysFont(None, 32)
+        self.font = pygame.font.SysFont(None, 24)
         self.velocity = self.font.render("Vel: 0", True, (255, 255, 255))
         self.running = self.font.render("Walking", True, (255, 255, 255))
         self.running_rect = self.running.get_rect()
@@ -16,6 +16,9 @@ class TestMarioPhysics(GameState):
         self.skidding = self.font.render("not skidding", True, (255, 255, 255))
         self.skidding_rect = self.skidding.get_rect()
         self.skidding_rect.top = self.running_rect.bottom
+        self.airborne = self.font.render("ground", True, (255, 255, 255))
+        self.airborne_rect = self.airborne.get_rect()
+        self.airborne_rect.top = self.skidding_rect.bottom
 
     def update(self, elapsed):
         self.mario.update(elapsed)
@@ -32,6 +35,9 @@ class TestMarioPhysics(GameState):
 
         self.skidding = self.font.render("skid" if self.mario.skidding else "not skid", True, (255, 255, 255))
         screen.blit(self.skidding, self.skidding_rect)
+
+        self.airborne = self.font.render("air" if self.mario.is_airborne else "ground", True, (255, 255, 255))
+        screen.blit(self.airborne, self.airborne_rect)
 
     @property
     def finished(self):

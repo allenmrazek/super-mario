@@ -26,12 +26,15 @@ num_frames_hold_speed = 10
 momentum_velocity_threshold = frames_to_seconds * mstpv('01900')
 momentum_start_jump_threshold = frames_to_seconds * mstpv('01D000')
 
-momentum_forward_low = frames_to_seconds_squared * mstpv('00098')
+momentum_forward_slow = frames_to_seconds_squared * mstpv('00098')
 momentum_forward_fast = frames_to_seconds_squared * mstpv('000E4')
 
 momentum_backward_fast = frames_to_seconds_squared * mstpv('000E4')  # used when current speed > velocity threshold
 momentum_backward_high_initial_speed = frames_to_seconds_squared * mstpv('000D0')  # low cur speed, high initial
 momentum_backward_low_initial_speed = frames_to_seconds_squared * mstpv('00098')  # low cur speed, low initial
+
+momentum_slow_start_max_velocity = frames_to_seconds * mstpv('01900')
+momentum_fast_start_max_velocity = frames_to_seconds * mstpv('02900')
 
 
 # air physics constants
@@ -58,7 +61,7 @@ vertical_physics_parameters = [
 
 level_entry_vertical_physics = _JumpParameters.create('00000', '00000', '00280', '00280')
 
-air_max_velocity = frames_to_seconds * mstpv('04800')
+air_max_vertical_velocity = frames_to_seconds * mstpv('04800')
 air_velocity_when_max_exceeded = frames_to_seconds * mstpv('04000')
 
 
@@ -82,14 +85,11 @@ class Mario(Entity):
         self.jumped = False
 
         # temp: set initial position of mario
-        self.position.x, self.position.y = 0, config.screen_rect.bottom - self.image.get_height() // 2
+        self.position.x, self.position.y = config.screen_rect.centerx, config.screen_rect.bottom - self.image.get_height() // 2
         self.velocity.x = 0.
         self.run_timer = 0.
 
     def update(self, dt):
-        initial_pos = self.position
-        initial_velocity = self.velocity
-
         if self.is_running and not self.input_state.dash:
             self.run_frame_counter = min(self.run_frame_counter + 1, num_frames_hold_speed + 1)
         else:
@@ -97,7 +97,10 @@ class Mario(Entity):
 
         # handle horizontal movement
         if self.input_state.left ^ self.input_state.right:
-            self._handle_horizontal_acceleration(dt)
+            if self.is_airborne:
+                self._handle_horizontal_momentum(dt)
+            else:
+                self._handle_horizontal_acceleration(dt)
         else:
             self._handle_horizontal_deceleration(dt)
 
@@ -130,6 +133,8 @@ class Mario(Entity):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether
         Mario skids to a stop or tries to accelerate to his max walk or run speed"""
 
+        # ** important note ** this is specifically for ground acceleration. Physics for air
+        # momentum are different and use different rules
         acceleration_direction = 1. if self.input_state.right else -1.
         decelerating = True if ((acceleration_direction > 0. and self.velocity.x < 0.) or
                                 (acceleration_direction < 0. and self.velocity.x > 0.)) else False
@@ -175,6 +180,42 @@ class Mario(Entity):
             # enforce minimum velocity
             if math.fabs(self.velocity.x) < min_walk_velocity:
                 self.velocity.x = min_walk_velocity * acceleration_direction
+
+    def _handle_horizontal_momentum(self, dt):
+        """Handle mid-air momentum"""
+        momentum_direction = 1. if self.input_state.right else -1.
+        gaining_momentum = True if (self.velocity.x >= 0. and momentum_direction > 0.) \
+            or (self.velocity.x < 0. and momentum_direction < 0) else False
+
+        if gaining_momentum:
+
+            delta_momentum = momentum_forward_slow \
+                if math.fabs(self.velocity.x) < momentum_velocity_threshold else momentum_forward_fast
+
+        else:  # losing momentum
+            if math.fabs(self.velocity.x) >= momentum_velocity_threshold:
+                delta_momentum = momentum_forward_fast
+            else:
+                # momentum is below threshold, delta now depends on *** initial speed at time of jump ***
+                assert self.jump_stats
+
+                delta_momentum = momentum_backward_low_initial_speed \
+                    if self.jump_stats.initial_speed < momentum_velocity_threshold \
+                    else momentum_backward_high_initial_speed
+
+        delta = delta_momentum * momentum_direction * dt
+
+        if not gaining_momentum and math.fabs(self.velocity.x) < delta:
+            self.velocity.x = 0.
+        else:
+            self.velocity.x += delta
+
+            # limit max horizontal velocity while in mid-air
+            max_velocity = momentum_slow_start_max_velocity \
+                if self.jump_stats.initial_speed < momentum_velocity_threshold else momentum_fast_start_max_velocity
+
+            if math.fabs(self.velocity.x) > max_velocity:
+                self.velocity.x = max_velocity * momentum_direction
 
     def _handle_horizontal_deceleration(self, dt):
         """Handle slowing to a stop; no direction keys are being pressed"""
@@ -238,7 +279,7 @@ class Mario(Entity):
 
             # limit vertical DOWNWARD velocity
             # for some reason it wraps around, kept for sake of authenticity
-            self.velocity.y = air_velocity_when_max_exceeded if self.velocity.y > air_max_velocity else self.velocity.y
+            self.velocity.y = air_velocity_when_max_exceeded if self.velocity.y > air_max_vertical_velocity else self.velocity.y
         else:
             self.jumped = self.jumped and self.input_state.jump
 
