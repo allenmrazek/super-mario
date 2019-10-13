@@ -4,6 +4,7 @@ import pygame
 from pygame import Vector2
 from .entity import Entity
 from util import mario_str_to_pixel_value as mstpv
+from animation import Animation
 import config
 
 frames_to_seconds = 60.  # mario speeds defined in terms of 60 fps
@@ -66,12 +67,13 @@ air_velocity_when_max_exceeded = frames_to_seconds * mstpv('04000')
 
 
 class Mario(Entity):
-    def __init__(self, input_state):
+    """Important note: Mario's position is defined by his feet, i.e. bottom center of rect"""
+
+    def __init__(self, input_state, atlas):
         super().__init__()
         self.input_state = input_state
 
-        self.image = pygame.image.load("images/mario.png").convert()
-        self.rect = self.image.get_rect()
+        self.animator = _MarioAnimation(atlas)
 
         # state values
         # todo: consider changing from frame counter to delta time, so avoid locking update loop at 1/60 dt
@@ -83,10 +85,12 @@ class Mario(Entity):
         self.jump_stats = None
         self.falling_gravity = level_entry_vertical_physics.gravity
         self.jumped = False
+        self.facing_right = True  # this value is "sticky": if no input, then is dir of last input
 
         # temp: set initial position of mario
-        self.position.x, self.position.y = config.screen_rect.centerx, config.screen_rect.bottom - self.image.get_height() // 2
+        self.position.x, self.position.y = config.screen_rect.centerx, config.screen_rect.bottom
         self.velocity.x = 0.
+        self.rect = atlas.load_static("mario_stand_right").image.get_rect()
         self.run_timer = 0.
 
     def update(self, dt):
@@ -101,29 +105,30 @@ class Mario(Entity):
                 self._handle_horizontal_momentum(dt)
             else:
                 self._handle_horizontal_acceleration(dt)
-        else:
+        elif not self.is_airborne:
             self._handle_horizontal_deceleration(dt)
+        # otherwise, left/right is not pressed and mario is in the air --> don't change velocity
 
         self._handle_vertical_movement(dt)
 
         # update position based on new velocity calculated by the above
         self.position += self.velocity * dt
 
-        # temp: wraparound screen
-        if self.position.x + self.image.get_width() > config.screen_rect.width:
-            self.position.x = 0.
-            self.velocity.x = 0.
+        # update animation
+        self.animator.update(self, dt)
 
         # temp: floor
-        if self.position.y + self.image.get_height() // 2 > config.screen_rect.height:
+        if self.position.y > config.screen_rect.height:
             # jump is over, reset
-            self.position.y = config.screen_rect.height - self.image.get_height() // 2
+            self.position.y = config.screen_rect.height
             self.velocity.y = 0
             self.jump_stats = None
 
     def draw(self, screen):
-        self.rect.center = self.position
-        screen.blit(self.image, self.rect)
+        self.rect.centerx = self.position.x
+        self.rect.bottom = self.position.y
+
+        screen.blit(self.animator.image, self.rect)
 
     @property
     def collision_mask(self):
@@ -138,6 +143,8 @@ class Mario(Entity):
         acceleration_direction = 1. if self.input_state.right else -1.
         decelerating = True if ((acceleration_direction > 0. and self.velocity.x < 0.) or
                                 (acceleration_direction < 0. and self.velocity.x > 0.)) else False
+
+        self.facing_right = True if self.input_state.right else False
 
         # note to self: decel and skidding case is to preserve skidding state even as mario's speed
         # drops below running; it'll be reset on either:
@@ -292,8 +299,47 @@ class Mario(Entity):
     def is_airborne(self):
         """Returns true if mario is in the air"""
         return math.fabs(self.velocity.y) > 0. or \
-            self.position.y < config.screen_rect.height - self.image.get_height() // 2.
+            self.position.y < config.screen_rect.height
 
         # todo: remove y coordinate when collision is implemented
         # note to self: consider that velocity.y == 0 at height of arc
         # which means this is more than just a velocity check
+
+
+class _DirectionSet(NamedTuple):
+    left: Animation
+    right: Animation
+
+
+class _MarioAnimation:
+    """This class merely figures out the appropriate mario animation to display"""
+    def __init__(self, atlas):
+        self.stand = _DirectionSet(atlas.load_static("mario_stand_left"), atlas.load_static("mario_stand_right"))
+        self.walk = _DirectionSet(atlas.load_animation("mario_walk_left"), atlas.load_animation("mario_walk_right"))
+        self.run = _DirectionSet(atlas.load_animation("mario_run_left"), atlas.load_animation("mario_run_right"))
+        self.skid = _DirectionSet(atlas.load_static("mario_skid_right"), atlas.load_static("mario_skid_left"))
+        self.jump = _DirectionSet(atlas.load_static("mario_jump_left"), atlas.load_static("mario_jump_right"))
+
+        self.current = self.stand[1]
+
+    def update(self, mario, dt):
+        direction = 1 if mario.facing_right else 0
+
+        # airborne?
+        if mario.is_airborne:
+            self.current = self.jump[direction]
+        else:
+            if math.fabs(mario.velocity.x) < min_walk_velocity:
+                self.current = self.stand[direction]
+            elif mario.skidding:
+                self.current = self.skid[direction]
+            elif mario.is_running:
+                self.current = self.run[direction]
+            else:
+                self.current = self.walk[direction]
+
+        self.current.update(dt)
+
+    @property
+    def image(self):
+        return self.current.image

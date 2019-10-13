@@ -4,10 +4,10 @@ from entities import Mario
 
 
 class TestMarioPhysics(GameState):
-    def __init__(self, input_state):
+    def __init__(self, input_state, atlas):
         super().__init__(input_state)
 
-        self.mario = Mario(input_state)
+        self.mario = Mario(input_state, atlas)
         self.font = pygame.font.SysFont(None, 24)
         self.velocity = self.font.render("Vel: 0", True, (255, 255, 255))
         self.running = self.font.render("Walking", True, (255, 255, 255))

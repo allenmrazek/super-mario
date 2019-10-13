@@ -1,5 +1,6 @@
 import os
 import pygame
+from sprite_atlas import load as load_sprites
 from state.game_state import GameStateStack
 from state.input_state import InputState
 from state.test_mario_physics import TestMarioPhysics
@@ -9,13 +10,18 @@ from timer import game_timer
 
 def run():
     # initialize PyGame
+    if pygame.mixer:
+        pygame.mixer.pre_init(22050, -16, 2, 1024)
+
+    os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
-    screen = pygame.display.set_mode(config.screen_size)
+    screen = pygame.display.set_mode(config.screen_size, flags=pygame.FULLSCREEN)
     pygame.display.set_caption("Super Mario")
+    atlas = load_sprites()
 
     # initialize states
     input_state = InputState()
-    state_stack = GameStateStack(TestMarioPhysics(input_state))
+    state_stack = GameStateStack(TestMarioPhysics(input_state, atlas))
     game_timer.reset()
 
     # timer initialize
