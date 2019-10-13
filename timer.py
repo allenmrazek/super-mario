@@ -2,6 +2,7 @@ import pygame
 
 
 class Timer:
+
     def __init__(self):
         self._last_tick = pygame.time.get_ticks()
         self._elapsed = 0.0

@@ -1,6 +1,5 @@
 from .game_state import *
-from .game_state import *
+from .test_mario_physics import *
 from .input_state import *
-from .physics_test import *
 
-__all__ = ["GameState", "GameStateStack", "input_state", "physics_test"]
+__all__ = ["GameState", "GameStateStack", "InputState", "TestMarioPhysics"]

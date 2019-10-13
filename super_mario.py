@@ -1,9 +1,8 @@
 import os
 import pygame
 from state.game_state import GameStateStack
-from state.physics_test import PhysicsTest
 from state.input_state import InputState
-
+from state.test_mario_physics import TestMarioPhysics
 import config
 from timer import game_timer
 
@@ -16,13 +15,22 @@ def run():
 
     # initialize states
     input_state = InputState()
-    state_stack = GameStateStack(PhysicsTest())
+    state_stack = GameStateStack(TestMarioPhysics(input_state))
     game_timer.reset()
+
+    # timer initialize
+    accumulator = 0.0
 
     while state_stack.top is not None and not input_state.quit:
         input_state.do_events()
         game_timer.update()
-        state_stack.update(input_state, game_timer.elapsed)
+
+        # todo: fixed timestep, or max timestep?
+        accumulator += game_timer.elapsed
+
+        while accumulator > config.PHYSICS_DT:
+            state_stack.update(config.PHYSICS_DT)
+            accumulator -= config.PHYSICS_DT
 
         state_stack.draw(screen)
         pygame.display.flip()

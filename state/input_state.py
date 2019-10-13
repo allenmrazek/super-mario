@@ -5,36 +5,48 @@ from pygame.locals import *
 
 class InputState:
     def __init__(self):
-        self.left, self.right, self.up, self.down, self.fire = False, False, False, False, False
+        self.left, self.right, self.up, self.down = False, False, False, False
+        self.fire, self.dash, self.jump = False, False, False
         self.quit = False
 
         self.left_down = False
         self.mouse_pos = (0, 0)
 
         self.key_actions = {
-            K_ESCAPE: self.__quit,
-            K_LEFT: self.__left,
-            K_RIGHT: self.__right,
-            K_UP: self.__up,
-            K_DOWN: self.__down
+            K_ESCAPE: self._quit,
+            K_LEFT: self._left,
+            K_RIGHT: self._right,
+            K_UP: self._up,
+            K_DOWN: self._down,
+            K_SPACE: self._jump,
+            KMOD_LSHIFT: self._dash,
+            K_z: self._jump,
+            K_x: self._dash
         }
 
         self.key_codes = []
 
-    def __quit(self, state):
+    def _quit(self, state):
         self.quit = state
 
-    def __left(self, state):
+    def _left(self, state):
         self.left = state
 
-    def __right(self, state):
+    def _right(self, state):
         self.right = state
 
-    def __up(self, state):
+    def _up(self, state):
         self.up = state
 
-    def __down(self, state):
+    def _down(self, state):
         self.down = state
+
+    def _jump(self, state):
+        self.jump = state
+
+    def _dash(self, state):
+        self.dash = state
+        self.fire = state
 
     def do_events(self):
         self.key_codes.clear()
@@ -61,6 +73,9 @@ class InputState:
                     self.left_down = True
                 elif evt.type == MOUSEBUTTONUP:
                     self.left_down = False
+
+        # pygame doesn't seem to have an event for only shift
+        self.dash = (pygame.key.get_mods() & KMOD_SHIFT)
 
     def _handle_text_entry(self, key):
         alpha = K_a <= key <= K_z
