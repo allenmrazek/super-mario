@@ -15,7 +15,7 @@ def run():
 
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
-    screen = pygame.display.set_mode(config.screen_size, flags=pygame.FULLSCREEN)
+    screen = pygame.display.set_mode(config.screen_size)
     pygame.display.set_caption("Super Mario")
     atlas = load_sprites()
 

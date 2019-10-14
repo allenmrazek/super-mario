@@ -5,10 +5,14 @@ from pygame import Vector2
 from .entity import Entity
 from util import mario_str_to_pixel_value as mstpv
 from animation import Animation
+from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 import config
 
-frames_to_seconds = 60.  # mario speeds defined in terms of 60 fps
+frames_to_seconds = 60.  # mario speeds defined in terms of 60 fps with original resolution
 frames_to_seconds_squared = frames_to_seconds ** 2
+
+frames_to_seconds *= config.rescale_factor  # apply any scaling factor, so proportions are kept
+frames_to_seconds_squared *= config.rescale_factor
 
 # horizontal movement constants
 min_walk_velocity = frames_to_seconds * mstpv('00130')
@@ -74,6 +78,7 @@ class Mario(Entity):
         self.input_state = input_state
 
         self.animator = _MarioAnimation(atlas)
+        self.debug_trajectory = JumpTrajectoryVisualizer() if config.debug_jumps else None
 
         # state values
         # todo: consider changing from frame counter to delta time, so avoid locking update loop at 1/60 dt
@@ -124,9 +129,15 @@ class Mario(Entity):
             self.velocity.y = 0
             self.jump_stats = None
 
+        if self.debug_trajectory:
+            self.debug_trajectory.update(self)
+
     def draw(self, screen):
         self.rect.centerx = self.position.x
         self.rect.bottom = self.position.y
+
+        if self.debug_trajectory:
+            self.debug_trajectory.draw(screen)
 
         screen.blit(self.animator.image, self.rect)
 

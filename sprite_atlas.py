@@ -5,6 +5,10 @@ from animation import Animation
 from animation import StaticAnimation
 import config
 
+# if rescale is not a factor of 2, sprites will have fuzzy edges that will look terrible with color keying
+assert config.rescale_factor % 2 == 0, "factor must be a multiple of 2"
+assert isinstance(config.rescale_factor, int), "factor must be an int value"
+
 
 class SpriteAtlasException(Exception):
     def __init__(self, name):
@@ -39,6 +43,13 @@ class SpriteAtlas:
             if not self.atlas:
                 raise RuntimeError
 
+            # apply rescaling
+            # rescale without resampling
+            scaled_size = (self.atlas.get_width() * config.rescale_factor,
+                           self.atlas.get_height() * config.rescale_factor)
+
+            self.atlas = self.atlas if config.rescale_factor == 1 else pygame.transform.scale(self.atlas, scaled_size)
+
             file = open(atlas_descriptor, 'r')
 
             if not file:
@@ -51,6 +62,12 @@ class SpriteAtlas:
                 # of the form: name = left top width height
                 name, rect_str = [s.strip() for s in line.split('=')]
                 rect = self._get_rect_from_str(rect_str)
+
+                # apply rescale factor
+                rect.x *= config.rescale_factor
+                rect.y *= config.rescale_factor
+                rect.width *= config.rescale_factor
+                rect.height *= config.rescale_factor
 
                 # add sprite to dictionary
                 self._sprite_rects[name] = rect
@@ -104,6 +121,12 @@ class SpriteAtlas:
 
         rect.width = override_width or rect.width
         rect.height = override_height or rect.height
+
+        assert 0 <= rect.width <= self.atlas.get_width(), "width out of range"
+        assert 0 <= rect.height <= self.atlas.get_height(), "height out of range"
+
+        assert 0 <= rect.x <= self.atlas.get_width() - rect.width, "x position out of range"
+        assert 0 <= rect.y <= self.atlas.get_height() - rect.height, "y position out of range"
 
         surf = self.atlas.subsurface(rect)
 
@@ -160,7 +183,7 @@ def load():
                                          (atlas.load_static("mario_stand_right").frames[0], True, False))
 
     # running (left and right)
-    atlas.initialize_animation("mario_run_right", 16, 16, 0.2, config.transparent_color)
+    atlas.initialize_animation("mario_run_right", 16 * config.rescale_factor, 16 * config.rescale_factor, 0.2, config.transparent_color)
 
     run_right = atlas.load_animation("mario_run_right")  # type: Animation
     left_run_frames = [pygame.transform.flip(f, True, False) for f in run_right.frames]
@@ -168,8 +191,8 @@ def load():
 
     # walking (left and right)
     # same frames as running, just slower
-    atlas.initialize_animation_from_frames("mario_walk_right", run_right.frames, 0.3)
-    atlas.initialize_animation_from_frames("mario_walk_left", left_run_frames, 0.3)
+    atlas.initialize_animation_from_frames("mario_walk_right", run_right.frames, 0.4)
+    atlas.initialize_animation_from_frames("mario_walk_left", left_run_frames, 0.4)
 
     # jumping (left and right)
     atlas.initialize_static("mario_jump_right", config.transparent_color)
@@ -182,32 +205,4 @@ def load():
     atlas.initialize_static_from_surface(
         "mario_skid_right", pygame.transform.flip(atlas.load_static("mario_skid_left").frames[0], True, False))
 
-
-
     return atlas
-
-# atlas.initialize_static("ship", color_key=config.transparent_color, override_width=48)  # used for explosion
-# atlas.initialize_static("player_bullet", color_key=config.transparent_color, generate_mask=True)
-# atlas.initialize_static("bunker", color_key=config.transparent_color, generate_mask=True)
-# atlas.initialize_static("selector", color_key=config.transparent_color)
-# atlas.initialize_static("ship_no_engines", color_key=config.transparent_color)
-#
-# atlas.initialize_animation("ship", 48, 32, 0.25, color_key=config.transparent_color)
-#
-# # init alien sprites
-# for alien in config.alien_stats:
-#     atlas.initialize_animation(alien.sprite_name, 32, 32, 1, color_key=config.transparent_color)
-# atlas.initialize_animation("ufo", 64, 64, 1, color_key=config.transparent_color)
-#
-# # alien bullet frames
-# frames = generate_alien_bullet_frames(config.default_alien_bullet.size, config.default_alien_bullet.color)
-# atlas.initialize_animation_from_frames("alien_bullet", frames, 0.5, generate_masks=True)
-#
-# # explosion frames for ship
-# frames = generate_explosion_frames(atlas.load_static("ship").image, 16, .5, 1.25, 15.5, 4.0)
-# atlas.initialize_animation_from_frames("ship_explosion", frames, .5)
-#
-# # explosion frames for aliens
-# for key in [k for k in atlas.animations.keys() if k.startswith("alien")]:
-#     frames = generate_explosion_frames(atlas.load_animation(key).image, 4, 1, 2, 8)
-#     atlas.initialize_animation_from_frames(key + "_explosion", frames, .25)

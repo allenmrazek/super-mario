@@ -1,8 +1,12 @@
 from pygame import Rect
 from pygame import Color
 
-screen_size = 256, 240
+debug_jumps = True
+
+screen_size = 256 * 4, 240 * 4
 screen_rect = Rect(0, 0, *screen_size)
+
+rescale_factor = 4  # all loaded sprites and images will be rescaled by this value
 
 transparent_color = Color('magenta')
 
