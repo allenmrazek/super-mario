@@ -1,3 +1,4 @@
+import random
 from .game_state import GameState
 from tileset import TileSet
 from tilemap import TileMap
@@ -9,7 +10,12 @@ class TestTileMap(GameState):
         super().__init__(input_state)
 
         self.tileset = TileSet("NES - Super Mario Bros - Tileset.png", 16)
-        self.map = TileMap(self.tileset)
+        self.map = TileMap(self.tileset, (400, 400))
+
+        # just pick random tiles
+        for x in range(self.map.width):
+            for y in range(self.map.height):
+                self.map.set_tile((x, y), random.randint(0, self.tileset.num_tiles))
 
     def update(self, elapsed):
         pass

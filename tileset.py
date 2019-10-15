@@ -18,13 +18,14 @@ class TileSet:
 
         # load image
         try:
-            self.map = pygame.image.load(image_path)
+            self.map = pygame.image.load(os.fsdecode(path))
         except pygame.error:
-            print("Error reading %s: %s" % (os.fsdecode(image_path), pygame.get_error()))
+            print("Error reading %s: %s" % (image_path, pygame.get_error()))
             raise
 
         # Scale image, if needed
         w, h = self.map.get_width() * config.rescale_factor, self.map.get_height() * config.rescale_factor
+        tile_dimensions *= config.rescale_factor
 
         self.map = pygame.transform.scale(self.map, (w, h)).convert()  # avoids per-pixel alpha, if any
 
@@ -48,9 +49,12 @@ class TileSet:
         self.dimensions = (tile_dimensions, tile_dimensions)
 
     def draw(self, screen, tile_idx, tile_position):
-        self._draw_rect.x, self._draw_rect.y = int(tile_position[0], tile_position[1])
+        if tile_idx is None:
+            return
 
-        screen.blit(self.tiles[tile_idx], self._draw_rect)
+        self._draw_rect.x, self._draw_rect.y = int(tile_position[0]), int(tile_position[1])
+
+        screen.blit(self.tiles[tile_idx].surface, self._draw_rect)
 
     @property
     def num_tiles(self):

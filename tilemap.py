@@ -1,40 +1,15 @@
 import os
-import pygame
 from tileset import TileSet
 
 
 class TileMap:
-    def __init__(self, tile_set: TileSet, size, filename=None):
+    def __init__(self, tile_set: TileSet, size):
         self.tile_set = tile_set
         self.map = []
-        self.width, self.height = int(size[0]), int(size[1])
+        self.width, self.height = size[0], size[1]
 
-    def set_width(self, num_tiles, preserve=True):
-        new_map = []
-
-        for row in range(self.height):
-            new_map[row] = [[] for _ in range(num_tiles)]
-
-            if preserve:
-                for i in range(0, min(num_tiles, self.width)):
-                    new_map[row][i] = (self.map[row][i])
-
-        self.map = new_map
-
-    def set_height(self, num_tiles, preserve=True):
-        new_map = []
-
-        for row in range(num_tiles):
-            if preserve:
-                new_map[row] = self.map[row][:num_tiles]
-            else:
-                new_map[row] = [[] for _ in range(self.width)]
-
-        self.map = new_map
-
-    def set_size(self, size, preserve=True):
-        self.set_width(size[0], preserve)
-        self.set_height(size[1], preserve)
+        for _ in range(self.width):
+            self.map.append([None for _ in range(self.height)])
 
     @staticmethod
     def load_from_file(filename):
@@ -61,6 +36,11 @@ class TileMap:
             for x in range(x_min, x_max):
                 tile_idx = self.map[x][y]
 
-                self.tile_set.draw(screen, tile_idx, x * tile_w, y * tile_h)
+                self.tile_set.draw(screen, tile_idx, (x * tile_w, y * tile_h))
 
+    def set_tile(self, position, index=None):
+        assert 0 <= position[0] <= self.width
+        assert 0 <= position[1] <= self.height
+
+        self.map[position[0]][position[1]] = index
 
