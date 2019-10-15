@@ -6,6 +6,7 @@ from state.input_state import InputState
 from state.test_mario_physics import TestMarioPhysics
 import config
 from timer import game_timer
+from state.test_tilemap import TestTileMap
 
 
 def run():
@@ -22,6 +23,8 @@ def run():
     # initialize states
     input_state = InputState()
     state_stack = GameStateStack(TestMarioPhysics(input_state, atlas))
+    state_stack.push(TestTileMap(input_state))
+
     game_timer.reset()
 
     # timer initialize
