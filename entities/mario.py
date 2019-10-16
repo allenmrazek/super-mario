@@ -2,7 +2,7 @@ import math
 from typing import NamedTuple
 import pygame
 from pygame import Vector2
-from .entity import Entity
+from .entity import Entity, DrawLayer
 from util import mario_str_to_pixel_value as mstpv
 from animation import Animation
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
@@ -144,6 +144,10 @@ class Mario(Entity):
     @property
     def collision_mask(self):
         return 0
+
+    @property
+    def layer(self):
+        return Draw
 
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether

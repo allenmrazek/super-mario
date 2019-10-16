@@ -32,20 +32,18 @@ class TileSet:
         if color_key is not None:
             self.map.set_colorkey(color_key)
 
-        assert w % tile_dimensions == 0 and h % tile_dimensions == 0
-
         # split into tiles
         self.tiles = []
-        x_tiles, y_tiles = w // tile_dimensions, h // tile_dimensions
+        x_tiles, y_tiles = w // tile_dimensions[0], h // tile_dimensions[1]
 
         for y in range(y_tiles):
             for x in range(x_tiles):
-                rect = pygame.Rect(x * tile_dimensions, y * tile_dimensions, tile_dimensions, tile_dimensions)
+                rect = pygame.Rect(x * tile_dimensions[0], y * tile_dimensions[1], tile_dimensions[0], tile_dimensions[1])
                 tile = self.map.subsurface(rect)
 
                 self.tiles.append(_Tile(tile, rect))
 
-        self._draw_rect = pygame.Rect(0, 0, tile_dimensions, tile_dimensions)
+        self._draw_rect = pygame.Rect(0, 0, tile_dimensions[0], tile_dimensions[1])
         self.dimensions = (tile_dimensions, tile_dimensions)
 
     def draw(self, screen, tile_idx, tile_position):

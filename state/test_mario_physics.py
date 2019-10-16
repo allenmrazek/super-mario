@@ -1,7 +1,11 @@
 import pygame
+from pygame.sprite import Group
 from .game_state import GameState
 from entities import Mario
+from tileset import TileSet
+from entities.block import Block
 import config
+
 
 class TestMarioPhysics(GameState):
     def __init__(self, input_state, atlas):
@@ -31,6 +35,13 @@ class TestMarioPhysics(GameState):
         self.height_measurement_image_rect = self.height_measurement_image.get_rect()
         self.height_measurement_image_rect.bottom = config.screen_rect.bottom
 
+        tile_size = 16 * config.rescale_factor, 16 * config.rescale_factor
+        tileset = TileSet("NES - Super Mario Bros - Tileset.png", tile_size)
+
+        block_x = (config.screen_rect.right - tile_size[0]) // tile_size[0]
+
+        self.blocks = [Block((block_x, config.screen_rect.height - y), tileset, 1, False) for y in range(0, tile_size[1] * 5, tile_size[1])]
+
     def update(self, elapsed):
         self.mario.update(elapsed)
 
@@ -38,6 +49,8 @@ class TestMarioPhysics(GameState):
         screen.fill((20, 20, 20))
 
         screen.blit(self.height_measurement_image, self.height_measurement_image_rect)
+        for block in self.blocks:
+            block.draw(screen)
 
         self.mario.draw(screen)
 
