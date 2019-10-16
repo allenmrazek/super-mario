@@ -1,5 +1,23 @@
 import os
 from tileset import TileSet
+from entities.entity import Entity
+
+
+class Block(Entity):
+    def __init__(self, position, idx, collides):
+        super().__init__()
+        self.position = position
+        self.idx = idx
+        self.collides = collides
+
+    def update(self, dt):
+        pass
+
+    def draw(self, screen):
+        pass
+
+    def collision_mask(self):
+        pass
 
 
 class TileMap:
