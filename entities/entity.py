@@ -1,35 +1,35 @@
 from abc import ABC, abstractmethod
+from pygame import Surface
+from pygame import Color
 from pygame.sprite import Sprite
-from enum import Enum
+from pygame.sprite import Rect
+from enum import IntEnum
+import config
 
 
-class CollisionLayer(Enum):
-    Nothing = 0
-    Mario = 1
-    Block = 2
+class Layer(IntEnum):
+    Background = 1 << 0
+    Block = 1 << 1
+    Mario = 1 << 2
+    Active = 1 << 3
 
 
-class DrawLayer(Enum):
-    Background = 0
-    Block = 1
-    Mario = 2
+blank_image = None
 
 
 class Entity(ABC, Sprite):
-    def on_collision(self, other_entity):
-        pass
+    def __init__(self, rect: Rect):
+        super().__init__()
+        self.rect = rect.copy()
 
-    def on_hit_top(self, other_entity):
-        pass
+        global blank_image
 
-    def on_hit_bottom(self, other_entity):
-        pass
+        if blank_image is not None:
+            blank_image = Surface((1, 1)).convert()
+            blank_image.fill(config.transparent_color)
+            blank_image.set_colorkey(config.transparent_color)
 
-    def on_hit_left(self, other_entity):
-        pass
-
-    def on_hit_right(self, other_entity):
-        pass
+        self.image = blank_image
 
     @abstractmethod
     def update(self, dt):
@@ -40,19 +40,19 @@ class Entity(ABC, Sprite):
         pass
 
     @property
-    def collision_mask(self):
-        # return an int, with bits set to layers to collide with
-        return CollisionLayer.Nothing
-
-    @property
     def layer(self):
-        return DrawLayer.Background
+        return Layer.Background
 
 
 class EntityManager:
     def __init__(self):
-        self.layers = {DrawLayer.Background: set(), DrawLayer.Block: set(), DrawLayer.Mario: set()}
-        self.ordering = [DrawLayer.Background, DrawLayer.Block, DrawLayer.Mario]
+        self.layers = {
+            Layer.Background: set(),
+            Layer.Block: set(),
+            Layer.Mario: set(),
+            Layer.Active: set()}
+
+        self.ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active]
 
     def register(self, entity):
         assert isinstance(entity, Entity)
@@ -68,12 +68,14 @@ class EntityManager:
         self.layers[entity.layer].remove(entity)
 
     def update(self, dt):
+        # todo: update only screen and a quarter
         def update_entity(entity):
             entity.update(dt)
 
         self._do_on_each_layer(update_entity)
 
     def draw(self, screen):
+        # todo: draw only screen and a quarter
         def draw_entity(entity):
             entity.draw(screen)
 

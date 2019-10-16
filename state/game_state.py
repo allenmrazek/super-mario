@@ -8,7 +8,7 @@ class GameState(ABC):
         self.input_state = input_state
 
     @abstractmethod
-    def update(self, elapsed):
+    def update(self, dt):
         pass
 
     @abstractmethod
@@ -71,11 +71,11 @@ class GameStateStack:
             return old_top
         raise NoStatesError
 
-    def update(self, elapsed):
+    def update(self, dt):
         top = self.top
 
         if top:
-            top.update(elapsed)
+            top.update(dt)
 
             if top.finished:
                 self.pop()

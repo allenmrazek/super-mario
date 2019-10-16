@@ -36,3 +36,15 @@ def copy_vector(v):
     new_v.x, new_v.y = v.x, v.y
 
     return new_v
+
+
+def make_vector(x, y):
+    new_v = pygame.Vector2()
+
+    new_v.x, new_v.y = x, y
+
+    return new_v
+
+
+def can_collide(mask1, mask2):
+    return (mask1 & mask2) != 0

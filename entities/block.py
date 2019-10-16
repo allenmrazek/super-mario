@@ -1,11 +1,20 @@
-from entities.entity import Entity, DrawLayer
-from entities.entity import CollisionLayer
+from pygame.sprite import Rect
+from entities.entity import Entity, Layer
+from entities.collider import Collider
+from .collider import ColliderManager
+
 from tileset import TileSet
+import config
 
 
 class Block(Entity):
-    def __init__(self, position, tileset: TileSet, idx):
-        super().__init__()
+    def __init__(self, position, tileset: TileSet, idx, cmanager):
+        r = Rect(position[0], position[1], tileset.dimensions[0], tileset.dimensions[1])
+        super().__init__(r)
+
+        self.collider = Collider(self, cmanager, 0)
+        cmanager.register(self.collider)
+
         self.position = position
         self.idx = idx
         self.tileset = tileset
@@ -16,13 +25,10 @@ class Block(Entity):
     def draw(self, screen):
         self.tileset.draw(screen, self.idx, self.position)
 
-    def on_collision(self, other_entity):
-        pass
-
     @property
     def collision_mask(self):
         return 0
 
     @property
     def layer(self):
-        return DrawLayer.Block
+        return Layer.Block

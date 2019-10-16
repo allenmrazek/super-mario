@@ -34,16 +34,16 @@ class TileSet:
 
         # split into tiles
         self.tiles = []
-        x_tiles, y_tiles = w // tile_dimensions[0], h // tile_dimensions[1]
+        x_tiles, y_tiles = w // tile_dimensions, h // tile_dimensions
 
         for y in range(y_tiles):
             for x in range(x_tiles):
-                rect = pygame.Rect(x * tile_dimensions[0], y * tile_dimensions[1], tile_dimensions[0], tile_dimensions[1])
+                rect = pygame.Rect(x * tile_dimensions, y * tile_dimensions, tile_dimensions, tile_dimensions)
                 tile = self.map.subsurface(rect)
 
                 self.tiles.append(_Tile(tile, rect))
 
-        self._draw_rect = pygame.Rect(0, 0, tile_dimensions[0], tile_dimensions[1])
+        self._draw_rect = pygame.Rect(0, 0, tile_dimensions, tile_dimensions)
         self.dimensions = (tile_dimensions, tile_dimensions)
 
     def draw(self, screen, tile_idx, tile_position):

@@ -2,7 +2,7 @@ import math
 from typing import NamedTuple
 import pygame
 from pygame import Vector2
-from .entity import Entity, DrawLayer
+from .entity import Entity, Layer
 from util import mario_str_to_pixel_value as mstpv
 from animation import Animation
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
@@ -74,10 +74,12 @@ class Mario(Entity):
     """Important note: Mario's position is defined by his feet, i.e. bottom center of rect"""
 
     def __init__(self, input_state, atlas):
-        super().__init__()
         self.input_state = input_state
 
         self.animator = _MarioAnimation(atlas)
+
+        super().__init__(self.animator.image.get_rect())
+
         self.debug_trajectory = JumpTrajectoryVisualizer() if config.debug_jumps else None
 
         # state values
@@ -142,12 +144,8 @@ class Mario(Entity):
         screen.blit(self.animator.image, self.rect)
 
     @property
-    def collision_mask(self):
-        return 0
-
-    @property
     def layer(self):
-        return Draw
+        return Layer.Mario
 
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether

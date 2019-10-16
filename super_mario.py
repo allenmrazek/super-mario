@@ -7,7 +7,7 @@ from state.test_mario_physics import TestMarioPhysics
 import config
 from timer import game_timer
 from state.test_tilemap import TestTileMap
-
+from state.test_block_physics import TestBlockPhysics
 
 def run():
     # initialize PyGame
@@ -24,6 +24,7 @@ def run():
     input_state = InputState()
     state_stack = GameStateStack(TestMarioPhysics(input_state, atlas))
     #state_stack.push(TestTileMap(input_state))
+    state_stack.push(TestBlockPhysics(input_state))
 
     game_timer.reset()
 
