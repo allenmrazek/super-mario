@@ -1,11 +1,8 @@
 from abc import ABC, abstractmethod
-from pygame import Surface
-from pygame import Color
-from pygame.sprite import Sprite
 from pygame.sprite import Rect
 from enum import IntEnum
-import config
-
+from util import copy_vector
+from util import make_vector
 
 class Layer(IntEnum):
     Background = 1 << 0
@@ -14,22 +11,11 @@ class Layer(IntEnum):
     Active = 1 << 3
 
 
-blank_image = None
-
-
-class Entity(ABC, Sprite):
+class Entity(ABC):
     def __init__(self, rect: Rect):
         super().__init__()
         self.rect = rect.copy()
-
-        global blank_image
-
-        if blank_image is not None:
-            blank_image = Surface((1, 1)).convert()
-            blank_image.fill(config.transparent_color)
-            blank_image.set_colorkey(config.transparent_color)
-
-        self.image = blank_image
+        self._position = make_vector(rect.x, rect.y)  # rect only int values
 
     @abstractmethod
     def update(self, dt):
@@ -43,16 +29,35 @@ class Entity(ABC, Sprite):
     def layer(self):
         return Layer.Background
 
+    @property
+    def position(self):
+        return copy_vector(self._position)
+
+    @position.setter
+    def position(self, pos):
+        self._position = copy_vector(pos)
+
 
 class EntityManager:
-    def __init__(self):
-        self.layers = {
+    def __init__(self, layers: dict, ordering: list):
+        assert layers is not None and len(layers.keys()) > 0
+        assert ordering is not None and len(ordering) > 0
+
+        self.layers = layers
+        self.ordering = ordering
+
+    @staticmethod
+    def create_default():
+        # create a default entity manager. This should be sufficient in most cases
+        layers = {
             Layer.Background: set(),
             Layer.Block: set(),
             Layer.Mario: set(),
             Layer.Active: set()}
 
-        self.ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active]
+        ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active]
+
+        return EntityManager(layers, ordering)
 
     def register(self, entity):
         assert isinstance(entity, Entity)

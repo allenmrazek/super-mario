@@ -8,6 +8,8 @@ import config
 
 
 class Block(Entity):
+    __slots__ = ['collider', 'position', 'idx', 'tileset']
+
     def __init__(self, position, tileset: TileSet, idx, cmanager):
         r = Rect(position[0], position[1], tileset.dimensions[0], tileset.dimensions[1])
         super().__init__(r)

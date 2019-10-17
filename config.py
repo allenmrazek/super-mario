@@ -11,3 +11,4 @@ rescale_factor = 4  # all loaded sprites and images will be rescaled by this val
 transparent_color = Color('magenta')
 
 PHYSICS_DT = 1. / 60
+PHYSICS_COLLISION_ITERATIONS = 5

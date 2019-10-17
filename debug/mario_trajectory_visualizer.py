@@ -2,6 +2,7 @@ import math
 import pygame
 from util import distance_squared
 from util import copy_vector
+from util import make_vector
 
 
 class _JumpTrajectory:
@@ -11,7 +12,7 @@ class _JumpTrajectory:
     def __init__(self, mario):
         self.points = []
         self.max_velocity = pygame.Vector2()
-        self.initial_velocity_x = math.fabs(mario.velocity.x)
+        self.initial_velocity_x = math.fabs(mario.get_velocity().x)
         self.debug_image = pygame.font.SysFont(None, 18).render('', True, (255, 0, 0))
         self.rect = self.debug_image.get_rect()
 
@@ -57,7 +58,7 @@ class JumpTrajectoryVisualizer:
 
     def update(self, mario):
         if self.last_known_position is None:
-            self.last_known_position = copy_vector(mario.position)
+            self.last_known_position = self.get_mario_feet_position(mario)
 
         if self.current_trajectory is None and mario.is_airborne:
             self.current_trajectory = _JumpTrajectory(mario)
@@ -68,15 +69,19 @@ class JumpTrajectoryVisualizer:
 
         elif not mario.is_airborne:
             if self.current_trajectory is not None:
-                self.current_trajectory.add(mario.position)
+                self.current_trajectory.add(self.get_mario_feet_position(mario))
 
             self.current_trajectory = None
 
         if self.current_trajectory is not None:
-            self.current_trajectory.add(mario.position)
-            self.current_trajectory.update(mario.velocity)
+            self.current_trajectory.add(self.get_mario_feet_position(mario))
+            self.current_trajectory.update(mario.get_velocity())
 
-        self.last_known_position = copy_vector(mario.position)
+        self.last_known_position = self.get_mario_feet_position(mario)
+
+    @staticmethod
+    def get_mario_feet_position(mario):
+        return mario.get_position() + make_vector(mario.rect.width // 2, mario.rect.height)
 
     def draw(self, screen):
         for traj in self.trajectories:

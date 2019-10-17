@@ -46,5 +46,9 @@ def make_vector(x, y):
     return new_v
 
 
+def copy_vector(v):
+    return make_vector(v.x, v.y)
+
+
 def can_collide(mask1, mask2):
     return (mask1 & mask2) != 0
