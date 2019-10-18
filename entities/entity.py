@@ -97,10 +97,27 @@ class EntityManager:
 
         return EntityManager(layers, ordering)
 
-    def register(self, entity):
-        assert isinstance(entity, Entity)
-        assert entity.layer in self.layers.keys()
+    def register(self, *args):
+        # assert isinstance(entity, Entity)
+        # assert entity.layer in self.layers.keys()
+        #
+        # self.layers[entity.layer].add(entity)
 
+        try:
+            iterator = iter(*args)
+
+            for item in iterator:
+                self._register_internal(item)
+
+        except TypeError:
+            for item in args:
+                if isinstance(item, Entity):
+                    self._register_internal(*args)
+                else:
+                    self.register(item)
+
+    def _register_internal(self, entity):
+        assert entity.layer in self.layers.keys()
         self.layers[entity.layer].add(entity)
 
     def unregister(self, entity):

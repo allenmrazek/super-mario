@@ -81,13 +81,13 @@ class TestMarioPhysics(GameState):
 
         self.entity_manager.draw(screen)
 
-        self.velocity = self.font.render("Vel: {:.2f}".format(self.mario._velocity.x), True, (255, 255, 255))
+        self.velocity = self.font.render("Vel: {:.2f}".format(self.mario.get_velocity().x), True, (255, 255, 255))
         screen.blit(self.velocity, self.velocity.get_rect())
 
         self.running = self.font.render("run" if self.mario.is_running else "walk", True, (255, 255, 255))
         screen.blit(self.running, self.running_rect)
 
-        self.skidding = self.font.render("skid" if self.mario._skidding else "not skid", True, (255, 255, 255))
+        self.skidding = self.font.render("skid" if self.mario.is_skidding else "not skid", True, (255, 255, 255))
         screen.blit(self.skidding, self.skidding_rect)
 
         self.airborne = self.font.render("air" if self.mario.is_airborne else "ground", True, (255, 255, 255))

@@ -2,7 +2,7 @@ from enum import Enum
 import pygame
 from .entity import Entity
 from .entity import Layer
-from util import make_vector
+from util import copy_vector
 
 
 class TextAnchor(Enum):
@@ -22,12 +22,12 @@ class Text(Entity):
         # todo: actual SMB font
         self.font = pygame.sysfont.SysFont(None, 24, color)
         self._next_text = text
-        self._text = text
+        self._text = ""
         self.color = color
         self.anchor = anchor
         self.anti_alias = anti_alias
         self.bg_color = bg_color
-        self.text_position = text_position
+        self.text_position = copy_vector(text_position)
         self.surface = None
         self._create_text_surface()
 
