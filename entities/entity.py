@@ -4,11 +4,13 @@ from enum import IntEnum
 from util import copy_vector
 from util import make_vector
 
+
 class Layer(IntEnum):
     Background = 1 << 0
     Block = 1 << 1
     Mario = 1 << 2
     Active = 1 << 3
+    Overlay = 1 << 4
 
 
 class Entity(ABC):
@@ -36,6 +38,41 @@ class Entity(ABC):
     @position.setter
     def position(self, pos):
         self._position = copy_vector(pos)
+        self.rect.x, self.rect.y = pos
+
+    @property
+    def x(self):
+        return self._position.x
+
+    @x.setter
+    def x(self, x):
+        self._position.x = x
+        self.rect.x = x
+
+    @property
+    def y(self):
+        return self._position.y
+
+    @y.setter
+    def y(self, y):
+        self._position.y = y
+        self.rect.y = y
+
+    @property
+    def width(self):
+        return self.rect.width
+
+    @width.setter
+    def width(self, w):
+        self.rect.width = w
+
+    @property
+    def height(self):
+        return self.rect.height
+
+    @height.setter
+    def height(self, h):
+        self.rect.height = h
 
 
 class EntityManager:
@@ -53,9 +90,10 @@ class EntityManager:
             Layer.Background: set(),
             Layer.Block: set(),
             Layer.Mario: set(),
-            Layer.Active: set()}
+            Layer.Active: set(),
+            Layer.Overlay: set()}
 
-        ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active]
+        ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active, Layer.Overlay]
 
         return EntityManager(layers, ordering)
 

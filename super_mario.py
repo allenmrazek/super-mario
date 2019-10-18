@@ -8,6 +8,8 @@ import config
 from timer import game_timer
 from state.test_tilemap import TestTileMap
 from state.test_block_physics import TestBlockPhysics
+from state.performance_measurement import PerformanceMeasurement
+
 
 def run():
     # initialize PyGame
@@ -22,10 +24,9 @@ def run():
 
     # initialize states
     input_state = InputState()
-    state_stack = GameStateStack(TestMarioPhysics(input_state, atlas))
-    #state_stack.push(TestTileMap(input_state))
-    #state_stack.push(TestBlockPhysics(input_state))
+    state_stack = GameStateStack()
 
+    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(input_state, atlas))
     game_timer.reset()
 
     # timer initialize

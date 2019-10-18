@@ -34,10 +34,11 @@ class NoStatesError(RuntimeError):
 
 
 class GameStateStack:
-    def __init__(self, initial_state: GameState):
-        assert initial_state is not None
-        self._states = [initial_state]
-        initial_state.activated()
+    def __init__(self, initial_state=None):
+        self._states = [] if initial_state is None else [initial_state]
+
+        if self.top is not None:
+            initial_state.activated()
 
     @property
     def top(self):
@@ -47,7 +48,7 @@ class GameStateStack:
     def top(self, state):
         assert state is not None
 
-        if state is not self.top:
+        if state is not self.top and self.top is not None:
             self.top.deactivated()
 
         self._states.insert(0, state)
@@ -85,3 +86,4 @@ class GameStateStack:
 
         if top:
             top.draw(screen)
+
