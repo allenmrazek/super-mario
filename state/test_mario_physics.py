@@ -4,19 +4,20 @@ from entities import Mario
 from entities.block import Block
 from entities.collider import ColliderManager
 from entities.entity import EntityManager
+from event.player_input import PlayerInputHandler
 from tileset import TileSet
 import config
 from util import make_vector
 
 
 class TestMarioPhysics(GameState):
-    def __init__(self, input_state, atlas):
-        super().__init__(input_state)
+    def __init__(self, game_events, atlas):
+        super().__init__(game_events)
 
         self.entity_manager = EntityManager.create_default()
         self.collision = ColliderManager()
-
-        self.mario = Mario(input_state, atlas, self.collision)
+        self.mario_input = PlayerInputHandler()
+        self.mario = Mario(self.mario_input, atlas, self.collision)
         self.font = pygame.font.SysFont(None, 24)
         self.velocity = self.font.render("Vel: 0", True, (255, 255, 255))
         self.running = self.font.render("Walking", True, (255, 255, 255))
@@ -32,9 +33,7 @@ class TestMarioPhysics(GameState):
         self.facing_rect = self.facing.get_rect()
         self.facing_rect.top = self.airborne_rect.bottom
 
-
         self.mario._position = make_vector(*config.screen_rect.center)
-
 
         # measuring sticks
         self.height_measurement_image = pygame.image.load("images/height_measurement.png")
@@ -70,9 +69,16 @@ class TestMarioPhysics(GameState):
             self.entity_manager.register(block)  # let block do its own collision registration
 
         self.entity_manager.register(self.mario)
+        self.game_events.register(self.mario_input)
+
+        # IMPORTANT TODO: remove all registered game events
 
     def update(self, dt):
         self.entity_manager.update(dt)
+
+    def event(self, event):
+        self.entity_manager.do_event(event)
+        raise NotImplementedError
 
     def draw(self, screen):
         screen.fill((20, 20, 20))

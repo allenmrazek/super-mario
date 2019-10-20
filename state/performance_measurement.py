@@ -16,8 +16,8 @@ class _Measurement(NamedTuple):
 
 
 class PerformanceMeasurement(GameState):
-    def __init__(self, input_state, target_state: GameState):
-        super().__init__(input_state)
+    def __init__(self, game_events, target_state: GameState):
+        super().__init__(game_events)
 
         assert target_state is not None
 
@@ -107,7 +107,7 @@ class PerformanceMeasurement(GameState):
 
     @staticmethod
     def measure(state_stack: GameStateStack, target_state: GameState):
-        pm = PerformanceMeasurement(target_state.input_state, target_state)
+        pm = PerformanceMeasurement(target_state.game_events, target_state)
         state_stack.push(pm)
 
     def _do_update_info_text(self):

@@ -1,14 +1,20 @@
 import os
 import pygame
 from sprite_atlas import load as load_sprites
+from event.game_events import GameEvents, EventHandler
 from state.game_state import GameStateStack
-from state.input_state import InputState
 from state.test_mario_physics import TestMarioPhysics
 import config
 from timer import game_timer
 from state.test_tilemap import TestTileMap
 from state.test_block_physics import TestBlockPhysics
 from state.performance_measurement import PerformanceMeasurement
+
+
+class _QuitListener(EventHandler):
+    def handle_event(self, evt, game_events):
+        if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
+            exit(0)
 
 
 def run():
@@ -23,17 +29,20 @@ def run():
     atlas = load_sprites()
 
     # initialize states
-    input_state = InputState()
+    game_events = GameEvents()
+    game_events.register(_QuitListener())
+
     state_stack = GameStateStack()
 
-    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(input_state, atlas))
+    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     game_timer.reset()
+
 
     # timer initialize
     accumulator = 0.0
 
-    while state_stack.top is not None and not input_state.quit:
-        input_state.do_events()
+    while state_stack.top is not None:
+        game_events.do_events()
         game_timer.update()
 
         # todo: fixed timestep, or max timestep?

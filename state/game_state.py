@@ -1,11 +1,12 @@
 from abc import abstractmethod
 from abc import ABC
+from event.game_events import GameEvents
 
 
 class GameState(ABC):
-    def __init__(self, input_state):
+    def __init__(self, game_events):
         super().__init__()
-        self.input_state = input_state
+        self.game_events = game_events
 
     @abstractmethod
     def update(self, dt):
@@ -87,3 +88,8 @@ class GameStateStack:
         if top:
             top.draw(screen)
 
+    def event(self, event):
+        top = self.top
+
+        if top:
+            top.event(event)

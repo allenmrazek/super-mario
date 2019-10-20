@@ -6,8 +6,8 @@ import config
 
 
 class TestTileMap(GameState):
-    def __init__(self, input_state):
-        super().__init__(input_state)
+    def __init__(self, game_events):
+        super().__init__(game_events)
 
         self.tileset = TileSet("NES - Super Mario Bros - Tileset.png", 16)
         self.map = TileMap(self.tileset, (400, 400))
@@ -18,6 +18,9 @@ class TestTileMap(GameState):
                 self.map.set_tile((x, y), random.randint(0, self.tileset.num_tiles))
 
     def update(self, elapsed):
+        pass
+
+    def event(self, event):
         pass
 
     def draw(self, screen):

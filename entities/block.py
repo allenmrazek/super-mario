@@ -1,10 +1,7 @@
 from pygame.sprite import Rect
 from entities.entity import Entity, Layer
 from entities.collider import Collider
-from .collider import ColliderManager
-
 from tileset import TileSet
-import config
 
 
 class Block(Entity):

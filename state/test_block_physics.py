@@ -1,4 +1,3 @@
-from pygame import Vector2
 from .game_state import GameState
 from entities.block import Block
 from entities.entity import EntityManager
@@ -10,11 +9,11 @@ from util import make_vector
 
 
 class TestBlockPhysics(GameState):
-    def __init__(self, input_state):
-        super().__init__(input_state)
+    def __init__(self, game_events):
+        super().__init__(game_events)
 
         self.colliders = ColliderManager()
-        self.entity_mgr = EntityManager()
+        self.entity_mgr = EntityManager.create_default()
 
         # load tileset
         tileset = TileSet("NES - Super Mario Bros - Tileset.png", 16)
@@ -43,6 +42,9 @@ class TestBlockPhysics(GameState):
     def draw(self, screen):
         screen.fill((120, 120, 120))
         self.entity_mgr.draw(screen)
+
+    def event(self, event):
+        raise NotImplementedError
 
     @property
     def finished(self):
