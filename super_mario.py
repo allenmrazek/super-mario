@@ -8,6 +8,7 @@ import config
 from timer import game_timer
 from state.test_tilemap import TestTileMap
 from state.test_block_physics import TestBlockPhysics
+from state.test_gui import TestGui
 from state.performance_measurement import PerformanceMeasurement
 
 
@@ -34,9 +35,10 @@ def run():
 
     state_stack = GameStateStack()
 
-    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
-    game_timer.reset()
+    #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
+    state_stack.push(TestGui(game_events))
 
+    game_timer.reset()
 
     # timer initialize
     accumulator = 0.0

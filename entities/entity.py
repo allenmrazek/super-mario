@@ -10,7 +10,8 @@ class Layer(IntEnum):
     Block = 1 << 1
     Mario = 1 << 2
     Active = 1 << 3
-    Overlay = 1 << 4
+    Interface = 1 << 4
+    Overlay = 1 << 5
 
 
 class Entity(ABC):
