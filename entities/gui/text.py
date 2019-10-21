@@ -47,4 +47,4 @@ class Text(Element):
         self.width, self.height = self.surface.get_width(), self.surface.get_height()
 
         # update surface position based on anchor
-        self.update_element_position()
+        self.layout()

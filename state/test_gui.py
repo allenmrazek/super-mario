@@ -13,14 +13,18 @@ class TestGui(GameState):
 
         self.window = Window(make_vector(0, 0), Rect(0, 0, 256, 256), (0, 255, 0), anchor=Anchor.TOP_LEFT)
 
-        text = Text(make_vector(self.window.rect.width, 0), anchor=Anchor.TOP_RIGHT)
+        text = Text(make_vector(128, 128), anchor=Anchor.TOP_LEFT)
         text.text = "Hello, world!"
-        self.window.add(text)
+        self.window.add_child(text)
+
+        game_events.register(self.window)
 
     def update(self, dt):
         self.window.update(dt)
 
     def draw(self, screen):
+        screen.fill((0, 0, 0))
+
         self.window.draw(screen)
 
         clr = (255, 0, 0)

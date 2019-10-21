@@ -17,7 +17,11 @@ class Layer(IntEnum):
 class Entity(ABC):
     def __init__(self, rect: Rect):
         super().__init__()
-        self.rect = rect.copy()
+
+        # reminder to self: we don't just expose this publically because we want them
+        # synchronized; specifically, that position can be tracked in floating points
+        # (since rects are int-only)
+        self._rect = rect.copy()
         self._position = make_vector(rect.x, rect.y)  # rect only int values
 
     @abstractmethod
@@ -33,13 +37,21 @@ class Entity(ABC):
         return Layer.Background
 
     @property
+    def rect(self):
+        return self._rect
+
+    @rect.setter
+    def rect(self, val):
+        self._rect = val
+
+    @property
     def position(self):
         return copy_vector(self._position)
 
     @position.setter
     def position(self, pos):
         self._position = copy_vector(pos)
-        self.rect.x, self.rect.y = pos
+        self._rect.x, self._rect.y = pos
 
     @property
     def x(self):
@@ -48,7 +60,7 @@ class Entity(ABC):
     @x.setter
     def x(self, x):
         self._position.x = x
-        self.rect.x = x
+        self._rect.x = x
 
     @property
     def y(self):
@@ -57,7 +69,7 @@ class Entity(ABC):
     @y.setter
     def y(self, y):
         self._position.y = y
-        self.rect.y = y
+        self._rect.y = y
 
     @property
     def width(self):
@@ -65,15 +77,15 @@ class Entity(ABC):
 
     @width.setter
     def width(self, w):
-        self.rect.width = w
+        self._rect.width = w
 
     @property
     def height(self):
-        return self.rect.height
+        return self._rect.height
 
     @height.setter
     def height(self, h):
-        self.rect.height = h
+        self._rect.height = h
 
 
 class EntityManager:

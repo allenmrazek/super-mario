@@ -1,10 +1,9 @@
 from enum import Enum
-from abc import abstractmethod
 import pygame
 from entities.entity import Entity
 from entities.entity import Layer
 from event import EventHandler
-from util import copy_vector
+from util import make_vector
 
 
 class Anchor(Enum):
@@ -18,65 +17,93 @@ class Anchor(Enum):
 class Element(Entity, EventHandler):
     _element_position_setters = {}
 
-    def __init__(self, element_position, anchor=Anchor.CENTER, initial_rect=None):
-        super().__init__(initial_rect or pygame.Rect(0, 0, 0, 0))
+    def __init__(self, position, anchor=Anchor.CENTER, initial_rect=None):
+        super().__init__(initial_rect or pygame.Rect(position[0], position[1], 0, 0))
 
         self.anchor = anchor
-        self.element_position = copy_vector(element_position)
-        self.position = self.element_position
+        self.parent = None
+        self.children = []
+        self.relative_position = position
+        self.position = position
 
-    @abstractmethod
     def update(self, dt):
-        pass
+        for child in self.children:
+            child.update(dt)
 
-    @abstractmethod
     def draw(self, screen):
-        pass
+        for child in self.children:
+            child.draw(screen)
 
     @property
     def layer(self):
         return Layer.Interface
 
-    def update_element_position(self):
+    def handle_event(self, evt, game_events):
+        # give children a chance to handle events
+        for child in self.children:
+            if hasattr(child, "handle_event"):
+                child.handle_event(evt, game_events)
+                if evt.consumed:
+                    break
+
+    def layout(self):
         # update position based on anchor
         Element._element_position_setters[self.anchor](self)
 
-    @property
-    def position(self):
-        return self._position
+        # children probably dependent on our position
+        for child in self.children:
+            child.layout()
 
-    @position.setter
-    def position(self, new_pos):
-        self.element_position = copy_vector(new_pos)
-        self.update_element_position()
+    def add_child(self, ui_element):
+        assert isinstance(ui_element, Element)
+
+        if ui_element not in self.children:
+            self.children.append(ui_element)
+            ui_element.parent = self
+            ui_element.layout()
+
+    def remove_child(self, ui_element):
+        assert hasattr(ui_element, "parent") and ui_element.parent is self
+
+        self.children.remove(ui_element)
+        ui_element.parent = None
+
+    def get_absolute_position(self):
+        return self.relative_position + (self.parent.get_absolute_position()
+                                         if self.parent is not None else pygame.Vector2())
+
+    def get_absolute_rect(self):
+        pos = self.get_absolute_position()
+
+        return pygame.Rect(pos.x, pos.y, self.width, self.height)
 
     @staticmethod
     def set_center(element):
-        element.x = element.element_position.x - element.width // 2
-        element.y = element.element_position.y - element.height // 2
+        if element.parent is None:
+            element.position = make_vector(element.relative_position.x - element.width // 2,
+                                           element.relative_position.y - element.height // 2)
+        else:
+            absolute_position = element.parent.get_absolute_position() + element.relative_position
+            absolute_position.x -= element.width // 2
+            absolute_position.y -= element.height // 2
+
+            element.position = absolute_position
 
     @staticmethod
     def set_top_left(element):
-        element.x, element.y = element.element_position
+        element.position = element.get_absolute_position()
 
     @staticmethod
     def set_top_right(element):
-        tp = element.element_position
-
-        element.x, element.y = tp.x - element.width, tp.y
+        element.position = element.get_absolute_position() - make_vector(element.width, 0)
 
     @staticmethod
     def set_bottom_left(element):
-        tp = element.element_position
-
-        element.x, element.y = tp.x, tp.y - element.height
+        element.position = element.get_absolute_position() - make_vector(0, element.height)
 
     @staticmethod
     def set_bottom_right(element):
-        tp = element.element_position
-
-        element.x = tp.x - element.width
-        element.y = tp.y - element.height
+        element.position = element.get_absolute_position() - make_vector(element.width, element.height)
 
 
 Element._element_position_setters = {Anchor.CENTER: Element.set_center,

@@ -1,12 +1,40 @@
+from typing import NamedTuple
+import pygame
 from .element import Element
 from .element import Anchor
 from event.game_events import EventHandler
-import pygame
 from util import copy_vector
+from util import make_vector
+
+
+class _TitleBar(Element):
+    def __init__(self, params):
+        super().__init__(make_vector(0, 0), anchor=Anchor.TOP_LEFT)
+        self.surface = params.font.Render(params.title, True, params.color)
+        self.color = params.color
+        self.font = params.font
+        self.height = params.height or self.surface.get_height()
+
+        self.layout()
+
+    def draw(self, screen):
+        pass
+
+    def update(self, dt):
+        pass
+
+    def handle_event(self, evt, game_events):
+        pass  # todo
 
 
 class Window(Element, EventHandler):
-    def __init__(self, window_position, rect, background, anchor=Anchor.CENTER):
+    class Parameters(NamedTuple):
+        color: pygame.Color
+        font: pygame.font.SysFont
+        height: int
+        title: str
+
+    def __init__(self, window_position, rect, background, anchor=Anchor.CENTER, title_bar_params=None):
         super().__init__(window_position, anchor, rect)
 
         assert background is not None
@@ -15,8 +43,15 @@ class Window(Element, EventHandler):
 
         self.element_position = copy_vector(window_position)
         self.background = background
-        self.update_element_position()
-        self._window_elements = []
+        self.titlebar = _TitleBar(title_bar_params) if title_bar_params is not None else None
+        if self.titlebar is not None:
+            self.add_child(self.titlebar)
+
+        self.layout()
+
+        # event-related state
+        self._is_dragging = False
+        self._start_drag = pygame.Vector2()
 
     def draw(self, screen: pygame.Surface):
         r = screen.get_rect().clip(self.rect)
@@ -28,35 +63,37 @@ class Window(Element, EventHandler):
 
         screen.set_clip(r)
 
-        for element in self._window_elements:
-            element.draw(screen)
+        # handle title bar
+        if self.titlebar is not None:
+            self.titlebar.draw(screen)
+
+        # draw children
+        super().draw(screen)
 
         screen.set_clip(None)
 
     def update(self, dt):
-        for element in self._window_elements:
-            element.update(dt)
+        pass
 
     def handle_event(self, evt, game_events):
-        # todo: own events?
+        # let children have a shot at the event first
+        super().handle_event(evt, game_events)
 
-        for element in self._window_elements:
-            element.handle_event(evt)
+        # handle own events
+        if not evt.consumed:
+            if evt.type == pygame.MOUSEBUTTONDOWN:
+                # todo: bring to front?
 
-            if evt.consumed:
-                break
+                self.consume(evt)  # always consume mousedown in a window
+                self._is_dragging = True
 
-    def add(self, ui_element):
-        if ui_element not in self._window_elements:
-            self._window_elements.append(ui_element)
+            elif evt.type == pygame.MOUSEBUTTONUP:
+                self.consume(evt)
+                self._is_dragging = False
+            elif evt.type == pygame.MOUSEMOTION:
+                if self._is_dragging:
+                    self.consume(evt)
+                    rel = evt.rel
 
-            # assume element's position is relative to our own
-            ui_element.element_position = self.element_position + ui_element.element_position
-
-    def remove(self, ui_element):
-        self._window_elements.remove(ui_element)
-
-        # relative->local coordinates
-        ui_element.element_position = self.element_position - ui_element.element_position
-
-    # todo: move child elements when position changed
+                    self.relative_position += rel
+                    self.layout()
