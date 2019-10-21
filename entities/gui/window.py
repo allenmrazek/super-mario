@@ -7,18 +7,36 @@ from util import copy_vector
 from util import make_vector
 
 
+class WindowParameters(NamedTuple):
+    bar_color: pygame.Color
+    text_color: pygame.Color
+    font: pygame.font.SysFont
+    height: int
+    title: str
+
+
 class _TitleBar(Element):
     def __init__(self, params):
         super().__init__(make_vector(0, 0), anchor=Anchor.TOP_LEFT)
-        self.surface = params.font.Render(params.title, True, params.color)
-        self.color = params.color
+        self.surface = params.font.render(params.title, True, params.text_color)
+        self.bar_color = params.bar_color
+        self.text_color = params.text_color
         self.font = params.font
-        self.height = params.height or self.surface.get_height()
+        self.height = params.height if params.height > 0 else self.surface.get_height()
 
         self.layout()
 
     def draw(self, screen):
-        pass
+        # draw title bar
+        r = self.get_absolute_rect()
+        current_clip = screen.get_clip()
+        screen.set_clip(r)
+        screen.set_clip(None)
+
+        screen.fill(self.bar_color, r)
+        screen.blit(self.surface, r)
+
+        screen.set_clip(current_clip)
 
     def update(self, dt):
         pass
@@ -26,15 +44,15 @@ class _TitleBar(Element):
     def handle_event(self, evt, game_events):
         pass  # todo
 
+    def layout(self):
+        self.width = self.parent.width if self.parent is not None else self.width
+
+        # todo: relative position of buttons?
+        super().layout()
+
 
 class Window(Element, EventHandler):
-    class Parameters(NamedTuple):
-        color: pygame.Color
-        font: pygame.font.SysFont
-        height: int
-        title: str
-
-    def __init__(self, window_position, rect, background, anchor=Anchor.CENTER, title_bar_params=None):
+    def __init__(self, window_position, rect, background, anchor=Anchor.CENTER, params=None):
         super().__init__(window_position, anchor, rect)
 
         assert background is not None
@@ -43,7 +61,7 @@ class Window(Element, EventHandler):
 
         self.element_position = copy_vector(window_position)
         self.background = background
-        self.titlebar = _TitleBar(title_bar_params) if title_bar_params is not None else None
+        self.titlebar = _TitleBar(params) if params is not None else None
         if self.titlebar is not None:
             self.add_child(self.titlebar)
 
