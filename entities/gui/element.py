@@ -50,7 +50,7 @@ class Element(Entity, EventHandler):
         # update position based on anchor
         Element._element_position_setters[self.anchor](self)
 
-        # children probably dependent on our position
+        # children dependent on our position
         for child in self.children:
             child.layout()
 
@@ -67,6 +67,16 @@ class Element(Entity, EventHandler):
 
         self.children.remove(ui_element)
         ui_element.parent = None
+
+    def bring_to_front(self, child_element):
+        if child_element in self.children and self.children[len(self.children) - 1] is not child_element:
+            self.children.remove(child_element)
+            self.children.append(child_element)
+
+    def send_to_back(self, child_element):
+        if child_element in self.children and self.children[0] is not child_element:
+            self.children.remove(child_element)
+            self.children.insert(0, child_element)
 
     def get_absolute_position(self):
         return self.relative_position + (self.parent.get_absolute_position()

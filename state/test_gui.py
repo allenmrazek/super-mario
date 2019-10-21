@@ -7,6 +7,7 @@ from entities.gui import Text
 from util import make_vector
 import config
 
+from entities.gui import SlicedImage
 
 class TestGui(GameState):
     def __init__(self, game_events):
@@ -27,6 +28,8 @@ class TestGui(GameState):
 
         game_events.register(self.window)
 
+        self.sliced = SlicedImage((4, 4))
+
     def update(self, dt):
         self.window.update(dt)
 
@@ -38,6 +41,8 @@ class TestGui(GameState):
         clr = (255, 0, 0)
         r = Rect(config.screen_rect.width - 256, 0, 256, 256)
         screen.fill(clr, r)
+
+        self.sliced.draw(screen, pygame.Rect(0, 0, 256, 256))
 
     @property
     def finished(self):
