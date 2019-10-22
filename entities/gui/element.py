@@ -25,7 +25,7 @@ class Element(Entity, EventHandler):
         self.parent = None
         self.children = []
         self.relative_position = copy_vector(position)
-        self.position = position
+        self.position = self.relative_position
 
     def update(self, dt):
         for child in self.children:

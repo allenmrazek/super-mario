@@ -27,7 +27,7 @@ def run():
     pygame.init()
     screen = pygame.display.set_mode(config.screen_size)
     pygame.display.set_caption("Super Mario")
-    atlas = load_sprites()
+    load_sprites()
 
     # initialize states
     game_events = GameEvents()
@@ -35,8 +35,8 @@ def run():
 
     state_stack = GameStateStack()
 
-    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
-    #state_stack.push(TestGui(game_events))
+    # PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
+    state_stack.push(TestGui(game_events))
 
     game_timer.reset()
 

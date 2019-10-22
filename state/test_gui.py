@@ -5,6 +5,7 @@ from entities.gui import Window, WindowParameters
 from entities.gui.element import Anchor
 from entities.gui import Text
 from entities.gui import Button
+from entities.gui import Texture
 from util import make_vector
 from entities.gui import SlicedImage
 import config
@@ -31,6 +32,10 @@ class TestGui(GameState):
         # add a button to the window
         def test_click():
             print("clicked!")
+
+        # add an image to the window
+        texture = Texture("images/atlas.png", make_vector(0, 256), anchor=Anchor.BOTTOM_LEFT)
+        self.window.add_child(texture)
 
         button = Button(make_vector(0, 0), SlicedImage(), size=(128, 48), text="click me",
                         on_click=test_click, text_color=pygame.Color('black'))
