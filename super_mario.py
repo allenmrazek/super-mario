@@ -1,16 +1,11 @@
 import os
 import pygame
-from sprite_atlas import load as load_sprites
+from atlas import load_atlases
 from event.game_events import GameEvents, EventHandler
 from state.game_state import GameStateStack
-from state.test_mario_physics import TestMarioPhysics
 import config
 from timer import game_timer
-from state.test_tilemap import TestTileMap
-from state.test_block_physics import TestBlockPhysics
 from state.test_gui import TestGui
-from state.performance_measurement import PerformanceMeasurement
-from state.editor_state import EditorState
 
 
 class _QuitListener(EventHandler):
@@ -28,7 +23,7 @@ def run():
     pygame.init()
     screen = pygame.display.set_mode(config.screen_size)
     pygame.display.set_caption("Super Mario")
-    load_sprites()
+    atlas = load_atlases()
 
     # initialize states
     game_events = GameEvents()
@@ -37,7 +32,7 @@ def run():
     state_stack = GameStateStack()
 
     # PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
-    state_stack.push(TestGui(game_events))
+    state_stack.push(TestGui(game_events, atlas))
     #state_stack.push(EditorState(game_events))
 
     game_timer.reset()

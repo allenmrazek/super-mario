@@ -1,24 +1,24 @@
 import pygame
 import config
-from util import make_vector
 
 
 class SlicedImage:
-    def __init__(self, corner_dimensions=None):
-        self._base_surface = pygame.image.load("images/window_slice_equal.png")
+    def __init__(self, base_surface, corner_dimensions=None):
+        assert base_surface is not None
+
+        self._base_surface = base_surface
 
         base_size = self._base_surface.get_rect().size
 
         self.corner_dimensions = corner_dimensions or (base_size[0] // 3, base_size[1] // 3)
         self._base_surface.set_colorkey(config.transparent_color)
 
-        self._slices = self._create_slices()
-        self._image = None
+        self._slices = self._create_slices()  # type: list
         self._generated = None
         self._generated_rect = None
 
     def draw(self, screen, rect):
-        if self._image is None or \
+        if self._generated is None or \
                 (self._generated_rect.width != rect.width or self._generated_rect.height != rect.height):
             self._construct_surface(rect)
 
@@ -38,9 +38,8 @@ class SlicedImage:
 
         return sliced
 
-    @staticmethod
-    def _tile(surface, start, stop, src, other_coord, tf_horizontal=False):
-        draw_rect = pygame.Rect(src.get_rect())
+    def _tile(self, start, stop, src_surface, other_coord, tf_horizontal):
+        draw_rect = pygame.Rect(src_surface.get_rect())
         area_rect = draw_rect.copy()
 
         if tf_horizontal:
@@ -48,19 +47,19 @@ class SlicedImage:
         else:
             draw_rect.x = other_coord
 
-        step_size = src.get_width() if tf_horizontal else src.get_height()
+        step_size = src_surface.get_width() if tf_horizontal else src_surface.get_height()
 
         for counting_coord in range(start, stop, step_size):
             if tf_horizontal:
                 draw_rect.x = counting_coord
-                draw_rect.width = min(stop - counting_coord, src.get_width())
+                draw_rect.width = min(stop - counting_coord, src_surface.get_width())
                 area_rect.width = draw_rect.width
             else:
                 draw_rect.y = counting_coord
-                draw_rect.height = min(stop - counting_coord, src.get_height())
+                draw_rect.height = min(stop - counting_coord, src_surface.get_height())
                 area_rect.width = draw_rect.height
 
-            surface.blit(src, draw_rect, area_rect)
+            self._generated.blit(src_surface, draw_rect, area_rect)
 
     def _construct_surface(self, rect):
         # for now, just don't allow sizes that are too small
@@ -101,10 +100,17 @@ class SlicedImage:
         start_y = self.corner_dimensions[1]
         stop_y = self._generated_rect.height - self.corner_dimensions[1]
 
-        SlicedImage._tile(self._generated, start_x, stop_x, self._slices[1], 0, True)
-        SlicedImage._tile(self._generated, start_x, stop_x, self._slices[7], self._generated_rect.height - self.corner_dimensions[1], True)
-        SlicedImage._tile(self._generated, start_y, stop_y, self._slices[3], 0, False)
-        SlicedImage._tile(self._generated, start_y, stop_y, self._slices[5], self._generated_rect.width - self.corner_dimensions[0], False)
+        # top
+        self._tile(start_x, stop_x, self._slices[1], 0, True)
+
+        # bottom
+        self._tile(start_x, stop_x, self._slices[7], self._generated_rect.height - self.corner_dimensions[1], True)
+
+        # left
+        self._tile(start_y, stop_y, self._slices[3], 0, False)
+
+        # right
+        self._tile(start_y, stop_y, self._slices[5], self._generated_rect.width - self.corner_dimensions[0], False)
 
     def _create_slices(self):
         assert self._base_surface.get_width() >= 2 * self.corner_dimensions[0]

@@ -2,3 +2,4 @@ mario_jump_right = 0 16 16 16
 mario_run_right = 0 0 48 16
 mario_skid_left = 16 16 16 16
 mario_stand_right = 32 16 16 16
+collision = 0 0 0 0

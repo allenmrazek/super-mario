@@ -10,7 +10,7 @@ import config
 
 
 class TestGui(GameState):
-    def __init__(self, game_events):
+    def __init__(self, game_events, atlas):
         super().__init__(game_events)
 
         font = pygame.font.SysFont("", 16)
@@ -33,11 +33,11 @@ class TestGui(GameState):
             print("clicked!")
 
         # add an image to the window
-        texture = Texture("images/atlas.png", make_vector(0, 256), anchor=Anchor.BOTTOM_LEFT)
+        texture = Texture(atlas.load_sliced("square"), make_vector(0, 256), anchor=Anchor.BOTTOM_LEFT)
         self.window.add_child(texture)
 
         # add a button to the window
-        button = Button(make_vector(0, 0), SlicedImage(), size=(128, 48), text="click me",
+        button = Button(make_vector(0, 0), atlas.load_sliced("very_rounded_corners "), size=(128, 48), text="click me",
                         on_click=test_click, text_color=pygame.Color('black'))
 
         self.window.add_child(button)

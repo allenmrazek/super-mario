@@ -1,0 +1,7 @@
+option_button = 24 24 8 8
+option_button_checked_heavy = 24 32 8 8
+option_button_checked_light = 32 24 8 8
+rounded_corners = 0 0 24 24
+square = 24 0 24 24
+very_rounded_corners = 0 24 24 24
+collision = 0 0 0 0
