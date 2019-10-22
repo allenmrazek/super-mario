@@ -1,21 +1,24 @@
-from copy import copy
 import pygame
 from pygame import Rect
 from .element import Element
 from .element import Anchor
 from .text import Text
+from . import SlicedImage
 from util import make_vector
+from .drawing import smart_blit
 import config
 
 
 class Button(Element):
-    def __init__(self, position, sliced_image, text=None, on_click=None, size=None,
+    def __init__(self, position, background, text=None, on_click=None, size=None,
                  anchor=Anchor.TOP_LEFT, text_color=config.default_text_color):
         if size is None:
-            size = self._sliced_image.get_rect().size
+            assert isinstance(background, pygame.Surface) or isinstance(background, SlicedImage)
+
+            size = background.get_rect().size
 
         super().__init__(position, Rect(*position, *size), anchor)
-        self._sliced_image = sliced_image
+        self._background = background
         self._text = None
 
         if text is not None:
@@ -28,7 +31,8 @@ class Button(Element):
         self._click_down = False
 
     def draw(self, screen):
-        self._sliced_image.draw(screen, self.rect)
+        smart_blit(screen, self._background, self.rect)
+
         super().draw(screen)
 
     def handle_event(self, evt, game_events):
@@ -40,6 +44,7 @@ class Button(Element):
 
                 if self._click_down:
                     self.consume(evt)
+                    self.make_active()
 
             elif evt.type == pygame.MOUSEBUTTONUP:
                 inside = self.rect.collidepoint(evt.pos)

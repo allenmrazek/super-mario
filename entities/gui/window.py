@@ -3,6 +3,7 @@ from .frame import Frame
 from .element import Anchor
 from .sliced_image import SlicedImage
 from util import copy_vector
+from .drawing import smart_blit
 
 
 class Window(Frame):
@@ -28,12 +29,7 @@ class Window(Frame):
         # so ensure only visible portion of window onscreen is drawn
         r = screen.get_rect().clip(self.rect)
 
-        if isinstance(self.background, pygame.Surface):
-            screen.blit(self.background, r)
-        elif isinstance(self.background, SlicedImage):
-            raise NotImplementedError
-        else:
-            screen.fill(self.background, r)
+        smart_blit(screen, self.background, r)
 
         # don't let children draw outside of bounds
         clipping_rect = screen.get_clip()
@@ -53,11 +49,9 @@ class Window(Frame):
         if self._is_dragging or (not evt.consumed and self.draggable):
             # left-down inside window -> start a drag (assuming no children handled it)
             if evt.type == pygame.MOUSEBUTTONDOWN and self.get_absolute_rect().collidepoint(*evt.pos):
-                if self.parent is not None:
-                    self.parent.bring_to_front(self)
-
                 self.consume(evt)  # always consume mousedown in a window
                 self._is_dragging = True
+                self.make_active()
 
             elif evt.type == pygame.MOUSEBUTTONUP:
                 self._is_dragging = False

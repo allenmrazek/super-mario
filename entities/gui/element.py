@@ -44,9 +44,11 @@ class Element(Entity, EventHandler):
 
     def handle_event(self, evt, game_events):
         # give children a chance to handle events
+        # note: things drawn LAST should be updated FIRST, hence the reversal
         for child in reversed(self.children):
             if hasattr(child, "handle_event"):
                 child.handle_event(evt, game_events)
+
                 if evt.consumed:
                     break
 
@@ -81,6 +83,14 @@ class Element(Entity, EventHandler):
         if child_element in self.children and self.children[0] is not child_element:
             self.children.remove(child_element)
             self.children.insert(0, child_element)
+
+    def make_active(self):
+        if self.parent is not None:
+            if hasattr(self.parent, "bring_to_front"):
+                self.parent.bring_to_front(self)
+
+            if hasattr(self.parent, "make_active"):
+                self.parent.make_active()
 
     def get_absolute_position(self):
         return self.relative_position + (self.parent.get_absolute_position()
