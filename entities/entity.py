@@ -104,7 +104,8 @@ class EntityManager:
             Layer.Block: set(),
             Layer.Mario: set(),
             Layer.Active: set(),
-            Layer.Overlay: set()}
+            Layer.Overlay: set(),
+        }
 
         ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active, Layer.Overlay]
 

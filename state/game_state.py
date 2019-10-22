@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from abc import ABC
-from event.game_events import GameEvents
 
 
 class GameState(ABC):

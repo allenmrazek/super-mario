@@ -20,9 +20,6 @@ class TestTileMap(GameState):
     def update(self, elapsed):
         pass
 
-    def event(self, event):
-        pass
-
     def draw(self, screen):
         self.map.draw(screen, config.screen_rect)
 

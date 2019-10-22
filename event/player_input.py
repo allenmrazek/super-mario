@@ -8,6 +8,8 @@ class PlayerInputHandler(EventHandler):
                  'left_click', 'right_click', 'mouse_position']
 
     def __init__(self):
+        super().__init__()
+
         self.left, self.right, self.up, self.down = False, False, False, False
         self.jump, self.dash, self.fire = False, False, False
         self.left_click, self.right_click = False, False
@@ -21,9 +23,9 @@ class PlayerInputHandler(EventHandler):
             K_UP: self._up,
             K_DOWN: self._down,
             K_SPACE: self._jump,
-            KMOD_LSHIFT: self._dash,
             K_z: self._jump,
-            K_x: self._dash
+            K_x: self._dash,
+            304: self._dash  # left shift
         }
 
     def handle_event(self, evt, game_events):
@@ -56,4 +58,3 @@ class PlayerInputHandler(EventHandler):
     def _dash(self, state):
         self.dash = state
         self.fire = state
-

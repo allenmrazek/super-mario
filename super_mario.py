@@ -35,8 +35,8 @@ def run():
 
     state_stack = GameStateStack()
 
-    #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
-    state_stack.push(TestGui(game_events))
+    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
+    #state_stack.push(TestGui(game_events))
 
     game_timer.reset()
 

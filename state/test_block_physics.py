@@ -43,9 +43,6 @@ class TestBlockPhysics(GameState):
         screen.fill((120, 120, 120))
         self.entity_mgr.draw(screen)
 
-    def event(self, event):
-        raise NotImplementedError
-
     @property
     def finished(self):
         return False

@@ -23,7 +23,7 @@ class PerformanceMeasurement(GameState):
         assert target_state is not None
 
         self.target_state = target_state
-        self.entities = EntityManager({Layer.Overlay: set()}, [Layer.Overlay])
+        self.entities = EntityManager({Layer.Interface: set()}, [Layer.Interface])
 
         text_position = make_vector(config.screen_rect.right, config.screen_rect.top)
 

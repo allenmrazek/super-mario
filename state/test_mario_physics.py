@@ -76,10 +76,6 @@ class TestMarioPhysics(GameState):
     def update(self, dt):
         self.entity_manager.update(dt)
 
-    def event(self, event):
-        self.entity_manager.do_event(event)
-        raise NotImplementedError
-
     def draw(self, screen):
         screen.fill((20, 20, 20))
 
