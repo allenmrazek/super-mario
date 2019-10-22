@@ -40,7 +40,6 @@ class _TitleBar(Element):
         # todo: relative position of buttons?
         super().layout()
 
-
 class Dialog(Window):
     def __init__(self,
                  dialog_position,
@@ -54,5 +53,5 @@ class Dialog(Window):
 
         self.text_color = text_color
         self.tb_color = tb_color
-
-        self.add_child(_TitleBar(tb_color, text_color, font, title))
+        self.title_bar = _TitleBar(tb_color, text_color, font, title)
+        self.add_child(self.title_bar)

@@ -1,18 +1,27 @@
 from .game_state import GameState
 from .game_state import GameStateStack
-#from editor.dialogs import ToolDialog
+from entities.gui import Frame
+from editor.dialogs import ToolDialog, LayerDialog
 from entities.entity import EntityManager, Layer
 import config
+from util import make_vector
 
 
 class EditorState(GameState):
-    def __init__(self, game_events):
+    def __init__(self, game_events, atlas):
         super().__init__(game_events)
 
-        #self.tool_dialog = ToolDialog()
+        # frame to contain all other windows
+        self.frame = Frame(make_vector(0, 0), config.screen_rect.size)
 
         self.entity_manager = EntityManager({Layer.Interface: set()}, [Layer.Interface])
-        #self.entity_manager.register(self.tool_dialog)
+        self.entity_manager.register(self.frame)
+
+        self.tool_dialog = EditorState.create_tool_dialog(atlas)
+        self.frame.add_child(self.tool_dialog)
+
+        self.layer_dialog = EditorState.create_layer_dialog(atlas)
+        self.frame.add_child(self.layer_dialog)
 
     def draw(self, screen):
         screen.fill(config.default_background_color)
@@ -27,9 +36,23 @@ class EditorState(GameState):
         return False
 
     def activated(self):
-        pass
-        #self.game_events.register(self.tool_dialog)
+        self.game_events.register(self.frame)
 
     def deactivated(self):
-        pass
-        #self.game_events.unregister(self.tool_dialog)
+        self.game_events.unregister(self.frame)
+
+    @staticmethod
+    def create_tool_dialog(atlas):
+        dialog = ToolDialog(atlas)
+
+        # todo: set up callbacks?
+
+        return dialog
+
+    @staticmethod
+    def create_layer_dialog(atlas):
+        dialog = LayerDialog(atlas)
+
+        # todo
+
+        return dialog

@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
+from typing import Sized
 from pygame.sprite import Rect
-from enum import IntEnum
+from enum import IntFlag
 from util import copy_vector
 from util import make_vector
 
 
-class Layer(IntEnum):
+class Layer(IntFlag):
     Background = 1 << 0
     Block = 1 << 1
     Mario = 1 << 2

@@ -63,6 +63,12 @@ class SlicedImage:
 
     def _construct_surface(self, rect):
         # for now, just don't allow sizes that are too small
+        if rect.width < 2 * self.corner_dimensions[0] or rect.height < 2 * self.corner_dimensions[1]:
+            self._generated = pygame.Surface(rect.size).convert()
+            self._generated_rect = self._generated.get_rect()
+            self._generated.fill(config.transparent_color)  # no color key: make it stand out
+            return
+
         assert rect.width >= 2 * self.corner_dimensions[0]
         assert rect.height >= 2 * self.corner_dimensions[1]
 
