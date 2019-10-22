@@ -18,7 +18,10 @@ class Anchor(Enum):
 class Element(Entity, EventHandler):
     _element_position_setters = {}
 
-    def __init__(self, position, anchor=Anchor.CENTER, initial_rect=None):
+    def __init__(self, position, initial_rect=None, anchor=Anchor.CENTER):
+        # note to self: some elements won't have an initial rect (their content needs to be created), so
+        # a None value is permissible here and will be changed when a layout event occurs
+
         super().__init__(initial_rect or pygame.Rect(position[0], position[1], 0, 0))
 
         self.anchor = anchor
@@ -41,7 +44,7 @@ class Element(Entity, EventHandler):
 
     def handle_event(self, evt, game_events):
         # give children a chance to handle events
-        for child in self.children:
+        for child in reversed(self.children):
             if hasattr(child, "handle_event"):
                 child.handle_event(evt, game_events)
                 if evt.consumed:

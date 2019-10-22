@@ -16,8 +16,8 @@ def mario_str_to_pixel_value(str_mario_value):
     subsubpixel_value = int(str_mario_value[3:4], 16)
     subsubsubpixel_value = int(str_mario_value[4:5], 16)
 
-    return block_value * block_size + pixel_value + subpixel_value / 16. + subsubpixel_value / (16. * 16.) + \
-        subsubsubpixel_value / (16. * 16. * 16.)
+    return block_value * block_size + pixel_value + subpixel_value / 16. + subsubpixel_value / (16. ** 2) + \
+        subsubsubpixel_value / (16. ** 3)
 
 
 def distance_squared(p1, p2):

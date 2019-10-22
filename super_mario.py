@@ -10,6 +10,7 @@ from state.test_tilemap import TestTileMap
 from state.test_block_physics import TestBlockPhysics
 from state.test_gui import TestGui
 from state.performance_measurement import PerformanceMeasurement
+from state.editor_state import EditorState
 
 
 class _QuitListener(EventHandler):
@@ -37,6 +38,7 @@ def run():
 
     # PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     state_stack.push(TestGui(game_events))
+    #state_stack.push(EditorState(game_events))
 
     game_timer.reset()
 

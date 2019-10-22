@@ -14,7 +14,7 @@ class Button(Element):
         if size is None:
             size = self._sliced_image.get_rect().size
 
-        super().__init__(position, anchor, Rect(*position, *size))
+        super().__init__(position, Rect(*position, *size), anchor)
         self._sliced_image = sliced_image
         self._text = None
 
