@@ -62,6 +62,7 @@ class Window(Element, EventHandler):
         self.element_position = copy_vector(window_position)
         self.background = background
         self.titlebar = _TitleBar(params) if params is not None else None
+
         if self.titlebar is not None:
             self.add_child(self.titlebar)
 

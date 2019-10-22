@@ -14,3 +14,5 @@ PHYSICS_DT = 1. / 60
 PHYSICS_COLLISION_ITERATIONS = 5
 
 default_text_color = Color('white')
+default_window_toolbar_color = Color('blue')
+default_window_background = Color('red')
