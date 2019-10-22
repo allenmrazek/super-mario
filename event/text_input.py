@@ -32,6 +32,6 @@ class TextInputHandler(EventHandler):
                     self.string += chr(key)
 
                 EventHandler.consume(evt)
-            else: # could be things like ,/" etc
+            else:  # could be things like ,/" etc
                 # todo
                 pass

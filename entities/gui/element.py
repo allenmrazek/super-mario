@@ -4,6 +4,7 @@ from entities.entity import Entity
 from entities.entity import Layer
 from event import EventHandler
 from util import make_vector
+from util import copy_vector
 
 
 class Anchor(Enum):
@@ -23,7 +24,7 @@ class Element(Entity, EventHandler):
         self.anchor = anchor
         self.parent = None
         self.children = []
-        self.relative_position = position
+        self.relative_position = copy_vector(position)
         self.position = position
 
     def update(self, dt):

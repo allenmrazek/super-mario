@@ -30,13 +30,13 @@ class PerformanceMeasurement(GameState):
         self.frame_rate = Text(text_position, "Frame Rate", anchor=Anchor.TOP_RIGHT)
 
         text_position.y += self.frame_rate.height
-        self.draw_stats = Text(text_position, anchor=Anchor.TOP_RIGHT)
+        self.draw_stats = Text(text_position, anchor=Anchor.TOP_RIGHT, text="???")
 
         text_position.y += self.frame_rate.height
-        self.update_rate = Text(text_position, anchor=Anchor.TOP_RIGHT)
+        self.update_rate = Text(text_position, anchor=Anchor.TOP_RIGHT, text="???")
 
         text_position.y += self.frame_rate.height
-        self.update_stats = Text(text_position, anchor=Anchor.TOP_RIGHT)
+        self.update_stats = Text(text_position, anchor=Anchor.TOP_RIGHT, text="???")
 
         self.entities.register([self.frame_rate, self.draw_stats, self.update_rate, self.update_stats])
 
