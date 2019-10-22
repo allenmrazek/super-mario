@@ -1,10 +1,11 @@
 import pygame
 from entities.gui.element import Element
 from .element import Anchor
+import config
 
 
 class Text(Element):
-    def __init__(self, element_position, text="", color=pygame.Color('white'), anchor=Anchor.CENTER,
+    def __init__(self, element_position, text="", color=config.default_text_color, anchor=Anchor.CENTER,
                  anti_alias=True, bg_color=None):
         super().__init__(element_position, anchor=anchor)
 

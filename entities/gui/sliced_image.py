@@ -1,11 +1,16 @@
 import pygame
+import config
+from util import make_vector
 
 
 class SlicedImage:
-    def __init__(self, corner_dimensions):
-        self.corner_dimensions = corner_dimensions
+    def __init__(self, corner_dimensions=None):
         self._base_surface = pygame.image.load("images/window_slice_equal.png")
-        self._base_surface.set_colorkey(pygame.Color('magenta'))
+
+        base_size = self._base_surface.get_rect().size
+
+        self.corner_dimensions = corner_dimensions or (base_size[0] // 3, base_size[1] // 3)
+        self._base_surface.set_colorkey(config.transparent_color)
 
         self._slices = self._create_slices()
         self._image = None
@@ -18,6 +23,9 @@ class SlicedImage:
             self._construct_surface(rect)
 
         screen.blit(self._generated, rect)
+
+    def get_rect(self):
+        return self._base_surface.get_rect()
 
     @staticmethod
     def _slice(surface: pygame.Surface, r):
@@ -99,8 +107,8 @@ class SlicedImage:
         SlicedImage._tile(self._generated, start_y, stop_y, self._slices[5], self._generated_rect.width - self.corner_dimensions[0], False)
 
     def _create_slices(self):
-        assert self._base_surface.get_width() == 3 * self.corner_dimensions[0]
-        assert self._base_surface.get_height() == 3 * self.corner_dimensions[1]
+        assert self._base_surface.get_width() >= 2 * self.corner_dimensions[0]
+        assert self._base_surface.get_height() >= 2 * self.corner_dimensions[1]
 
         # 0 1 2
         # 3 4 5

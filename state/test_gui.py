@@ -4,10 +4,11 @@ from .game_state import GameState
 from entities.gui import Window, WindowParameters
 from entities.gui.element import Anchor
 from entities.gui import Text
+from entities.gui import Button
 from util import make_vector
+from entities.gui import SlicedImage
 import config
 
-from entities.gui import SlicedImage
 
 class TestGui(GameState):
     def __init__(self, game_events):
@@ -22,13 +23,21 @@ class TestGui(GameState):
                                  text_color=pygame.Color('blue'),
                                  font=font, title="Hello!", height=0))
 
+        # text inside the window
         text = Text(make_vector(128, 128), anchor=Anchor.TOP_LEFT)
         text.text = "Hello, world!"
         self.window.add_child(text)
 
-        game_events.register(self.window)
+        # add a button to the window
+        def test_click():
+            print("clicked!")
 
-        self.sliced = SlicedImage((4, 4))
+        button = Button(make_vector(0, 0), SlicedImage(), size=(128, 48), text="click me",
+                        on_click=test_click, text_color=pygame.Color('black'))
+
+        self.window.add_child(button)
+
+        game_events.register(self.window)
 
     def update(self, dt):
         self.window.update(dt)
@@ -41,8 +50,6 @@ class TestGui(GameState):
         clr = (255, 0, 0)
         r = Rect(config.screen_rect.width - 256, 0, 256, 256)
         screen.fill(clr, r)
-
-        self.sliced.draw(screen, pygame.Rect(0, 0, 256, 256))
 
     @property
     def finished(self):
