@@ -21,7 +21,7 @@ class Button(Element):
         self._text = None
 
         if text is not None:
-            self._text = Text(make_vector(size[0] // 2, size[1] // 2), "", font, text_color)
+            self._text = Text(make_vector(size[0] // 2, size[1] // 2), text, font, text_color, anchor=Anchor.CENTER)
 
             self.add_child(self._text)
             self._text.layout()

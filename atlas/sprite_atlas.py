@@ -152,6 +152,9 @@ class SpriteAtlas:
 
         self.animations[name] = Animation(frames, duration)
 
+    def initialize_slice_from_surface(self, name, surf, dims):
+        self.sliced[name] = SlicedImage(surf, dims)
+
     def initialize_slice(self, name, slice_size, color_key=None):
         assert len(slice_size) == 2
 
@@ -259,10 +262,3 @@ class SpriteAtlas:
         r.left, r.top, r.width, r.height = [int(x) for x in rect_str.split(' ')]
 
         return r
-
-    @staticmethod
-    def initialize_from_dir(path):
-        assert os.path.exists(path)
-        assert os.path.isdir(path)
-
-        raise NotImplementedError

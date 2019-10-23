@@ -20,7 +20,8 @@ class _TitleBar(Element):
 
     def draw(self, screen):
         # draw title bar
-        r = self.get_absolute_rect()
+        r = screen.get_rect().clip(self.get_absolute_rect())
+
         current_clip = screen.get_clip()
         screen.set_clip(r)
 

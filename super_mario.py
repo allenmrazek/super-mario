@@ -7,6 +7,7 @@ from state.editor_state import EditorState
 import config
 from timer import game_timer
 from state.test_gui import TestGui
+from state.test_level import TestLevel
 
 
 class _QuitListener(EventHandler):
@@ -34,7 +35,8 @@ def run():
 
     # PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     # state_stack.push(TestGui(game_events, atlas))
-    state_stack.push(EditorState(game_events, atlas))
+    #state_stack.push(EditorState(game_events, atlas))
+    state_stack.push(TestLevel(game_events, atlas))
 
     game_timer.reset()
 

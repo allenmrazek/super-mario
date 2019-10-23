@@ -2,7 +2,6 @@ import os
 from tileset import TileSet
 
 
-
 class TileMap:
     def __init__(self, tile_set: TileSet, size):
         self.tile_set = tile_set

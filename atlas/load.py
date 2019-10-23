@@ -2,16 +2,26 @@ import os
 import pygame
 from . import SpriteAtlas
 from animation import Animation
-from entities.gui.drawing import generated_selected_version
+from entities.gui.drawing import generated_selected_version_circle, generated_selected_version_darken
 import config
 
 
-def _get_atlas_path(atlas_name):
+def get_atlas_path(atlas_name):
     return os.path.join("images", f"{atlas_name}.png")
 
 
+def _load_all_as_static(atlas_name):
+    atlas = SpriteAtlas(get_atlas_path(atlas_name), tf_use_rescale_factor=False)
+    kwargs = {"color_key": config.transparent_color}
+
+    for name in atlas.sprite_names:
+        atlas.initialize_static(name, **kwargs)
+
+    return atlas
+
+
 def load_entity_atlas():
-    atlas = SpriteAtlas(_get_atlas_path("atlas_entities"))
+    atlas = SpriteAtlas(get_atlas_path("mario"))
 
     # stationary
     atlas.initialize_static("mario_stand_right", config.transparent_color)
@@ -49,30 +59,37 @@ def load_entity_atlas():
 
 
 def load_gui_atlas():
-    atlas = SpriteAtlas(_get_atlas_path("atlas_gui"), tf_use_rescale_factor=False)
+    atlas = SpriteAtlas(get_atlas_path("gui"), tf_use_rescale_factor=False)
     kwargs = {"color_key": config.transparent_color}
 
-    atlas.initialize_slice("bkg_square", (16, 16), **kwargs)
-    atlas.initialize_slice("bkg_rounded", (32, 32), **kwargs)
-    atlas.initialize_slice("bkg_very_rounded", (32, 32), **kwargs)
-    atlas.initialize_slice("control_small", (7, 7), **kwargs)
-    atlas.initialize_slice("control_small_block", (7, 7), **kwargs)
-    atlas.initialize_slice("control_small_block2", (7, 7), **kwargs)
-    atlas.initialize_slice("control_small_block2_hl", (7, 7), **kwargs)
+    def load_slice(name, hl_name, dims, **kw):
+        atlas.initialize_slice(name, dims, **kw)
+        sliced = atlas.load_sliced(name)
+
+        hl = generated_selected_version_darken(sliced.base_surface, 0.5)
+
+        if sliced.base_surface.get_colorkey() is not None:
+            hl = hl.convert()
+            hl.set_colorkey(sliced.base_surface.get_colorkey())
+
+        atlas.initialize_slice_from_surface(hl_name, hl, dims)
+
+    load_slice("bkg_square", "bkg_square_hl", (16, 16), **kwargs)
+    load_slice("bkg_rounded", "bkg_rounded_hl", (32, 32), **kwargs)
+    load_slice("bkg_very_rounded", "bkg_very_rounded_hl", (32, 32), **kwargs)
+    load_slice("control_small", "control_small_hl", (7, 7), **kwargs)
+    load_slice("control_small_block", "control_small_block_hl", (7, 7), **kwargs)
+    load_slice("control_small_block2", "control_small_block2_hl", (7, 7), **kwargs)
 
     atlas.initialize_static("option_button", **kwargs)
     atlas.initialize_static("option_button_checked_heavy", **kwargs)
     atlas.initialize_static("option_button_checked_light", **kwargs)
 
     # tools (no colorkey => use per-pixel alpha)
-    # atlas.initialize_static("pencil")
-    # atlas.initialize_static("paint")
-    # atlas.initialize_static("grid")
-    # atlas.initialize_static("dropper")
 
     def load_tool_static(name, hl_name):
         atlas.initialize_static(name)
-        atlas.initialize_static_from_surface(hl_name, generated_selected_version(atlas.load_static(name).image,
+        atlas.initialize_static_from_surface(hl_name, generated_selected_version_circle(atlas.load_static(name).image,
                                                                                  pygame.Color('yellow')))
 
     load_tool_static("pencil", "pencil_hl")
@@ -83,8 +100,25 @@ def load_gui_atlas():
     return atlas
 
 
+def load_solid_block_atlas():
+    return _load_all_as_static("solid_blocks")
+
+
+def load_background_block_atlas():
+    return _load_all_as_static("background_blocks")
+
+
+def load_interactive_block_atlas():
+    return _load_all_as_static("interactive_blocks")
+
+    # todo: actually load animations here
+
+
 def load_atlases():
     entity_atlas = load_entity_atlas()
     gui_atlas = load_gui_atlas()
+    solid_block_atlas = load_solid_block_atlas()
+    background_block_atlas = load_background_block_atlas()
+    interactive_block_atlas = load_interactive_block_atlas()
 
-    return entity_atlas + gui_atlas
+    return entity_atlas + gui_atlas + solid_block_atlas + background_block_atlas + interactive_block_atlas
