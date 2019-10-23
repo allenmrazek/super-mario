@@ -158,4 +158,9 @@ class EntityManager:
     def _do_on_each_layer(self, fn):
         for layer in self.ordering:
             for entity in self.layers[layer]:
-                fn(entity)
+                if hasattr(entity, "enabled"):
+                    if entity.enabled:
+                        fn(entity)
+
+                else:
+                    fn(entity)

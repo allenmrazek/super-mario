@@ -2,8 +2,8 @@ import os
 import pygame
 from pygame import Rect, PixelArray
 from level.tile import Tile, Classification
-from level.util import calc_hash
 from util import make_vector
+import config
 
 
 def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelArray, target_rect: Rect, trans_color):
@@ -19,8 +19,8 @@ def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelAr
                 anchor_color = tile_anchor.surface.unmap_rgb(anchor_pixel)
                 target_color = target_surface.unmap_rgb(target_pixel)
 
-                if anchor_color == trans_color or target_color == trans_color:
-                    continue  # transparent pixels on either always pass
+                if anchor_color == config.transparent_color and target_color == trans_color:
+                    continue  # transparent pixels don't need to match, they just need to both be transparent
 
                 if anchor_pixel != target_pixel:
                     return False
@@ -66,23 +66,41 @@ class TileIdentifier:
 
     @property
     def finished(self):
+        if self.search_rect is not None:
+            r = self.world.get_rect()
+
+            if self.search_rect.bottom >= r.bottom or self.search_rect.right >= r.right:
+                return True
+
         return self._finished
+
+    @staticmethod
+    def is_transparent(surface, pixels, rect, world_transparent):
+        for y in range(rect.top, rect.bottom):
+            for x in range(rect.left, rect.right):
+                if surface.unmap_rgb(pixels[x, y]) != world_transparent:
+                    return False
+
+        return True
 
     def locate_next(self):
         # find next tile to classify
         with PixelArray(self.world) as pixels:
-            while self.search_rect.bottom <= self.world.get_height():
-                while self.search_rect.right <= self.world.get_width():
-                    hashcode = calc_hash(self.world, pixels, self.search_rect, self.world_trans_color)
+            while self.search_rect.bottom < self.world.get_height():
+                while self.search_rect.right < self.world.get_width():
+                    exists = False
 
-                    # does this hash match any known tiles?
-                    matches = [t for t in self.known_tiles if t.hashcode == hashcode[0] and is_exact_match_to_anchor(
-                        t, self.world, pixels, self.search_rect, self.world_trans_color
-                    )]
+                    # check for all transparent
+                    if not TileIdentifier.is_transparent(self.world, pixels, self.search_rect, self.world_trans_color):
 
-                    if not any(matches) and hashcode[1] > 0:
-                        print("found hashcode ", hashcode[0])
-                        return
+                        # otherwise, see if we recognize the tile
+                        for known in self.known_tiles:
+                            if not exists and is_exact_match_to_anchor(known, self.world, pixels,
+                                                                       self.search_rect, self.world_trans_color):
+                                exists = True
+
+                        if not exists:
+                            return
 
                     # else, continue
                     self.search_rect.move_ip(self.known_tiles[0].surface.get_width(), 0)
@@ -137,14 +155,9 @@ class TileIdentifier:
                 for y in range(sr.top, sr.bottom - search_rect.height + 1):
                     search_rect.x, search_rect.y = x, y
 
-                    search_hash = calc_hash(surface, search_pixels, search_rect, trans_color)
-
-                    # determine if this hashcode matches any anchor(s)
-                    matches = [a for a in anchors if a.hashcode == search_hash[0] and is_exact_match_to_anchor(
-                        a, surface, search_pixels, search_rect, trans_color
-                    )]
-
-                    if any(matches) and search_hash[1] > 0:
-                        return x, y
+                    for known in anchors:
+                        if is_exact_match_to_anchor(known, self.world, search_pixels,
+                                                    search_rect, self.world_trans_color):
+                            return x, y
 
             return None

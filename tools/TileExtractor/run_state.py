@@ -102,6 +102,8 @@ class RunState(GameState, EventHandler):
         self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/test_bg.png",
                                               (107, 140, 255))
 
+        self.classifier_dialog.enabled = False
+        
     def update(self, dt):
         self.entities.update(dt)
         self.classifier_dialog.enabled = not self.tile_identifier.finished
