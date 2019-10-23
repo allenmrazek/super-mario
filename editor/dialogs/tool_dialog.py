@@ -5,7 +5,7 @@ from util import make_vector
 
 
 class ToolDialog(Dialog):
-    SIZE = (196, 128)
+    SIZE = (256, 128)
 
     def __init__(self, atlas):
         font=pygame.font.SysFont("", 24)

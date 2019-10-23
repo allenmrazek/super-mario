@@ -6,6 +6,9 @@ from .button import Button
 from .texture import Texture
 from .dialog import Dialog
 from .frame import Frame
-from .drawing import smart_blit
+from .drawing import smart_draw
+from .element import ElementStyle
+from .option import Option
 
-__all__ = ['Element', 'Anchor', 'Text', 'Window', 'SlicedImage', 'Button', 'Texture', 'Dialog', 'Frame', 'smart_blit']
+__all__ = ['Element', 'Anchor', 'Text', 'Window', 'SlicedImage', 'Button',
+           'Texture', 'Dialog', 'Frame', 'smart_draw', 'ElementStyle', Option]

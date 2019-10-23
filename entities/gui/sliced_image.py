@@ -25,6 +25,8 @@ class SlicedImage:
         screen.blit(self._generated, rect)
 
     def get_rect(self):
+        if self._generated is not None:
+            return self._generated_rect.copy()
         return self._base_surface.get_rect()
 
     @staticmethod
@@ -39,27 +41,25 @@ class SlicedImage:
         return sliced
 
     def _tile(self, start, stop, src_surface, other_coord, tf_horizontal):
-        draw_rect = pygame.Rect(src_surface.get_rect())
-        area_rect = draw_rect.copy()
+        draw_pos = pygame.Vector2()
+        area_rect = src_surface.get_rect()
 
         if tf_horizontal:
-            draw_rect.y = other_coord
+            draw_pos.y = other_coord
         else:
-            draw_rect.x = other_coord
+            draw_pos.x = other_coord
 
         step_size = src_surface.get_width() if tf_horizontal else src_surface.get_height()
 
         for counting_coord in range(start, stop, step_size):
             if tf_horizontal:
-                draw_rect.x = counting_coord
-                draw_rect.width = min(stop - counting_coord, src_surface.get_width())
-                area_rect.width = draw_rect.width
+                draw_pos.x = counting_coord
+                area_rect.width = min(stop - counting_coord, src_surface.get_width())
             else:
-                draw_rect.y = counting_coord
-                draw_rect.height = min(stop - counting_coord, src_surface.get_height())
-                area_rect.width = draw_rect.height
+                draw_pos.y = counting_coord
+                area_rect.height = min(stop - counting_coord, src_surface.get_height())
 
-            self._generated.blit(src_surface, draw_rect, area_rect)
+            self._generated.blit(src_surface, draw_pos, area_rect)
 
     def _construct_surface(self, rect):
         # for now, just don't allow sizes that are too small
@@ -74,6 +74,9 @@ class SlicedImage:
 
         self._generated = pygame.Surface(rect.size).convert(24)  # note: assumes 24 bit surfaces (no per-pixel alpha)
         self._generated_rect = self._generated.get_rect()
+
+        if self._base_surface.get_colorkey() is not None:
+            self._generated.fill(self._base_surface.get_colorkey())
 
         # expand center tile
         scale_x = float(self._generated_rect.width - 2 * self.corner_dimensions[0]) / self.corner_dimensions[0]
@@ -168,3 +171,13 @@ class SlicedImage:
         slices[5] = SlicedImage._slice(self._base_surface, side_rect)
 
         return slices
+
+    def __deepcopy__(self, memodict=None):
+        img = SlicedImage(self._base_surface)
+
+        img.corner_dimensions = self.corner_dimensions
+        img._slices = self._slices
+        img._generated = None
+        img._generated_rect = None
+
+        return img

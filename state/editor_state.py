@@ -1,6 +1,6 @@
 from .game_state import GameState
 from .game_state import GameStateStack
-from entities.gui import Frame
+from entities.gui import Frame, Window
 from editor.dialogs import ToolDialog, LayerDialog
 from entities.entity import EntityManager, Layer
 import config

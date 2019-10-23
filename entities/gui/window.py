@@ -3,7 +3,7 @@ from .frame import Frame
 from .element import Anchor
 from .sliced_image import SlicedImage
 from util import copy_vector
-from .drawing import smart_blit
+from .drawing import smart_draw
 
 
 class Window(Frame):
@@ -29,7 +29,7 @@ class Window(Frame):
         # so ensure only visible portion of window onscreen is drawn
         r = screen.get_rect().clip(self.rect)
 
-        smart_blit(screen, self.background, r)
+        smart_draw(screen, self.background, r)
 
         # don't let children draw outside of bounds
         clipping_rect = screen.get_clip()

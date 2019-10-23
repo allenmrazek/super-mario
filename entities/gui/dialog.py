@@ -40,6 +40,7 @@ class _TitleBar(Element):
         # todo: relative position of buttons?
         super().layout()
 
+
 class Dialog(Window):
     def __init__(self,
                  dialog_position,

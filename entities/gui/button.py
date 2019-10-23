@@ -3,27 +3,33 @@ from pygame import Rect
 from .element import Element
 from .element import Anchor
 from .text import Text
-from . import SlicedImage
+from .sliced_image import SlicedImage
+from .element import ElementStyle
 from util import make_vector
-from .drawing import smart_blit
+from .drawing import smart_draw
 import config
 
 
 class Button(Element):
-    def __init__(self, position, background, text=None, on_click=None, size=None,
-                 anchor=Anchor.TOP_LEFT, text_color=config.default_text_color):
-        if size is None:
-            assert isinstance(background, pygame.Surface) or isinstance(background, SlicedImage)
+    def __init__(self, position, size, style: ElementStyle, text=None, on_click=None):
+        if size is None or (size[0] == 0 and size[1] == 0):
+            assert isinstance(style.background, pygame.Surface) or isinstance(style.background, SlicedImage)
 
-            size = background.get_rect().size
+            size = style.background.get_rect().size
 
-        super().__init__(position, Rect(*position, *size), anchor)
-        self._background = background
+        super().__init__(position, Rect(*position, *size), style.anchor)
+        self._background = style.background
         self._text = None
 
+        text_style = ElementStyle(
+            background=None,
+            anchor=Anchor.CENTER,
+            text_color=style.text_color,
+            font=style.font
+        )
         if text is not None:
-            self._text = Text(make_vector(size[0] // 2, size[1] // 2),
-                              anchor=Anchor.CENTER, color=text_color, text=text)
+            self._text = Text(make_vector(size[0] // 2, size[1] // 2), "", text_style)
+
             self.add_child(self._text)
             self._text.layout()
 
@@ -31,7 +37,7 @@ class Button(Element):
         self._click_down = False
 
     def draw(self, screen):
-        smart_blit(screen, self._background, self.rect)
+        smart_draw(screen, self._background, self.rect)
 
         super().draw(screen)
 
