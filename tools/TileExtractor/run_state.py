@@ -99,9 +99,8 @@ class RunState(GameState, EventHandler):
         self.entities.register(self.classifier_dialog)
         game_events.register(self.classifier_dialog)
 
-        self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/test_bg.png",
-                                              (107, 140, 255))
-
+        self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/bg-1-1_uw.png", None)
+        self.tile_identifier.locate_next()
         self.classifier_dialog.enabled = False
         
     def update(self, dt):
@@ -134,5 +133,5 @@ class RunState(GameState, EventHandler):
         self.tile_identifier.locate_next()
 
     def classify_ignore(self):
-        self.tile_identifier.set_classification(Classification.NotClassified)
+        self.tile_identifier.set_classification(Classification.Ignore)
         self.tile_identifier.locate_next()

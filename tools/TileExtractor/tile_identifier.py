@@ -38,8 +38,13 @@ class TileIdentifier:
         if isinstance(world_trans_color, tuple):
             world_trans_color = pygame.Color(*world_trans_color)
 
-        self.world = pygame.image.load(target_file).convert(32)
+        self.world = pygame.image.load(target_file).convert(24)
         self.world_trans_color = world_trans_color
+
+        if self.world_trans_color is None:
+            # try to guess color using upper-left pixel, which is usually background
+            self.world_trans_color = self.world.get_at((0, 0))
+            print("guessed that world transparent color is ", self.world_trans_color)
 
         self.known_tiles = []
 
@@ -53,8 +58,11 @@ class TileIdentifier:
         self.known_tiles.extend(
             self._load_tiles_from("../../images/atlas_interactive_blocks/", Classification.SolidInteractive))
 
+        self.known_tiles.extend(
+            self._load_tiles_from("../../images/atlas_ignored_blocks/", Classification.Ignore))
+
         self.anchor_position = self._find_anchor(self.world, self.world_trans_color)
-        tile_width, tile_height = self.known_tiles[0].surface.get_rect().size
+        tile_width, tile_height = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (16, 16)
         self.startx, self.starty = self.anchor_position[0] % tile_width, self.anchor_position[1] % tile_height
 
         if self.anchor_position is not None:
@@ -84,9 +92,15 @@ class TileIdentifier:
         return True
 
     def locate_next(self):
+        movement = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (16, 16)
+
+        print("identifying next tile to classify ...")
+
         # find next tile to classify
         with PixelArray(self.world) as pixels:
             while self.search_rect.bottom < self.world.get_height():
+                print(f"searching along {self.search_rect.top}-{self.search_rect.bottom}")
+
                 while self.search_rect.right < self.world.get_width():
                     exists = False
 
@@ -103,10 +117,14 @@ class TileIdentifier:
                             return
 
                     # else, continue
-                    self.search_rect.move_ip(self.known_tiles[0].surface.get_width(), 0)
+                    self.search_rect.move_ip(movement[0], 0)
+
                     if self.search_rect.right > self.world.get_width():
                         self.search_rect.left = self.startx
-                        self.search_rect.move_ip(0, self.known_tiles[0].surface.get_height())
+                        self.search_rect.move_ip(0, movement[1])
+
+                self.search_rect.left = self.startx
+                self.search_rect.move_ip(0, movement[1])
 
         self._finished = True
 
@@ -115,7 +133,7 @@ class TileIdentifier:
 
     def set_classification(self, classification):
         # classify selected tile as given arg
-        tile = Tile.create_from_surface(self.world, self.search_rect, self.world_trans_color)
+        tile = Tile.create_from_surface(self.world, self.search_rect, self.world_trans_color, classification)
         tile.classication = classification
 
         self.known_tiles.append(tile)
@@ -148,16 +166,22 @@ class TileIdentifier:
         # advance through surface, looking for any matches to anchor hashes
         search_hash = 0
 
-        pygame.image.save(surface, "../../images/test/all_zero.png")
+        print("searching for anchor ...")
 
         with pygame.PixelArray(surface) as search_pixels:
             for x in range(sr.left, sr.right - search_rect.width + 1):
+
+                print("searching along columns at x = ", x)
+
                 for y in range(sr.top, sr.bottom - search_rect.height + 1):
                     search_rect.x, search_rect.y = x, y
 
                     for known in anchors:
                         if is_exact_match_to_anchor(known, self.world, search_pixels,
-                                                    search_rect, self.world_trans_color):
+                                                    search_rect, self.world_trans_color) \
+                                and not self.is_transparent(surface, search_pixels, search_rect, self.world_trans_color):
+                            print("anchor found at ", x, ", ", y)
                             return x, y
 
+            print("*** no anchor found ***")
             return None
