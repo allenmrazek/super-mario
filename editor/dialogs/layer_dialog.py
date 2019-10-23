@@ -41,7 +41,7 @@ class LayerDialog(Dialog):
                             mouseover_image=atlas.load_sliced("control_small_block2_hl"),
                             font=font)
             option.selected = False
-            
+
             self.add_child(option)
             option.layout()
             y_pos += option.height

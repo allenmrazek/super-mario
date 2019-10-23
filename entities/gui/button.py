@@ -13,8 +13,6 @@ class Button(Element):
     def __init__(self, position, size, background, font, anchor=Anchor.TOP_LEFT, text=None, on_click_callback=None,
                  text_color=config.default_text_color, mouseover_image=None):
         if size is None or (size[0] == 0 and size[1] == 0):
-            assert isinstance(background, pygame.Surface) or isinstance(background, SlicedImage)
-
             size = background.get_rect().size
 
         super().__init__(position, Rect(*position, *size), anchor, )

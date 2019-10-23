@@ -8,6 +8,12 @@ class Option(Button):
     def __init__(self, position, size, background, font, text,
                  selected_image, unselected_image, is_selected=True, anchor=Anchor.TOP_LEFT,
                  text_color=config.default_text_color, mouseover_image=None):
+        if background is not None:
+            size = size or background.get_rect().size
+
+        assert hasattr(selected_image, "get_rect")
+        assert hasattr(unselected_image, "get_rect")
+
         super().__init__(position=position,
                          size=size, background=background, text="", font=font, anchor=anchor,
                          mouseover_image=mouseover_image)
@@ -63,8 +69,15 @@ class OptionGroup:
     def __init__(self, tf_require_selected=True, *option_buttons):
         self.option_buttons = []
         self.require_selected = tf_require_selected  # if true, ensure there is always at least one selection
-        for btn in option_buttons:
-            self.add(btn)
+
+        try:
+            it = iter(*option_buttons)
+
+            for btn in it:
+                self.add(btn)
+        except TypeError:
+            for btn in option_buttons:
+                self.add(btn)
 
     def _make_callback(self, button_self):
         """Goal: right after the original click does whatever it does, we get a chance. Do this transparently"""

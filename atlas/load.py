@@ -2,6 +2,7 @@ import os
 import pygame
 from . import SpriteAtlas
 from animation import Animation
+from entities.gui.drawing import generated_selected_version
 import config
 
 
@@ -54,14 +55,30 @@ def load_gui_atlas():
     atlas.initialize_slice("bkg_square", (16, 16), **kwargs)
     atlas.initialize_slice("bkg_rounded", (32, 32), **kwargs)
     atlas.initialize_slice("bkg_very_rounded", (32, 32), **kwargs)
-    # atlas.initialize_slice("control_small", (7, 7), **kwargs)
-    # atlas.initialize_slice("control_small_block", (7, 7), **kwargs)
+    atlas.initialize_slice("control_small", (7, 7), **kwargs)
+    atlas.initialize_slice("control_small_block", (7, 7), **kwargs)
     atlas.initialize_slice("control_small_block2", (7, 7), **kwargs)
     atlas.initialize_slice("control_small_block2_hl", (7, 7), **kwargs)
 
     atlas.initialize_static("option_button", **kwargs)
     atlas.initialize_static("option_button_checked_heavy", **kwargs)
     atlas.initialize_static("option_button_checked_light", **kwargs)
+
+    # tools (no colorkey => use per-pixel alpha)
+    # atlas.initialize_static("pencil")
+    # atlas.initialize_static("paint")
+    # atlas.initialize_static("grid")
+    # atlas.initialize_static("dropper")
+
+    def load_tool_static(name, hl_name):
+        atlas.initialize_static(name)
+        atlas.initialize_static_from_surface(hl_name, generated_selected_version(atlas.load_static(name).image,
+                                                                                 pygame.Color('yellow')))
+
+    load_tool_static("pencil", "pencil_hl")
+    load_tool_static("paint", "paint_hl")
+    load_tool_static("grid", "grid_hl")
+    load_tool_static("dropper", "dropper_hl")
 
     return atlas
 

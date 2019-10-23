@@ -59,3 +59,6 @@ class Dialog(Window):
         self.title_bar = _TitleBar(tb_color, text_color, font, title,
                                    tb_extra_height=additional_height, tb_text_offset=text_start_offset)
         self.add_child(self.title_bar)
+
+    def get_title_bar_bottom(self):
+        return self.title_bar.height
