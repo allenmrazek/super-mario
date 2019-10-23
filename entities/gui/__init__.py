@@ -7,7 +7,7 @@ from .texture import Texture
 from .dialog import Dialog
 from .frame import Frame
 from .drawing import smart_draw
-from .option import Option
+from .option import Option, OptionGroup
 
 __all__ = ['Element', 'Anchor', 'Text', 'Window', 'SlicedImage', 'Button',
-           'Texture', 'Dialog', 'Frame', 'smart_draw', 'Option']
+           'Texture', 'Dialog', 'Frame', 'smart_draw', 'Option', 'OptionGroup']

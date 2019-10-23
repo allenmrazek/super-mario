@@ -1,7 +1,10 @@
 bkg_rounded = 0 0 96 96
 bkg_square = 96 0 96 96
 bkg_very_rounded = 0 96 96 96
-control_small = 0 192 16 16
+control_small = 160 96 16 16
+control_small_block = 128 128 16 16
+control_small_block2 = 96 160 16 16
+control_small_block2_hl = 96 176 16 16
 option_button = 96 96 32 32
 option_button_checked_heavy = 96 128 32 32
 option_button_checked_light = 128 96 32 32

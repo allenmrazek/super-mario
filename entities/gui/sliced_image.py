@@ -79,16 +79,19 @@ class SlicedImage:
             self._generated.fill(self._base_surface.get_colorkey())
 
         # expand center tile
-        scale_x = float(self._generated_rect.width - 2 * self.corner_dimensions[0]) / self.corner_dimensions[0]
-        scale_y = float(self._generated_rect.height - 2 * self.corner_dimensions[1]) / self.corner_dimensions[1]
-        center_slice = self._slices[4]
-        scale_center = int(center_slice.get_width() * scale_x), int(center_slice.get_height() * scale_y)
+        new_center_width = int(self._generated_rect.width - 2 * self.corner_dimensions[0])
+        new_center_height = int(self._generated_rect.height - 2 * self.corner_dimensions[1])
 
-        center = pygame.transform.smoothscale(self._slices[4], scale_center)
+        center_slice = self._slices[4]
+
+        center = pygame.transform.smoothscale(self._slices[4], (new_center_width, new_center_height))
 
         r = center.get_rect()
         r.center = self._generated_rect.center
         self._generated.blit(center, r)
+
+        if center.get_height() == 5:
+            pygame.image.save(self._generated, "images/generated.png")
 
         if center_slice.get_colorkey() is not None:
             self._generated.set_colorkey(center_slice.get_colorkey())
@@ -154,17 +157,15 @@ class SlicedImage:
         slices[4] = SlicedImage._slice(self._base_surface, middle_rect)
 
         # now each of the four side slices which aren't corners
-        side_rect = pygame.Rect(self.corner_dimensions[0], 0, *self.corner_dimensions)
+        side_rect = pygame.Rect(self.corner_dimensions[0], 0,
+                                base_rect.width - self.corner_dimensions[0] * 2, self.corner_dimensions[1])
         slices[1] = SlicedImage._slice(self._base_surface, side_rect)
 
         side_rect.bottom = base_rect.bottom
         slices[7] = SlicedImage._slice(self._base_surface, side_rect)
 
-        side_rect.left = 0
-        side_rect.top = self.corner_dimensions[1]
-        side_rect.width = self.corner_dimensions[0]
-        side_rect.height = self.corner_dimensions[1]
-
+        side_rect = pygame.Rect(0, self.corner_dimensions[1], self.corner_dimensions[0],
+                                base_rect.height - self.corner_dimensions[1] * 2)
         slices[3] = SlicedImage._slice(self._base_surface, side_rect)
 
         side_rect.right = base_rect.right

@@ -11,22 +11,17 @@ import config
 
 class Button(Element):
     def __init__(self, position, size, background, font, anchor=Anchor.TOP_LEFT, text=None, on_click_callback=None,
-                 text_color=config.default_text_color):
+                 text_color=config.default_text_color, mouseover_image=None):
         if size is None or (size[0] == 0 and size[1] == 0):
             assert isinstance(background, pygame.Surface) or isinstance(background, SlicedImage)
 
             size = background.get_rect().size
 
-        super().__init__(position, Rect(*position, *size), anchor)
+        super().__init__(position, Rect(*position, *size), anchor, )
         self._background = background
+        self._background_mouseover = mouseover_image or background
         self._text = None
 
-        # text_style = ElementStyle(
-        #     background=None,
-        #     anchor=Anchor.CENTER,
-        #     text_color=text_color,
-        #     font=font
-        # )
         if text is not None:
             self._text = Text(make_vector(size[0] // 2, size[1] // 2), "", font, text_color)
 
@@ -35,9 +30,10 @@ class Button(Element):
 
         self.on_click = on_click_callback
         self._click_down = False
+        self._mouseover = False
 
     def draw(self, screen):
-        smart_draw(screen, self._background, self.rect)
+        smart_draw(screen, self._background if not self._mouseover else self._background_mouseover, self.rect)
 
         super().draw(screen)
 
@@ -63,6 +59,9 @@ class Button(Element):
                         self.consume(evt)
 
                 self._click_down = False
+
+        if evt.type == pygame.MOUSEMOTION:
+            self._mouseover = self.get_absolute_rect().collidepoint(*evt.pos)
 
     def clicked(self):
         pass

@@ -54,7 +54,10 @@ def load_gui_atlas():
     atlas.initialize_slice("bkg_square", (16, 16), **kwargs)
     atlas.initialize_slice("bkg_rounded", (32, 32), **kwargs)
     atlas.initialize_slice("bkg_very_rounded", (32, 32), **kwargs)
-    atlas.initialize_slice("control_small", (7, 7), **kwargs)
+    # atlas.initialize_slice("control_small", (7, 7), **kwargs)
+    # atlas.initialize_slice("control_small_block", (7, 7), **kwargs)
+    atlas.initialize_slice("control_small_block2", (7, 7), **kwargs)
+    atlas.initialize_slice("control_small_block2_hl", (7, 7), **kwargs)
 
     atlas.initialize_static("option_button", **kwargs)
     atlas.initialize_static("option_button_checked_heavy", **kwargs)

@@ -9,7 +9,8 @@ from .drawing import smart_draw
 class Window(Frame):
     """A window is essentially just a rect on the screen, with a color, sliced, or surface background. It
     sets a clipping rect for the screen which prevents children from drawing anything outside of it"""
-    def __init__(self, window_position, size, background, anchor=Anchor.TOP_LEFT, draggable=True):
+    def __init__(self, window_position, size, background, anchor=Anchor.TOP_LEFT, draggable=True,
+                 background_mouseover=None):
         super().__init__(window_position, size, anchor)
 
         assert background is not None
@@ -18,18 +19,20 @@ class Window(Frame):
 
         self.element_position = copy_vector(window_position)
         self.background = background
+        self.background_mouseover = background_mouseover or background
         self.draggable = draggable
 
         # event-related state
         self._is_dragging = False
         self._start_drag = pygame.Vector2()
+        self._mouseover = False
 
     def draw(self, screen: pygame.Surface):
         # pygame seems to just set coordinates to 0 if rect is outside of screen and you try and blit it?
         # so ensure only visible portion of window onscreen is drawn
         r = screen.get_rect().clip(self.rect)
 
-        smart_draw(screen, self.background, r)
+        smart_draw(screen, self.background if not self._mouseover else self.background_mouseover, r)
 
         # don't let children draw outside of bounds
         clipping_rect = screen.get_clip()
@@ -68,3 +71,7 @@ class Window(Frame):
                     self.layout()
             else:
                 self._is_dragging = False
+
+        # mouseover highlighting
+        if evt.type == pygame.MOUSEMOTION:
+            self._mouseover = self.get_absolute_rect().collidepoint(*evt.pos)

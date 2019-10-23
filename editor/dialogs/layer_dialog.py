@@ -1,5 +1,5 @@
 import pygame
-from entities.gui import Text, Texture, Window, Dialog, Option
+from entities.gui import Text, Texture, Window, Dialog, Option, OptionGroup
 from entities.entity import Layer
 from entities.gui import Anchor
 import config
@@ -28,16 +28,22 @@ class LayerDialog(Dialog):
         # create an entry for each layer
         y_pos = font.get_height()
 
+        self.option_group = OptionGroup(tf_require_selected=True)
+
         for layer in Layer:
             option = Option(make_vector(0, y_pos),
-                            (width - 10, font.get_height() * 2),
+                            (width, font.get_height() * 2),
                             text=layer.name,
                             selected_image=atlas.load_static("option_button_checked_light"),
                             unselected_image=atlas.load_static("option_button"),
                             text_color=pygame.Color('black'),
-                            background=atlas.load_sliced("control_small"),
+                            background=atlas.load_sliced("control_small_block2"),
+                            mouseover_image=atlas.load_sliced("control_small_block2_hl"),
                             font=font)
-
+            option.selected = False
+            
             self.add_child(option)
             option.layout()
             y_pos += option.height
+
+            self.option_group.add(option)

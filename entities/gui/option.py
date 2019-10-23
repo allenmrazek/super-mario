@@ -7,9 +7,10 @@ from util import make_vector, copy_vector
 class Option(Button):
     def __init__(self, position, size, background, font, text,
                  selected_image, unselected_image, is_selected=True, anchor=Anchor.TOP_LEFT,
-                 text_color=config.default_text_color):
+                 text_color=config.default_text_color, mouseover_image=None):
         super().__init__(position=position,
-                         size=size, background=background, text="", font=font, anchor=anchor)
+                         size=size, background=background, text="", font=font, anchor=anchor,
+                         mouseover_image=mouseover_image)
 
         assert selected_image and unselected_image
 
@@ -55,3 +56,37 @@ class Option(Button):
     def clicked(self):
         print("option clicked!")
         self.selected = not self.selected
+
+
+class OptionGroup:
+    """This class makes sure only one option in a set of options is selected at a time"""
+    def __init__(self, tf_require_selected=True, *option_buttons):
+        self.option_buttons = []
+        self.require_selected = tf_require_selected  # if true, ensure there is always at least one selection
+        for btn in option_buttons:
+            self.add(btn)
+
+    def _make_callback(self, button_self):
+        """Goal: right after the original click does whatever it does, we get a chance. Do this transparently"""
+        original_click = button_self.clicked
+
+        def merged_callback():
+            # if we require at least one selection, don't allow a button to become unselected due to a click
+            if not self.require_selected or not button_self.selected:
+                original_click()
+                self.on_member_clicked(button_self)
+
+        button_self.clicked = merged_callback
+
+    def add(self, option_button):
+        assert isinstance(option_button, Option)
+
+        self.option_buttons.append(option_button)
+        self._make_callback(option_button)
+
+    def on_member_clicked(self, which):
+        if which.selected:
+            # unset all other options
+            for btn in self.option_buttons:
+                if btn is not which:
+                    btn.selected = False

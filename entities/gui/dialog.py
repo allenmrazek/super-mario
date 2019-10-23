@@ -7,13 +7,14 @@ import config
 
 
 class _TitleBar(Element):
-    def __init__(self, bar_color, text_color, font, text):
+    def __init__(self, bar_color, text_color, font, text, tb_extra_height=None, tb_text_offset=None):
         super().__init__(make_vector(0, 0), anchor=Anchor.TOP_LEFT)
         self.surface = font.render(text, True, text_color)
         self.bar_color = bar_color
         self.text_color = text_color
         self.font = font
-        self.height = self.surface.get_height()
+        self.height = self.surface.get_height() + (tb_extra_height or 0)
+        self.text_offset = tb_text_offset or (0, 0)
 
         self.layout()
 
@@ -24,7 +25,7 @@ class _TitleBar(Element):
         screen.set_clip(r)
 
         screen.fill(self.bar_color, r)
-        screen.blit(self.surface, r)
+        screen.blit(self.surface, (r.x + self.text_offset[0], r.y + self.text_offset[1]))
 
         screen.set_clip(current_clip)
 
@@ -49,10 +50,12 @@ class Dialog(Window):
                  font,
                  text_color=config.default_text_color,
                  tb_color=config.default_window_toolbar_color,
-                 title=""):
+                 title="",
+                 additional_height=4, text_start_offset=(6, 2)):
         super().__init__(dialog_position, dialog_size, background)
 
         self.text_color = text_color
         self.tb_color = tb_color
-        self.title_bar = _TitleBar(tb_color, text_color, font, title)
+        self.title_bar = _TitleBar(tb_color, text_color, font, title,
+                                   tb_extra_height=additional_height, tb_text_offset=text_start_offset)
         self.add_child(self.title_bar)
