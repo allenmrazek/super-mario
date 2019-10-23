@@ -1,23 +1,24 @@
 import pygame
-from entities.gui.element import Element, ElementStyle
+from entities.gui.element import Element
 from .element import Anchor
 from .drawing import smart_draw
 import config
 
 
 class Text(Element):
-    def __init__(self, element_position, text, style: ElementStyle):
+    def __init__(self, element_position, text, font, text_color=config.default_text_color, anchor=Anchor.TOP_LEFT,
+                 anti_alias=True, background=None):
         # color=config.default_text_color, anchor=Anchor.CENTER,
         #          anti_alias=True, bg_color=None):
-        super().__init__(element_position, anchor=style.anchor)
+        super().__init__(element_position, anchor=anchor)
 
         # todo: actual SMB font
-        self.font = style.font
+        self.font = font
         self._next_text = text
         self._text = ""
-        self.color = style.text_color
-        self.anti_alias = style.anti_alias
-        self.background = style.background
+        self.color = text_color
+        self.anti_alias = anti_alias
+        self.background = background
         self.surface = None
         self._create_text_surface()
 
@@ -53,7 +54,7 @@ class Text(Element):
             # have some complex background that must be blitted first
             surf_dimensions = self.font.size(self._next_text)
 
-            self.surface = pygame.Surface(surf_dimensions).convert_alpha()  # want 32 bit
+            self.surface = pygame.Surface(surf_dimensions).convert_alpha(pygame.display.get_surface())  # want 32 bit
             self.surface.fill(config.transparent_color)
 
             smart_draw(self.surface, self.background, self.background.get_rect())

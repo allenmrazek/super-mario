@@ -6,7 +6,6 @@ from entities.entity import Layer
 from event import EventHandler
 from util import make_vector
 from util import copy_vector
-import config
 
 
 class Anchor(Enum):
@@ -15,49 +14,6 @@ class Anchor(Enum):
     TOP_RIGHT = 2
     BOTTOM_LEFT = 3
     BOTTOM_RIGHT = 4
-
-
-class ElementStyle:
-    def __init__(self,
-                 background=config.default_window_background,
-                 text_color=config.default_text_color,
-                 selected=None,
-                 not_selected=None,
-                 anchor=Anchor.TOP_LEFT,
-                 font=None,
-                 anti_alias=True):
-
-        self.background = background
-        self.text_color = text_color
-        self.selected = selected
-        self.not_selected = not_selected
-        self.anchor = anchor
-        self.font = font
-        self.anti_alias = anti_alias
-
-        # todo: others (mouse over, mouse down, etc) ?
-
-    def __copy__(self):
-        # deepcopy, except surfaces and font
-        new_style = ElementStyle()
-        new_style.__dict__ = {}
-
-        def should_shallow_copy(thing):
-            types = [pygame.font.Font, pygame.Surface]
-
-            for t in types:
-                if isinstance(thing, t):
-                    return True
-
-            return False
-
-        for k, v in self.__dict__.items():
-            if should_shallow_copy(v):
-                new_style.__dict__[k] = v
-            else:
-                new_style.__dict__[k] = deepcopy(v)
-
-        return new_style
 
 
 class Element(Entity, EventHandler):

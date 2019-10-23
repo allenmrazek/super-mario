@@ -16,4 +16,6 @@ class Texture(Element):
         self.background = background
 
     def draw(self, screen):
+        super().draw(screen)
+
         smart_draw(screen, self.background, self.rect)

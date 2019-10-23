@@ -1,19 +1,15 @@
 from copy import copy
-from . import Button, SlicedImage, Text, ElementStyle, Anchor, Texture
+from . import Button, SlicedImage, Text, Anchor, Texture
 import config
 from util import make_vector, copy_vector
 
 
 class Option(Button):
-    def __init__(self, position, size, text, option_style: ElementStyle, button_style=None, is_selected=True):
+    def __init__(self, position, size, background, font, text,
+                 selected_image, unselected_image, is_selected=True, anchor=Anchor.TOP_LEFT,
+                 text_color=config.default_text_color):
         super().__init__(position=position,
-                         size=size,
-                         style=button_style or option_style,
-                         text="",  # will control own text
-                         )
-
-        selected_image = option_style.selected
-        unselected_image = option_style.not_selected
+                         size=size, background=background, text="", font=font, anchor=anchor)
 
         assert selected_image and unselected_image
 
@@ -24,19 +20,26 @@ class Option(Button):
         self._texture_on = Texture(selected_image, relative)
         self._texture_off = Texture(unselected_image, relative)
 
-        # self.add_child(self._texture_on)
-        # self.add_child(self._texture_off)
+        relative.y -= max(self._texture_off.height, self._texture_on.height) // 2
+        self._texture_on.relative_position = copy_vector(relative)
+        self._texture_off.relative_position = copy_vector(relative)
+
+        self.add_child(self._texture_on)
+        self.add_child(self._texture_off)
 
         self.selected = is_selected
 
         # create text
         # position to right side of textures
-        relative.x = max(self._texture_on.width, self._texture_off.width)
-        relative.y = size[1] // 2 - option_style.font.get_height() // 2
+        relative.x = max(self._texture_on.get_absolute_rect().right + 10,
+                         self._texture_off.get_absolute_rect().right + 10)
+        relative.y = size[1] // 2 - font.get_height() // 2
 
-        self.text = Text(relative, text, button_style)
+        self.text = Text(relative, text, font, text_color=text_color)
 
         self.add_child(self.text)
+
+        self.layout()
 
     @property
     def selected(self):
@@ -49,7 +52,6 @@ class Option(Button):
         self._selected = val
         # todo: invoke callback?
 
-    def on_click(self):
+    def clicked(self):
         print("option clicked!")
         self.selected = not self.selected
-

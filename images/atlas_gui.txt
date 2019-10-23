@@ -1,6 +1,7 @@
-option_button = 25 25 8 8
-option_button_checked_heavy = 25 34 8 8
-option_button_checked_light = 34 25 8 8
-rounded_corners = 0 0 24 24
-square = 25 0 24 24
-very_rounded_corners = 0 25 24 24
+bkg_rounded = 0 0 96 96
+bkg_square = 96 0 96 96
+bkg_very_rounded = 0 96 96 96
+control_small = 0 192 16 16
+option_button = 96 96 32 32
+option_button_checked_heavy = 96 128 32 32
+option_button_checked_light = 128 96 32 32

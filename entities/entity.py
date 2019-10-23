@@ -14,6 +14,10 @@ class Layer(IntFlag):
     Interface = 1 << 4
     Overlay = 1 << 5
 
+    @staticmethod
+    def count():
+        return len(Layer)
+
 
 class Entity(ABC):
     def __init__(self, rect: Rect):

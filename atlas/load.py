@@ -51,9 +51,10 @@ def load_gui_atlas():
     atlas = SpriteAtlas(_get_atlas_path("atlas_gui"), tf_use_rescale_factor=False)
     kwargs = {"color_key": config.transparent_color}
 
-    atlas.initialize_slice("square", (4, 4), **kwargs)
-    atlas.initialize_slice("rounded_corners", (8, 8), **kwargs)
-    atlas.initialize_slice("very_rounded_corners", (8, 8), **kwargs)
+    atlas.initialize_slice("bkg_square", (16, 16), **kwargs)
+    atlas.initialize_slice("bkg_rounded", (32, 32), **kwargs)
+    atlas.initialize_slice("bkg_very_rounded", (32, 32), **kwargs)
+    atlas.initialize_slice("control_small", (7, 7), **kwargs)
 
     atlas.initialize_static("option_button", **kwargs)
     atlas.initialize_static("option_button_checked_heavy", **kwargs)

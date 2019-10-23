@@ -1,6 +1,6 @@
 import pygame
 from .sliced_image import SlicedImage
-from animation import StaticAnimation
+from animation import Animation
 
 
 # distinguishes between a color, a Surface, and a SlicedImage
@@ -18,5 +18,9 @@ def smart_draw(target, source, dest_rect=None, src_rect=None):
         assert dest_rect is not None
 
         source.draw(target, dest_rect)
-    elif isinstance(source, StaticAnimation):
+    elif isinstance(source, Animation):
+        assert dest_rect is not None
+
         target.blit(source.image, dest_rect)
+    else:
+        raise NotImplementedError

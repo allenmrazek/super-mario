@@ -12,7 +12,7 @@ class ToolDialog(Dialog):
 
         r = config.screen_rect.copy()
         super().__init__(make_vector(r.right - ToolDialog.SIZE[0], r.top),
-                         ToolDialog.SIZE, atlas.load_sliced("rounded_corners"),
+                         ToolDialog.SIZE, atlas.load_sliced("bkg_rounded"),
                          font=font, title="Tools")
 
         # todo: tool types
