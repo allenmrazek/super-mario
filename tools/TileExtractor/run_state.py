@@ -5,6 +5,8 @@ from event import EventHandler
 from entities import EntityManager, Layer
 import config
 from util import make_vector
+from .tile_identifier import TileIdentifier
+from level.tile import Classification
 
 
 class RunState(GameState, EventHandler):
@@ -37,7 +39,8 @@ class RunState(GameState, EventHandler):
             font=font,
             text="Background",
             text_color=pygame.Color('black'),
-            mouseover_image=atlas.load_sliced("bkg_square_hl")
+            mouseover_image=atlas.load_sliced("bkg_square_hl"),
+            on_click_callback=self.classify_background
         )
 
         # create 'solid block / not interactive' button
@@ -48,7 +51,8 @@ class RunState(GameState, EventHandler):
             font=font,
             text="Solid + Not Interactive",
             text_color=pygame.Color('black'),
-            mouseover_image=atlas.load_sliced("bkg_square_hl")
+            mouseover_image=atlas.load_sliced("bkg_square_hl"),
+            on_click_callback=self.classify_solid_noninteractive
         )
 
         # create 'solid block / interactive' button
@@ -59,7 +63,8 @@ class RunState(GameState, EventHandler):
             font=font,
             text="Solid + Interactive",
             text_color=pygame.Color('black'),
-            mouseover_image=atlas.load_sliced("bkg_square_hl")
+            mouseover_image=atlas.load_sliced("bkg_square_hl"),
+            on_click_callback=self.classify_solid_interactive
         )
 
         # create 'skip' button
@@ -70,7 +75,8 @@ class RunState(GameState, EventHandler):
             font=font,
             text="Skip",
             text_color=pygame.Color('black'),
-            mouseover_image=atlas.load_sliced("bkg_square_hl")
+            mouseover_image=atlas.load_sliced("bkg_square_hl"),
+            on_click_callback=self.classify_ignore
         )
 
         buttons = [background_button, solid_noninteractive, solid_interactive, skip]
@@ -93,11 +99,16 @@ class RunState(GameState, EventHandler):
         self.entities.register(self.classifier_dialog)
         game_events.register(self.classifier_dialog)
 
+        self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/test_bg.png",
+                                              (107, 140, 255))
+
     def update(self, dt):
         self.entities.update(dt)
+        self.classifier_dialog.enabled = not self.tile_identifier.finished
 
     def draw(self, screen):
         screen.fill(config.transparent_color)
+        self.tile_identifier.draw(screen)
         self.entities.draw(screen)
 
     @property
@@ -107,3 +118,19 @@ class RunState(GameState, EventHandler):
     def handle_event(self, evt, game_events):
         if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
             self._quit = True
+
+    def classify_background(self):
+        self.tile_identifier.set_classification(Classification.Background)
+        self.tile_identifier.locate_next()
+
+    def classify_solid_noninteractive(self):
+        self.tile_identifier.set_classification(Classification.SolidNoninteractive)
+        self.tile_identifier.locate_next()
+
+    def classify_solid_interactive(self):
+        self.tile_identifier.set_classification(Classification.SolidInteractive)
+        self.tile_identifier.locate_next()
+
+    def classify_ignore(self):
+        self.tile_identifier.set_classification(Classification.NotClassified)
+        self.tile_identifier.locate_next()
