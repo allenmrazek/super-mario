@@ -44,17 +44,22 @@ class Tile:
 
     @staticmethod
     def load_from_file(path, classification):
-        """Load an already-extracted tile. Assumes transparent color (magenta) should be ignored in hash"""
+        """Load an already-extracted tile. Assumes transparent color (magenta) should be ignored in hash
+        Note that one file may technically contain 'multiple' tiles if the tile is actually an animation """
         if not os.path.exists(path) or not os.path.isfile(path):
             raise FileNotFoundError
 
         surf = pygame.image.load(path).convert(24)
 
-        return Tile(surf, classification)
+        return [Tile.create_from_surface(surf, pygame.Rect(x, 0, *config.base_tile_dimensions),
+                                         config.transparent_color, classification, tf_save=False)
+                for x in range(0, surf.get_width(), config.base_tile_dimensions[0])]
 
     @staticmethod
-    def create_from_surface(surface, rect, surf_transparent, classification):
-        surf = surface.subsurface(rect)
+    def create_from_surface(surface, rect, surf_transparent, classification, tf_save=True):
+        # remember: rect might have multiple tiles. Most of the time it doesn't, but convenient to handle the
+        # situation here where it will be invisible to tile extractor
+        surf = surface.subsurface(rect).convert(24)
 
         with pygame.PixelArray(surf) as pixels:
             # convert any world-transparent pixels to config transparent pixels (magenta)
@@ -67,7 +72,8 @@ class Tile:
 
             tile = Tile(surf, Classification.NotClassified)
 
-            Tile._save_tile(tile, classification)
+            if tf_save:
+                Tile._save_tile(tile, classification)
 
             return tile
 
