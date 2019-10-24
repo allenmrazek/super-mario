@@ -7,11 +7,16 @@ import config
 
 
 def get_atlas_path(atlas_name):
-    return os.path.join("images", f"{atlas_name}.png")
+    return os.path.join("images", f"atlas_{atlas_name}.png")
 
 
 def _load_all_as_static(atlas_name):
-    atlas = SpriteAtlas(get_atlas_path(atlas_name), tf_use_rescale_factor=False)
+    path = get_atlas_path(atlas_name)
+
+    if not os.path.exists(path):
+        return SpriteAtlas(tf_use_rescale_factor=False)
+
+    atlas = SpriteAtlas(path, tf_use_rescale_factor=True)
     kwargs = {"color_key": config.transparent_color}
 
     for name in atlas.sprite_names:
@@ -114,7 +119,7 @@ def load_interactive_block_atlas():
     # todo: actually load animations here
 
 
-def load_atlases():
+def load_atlases(tf_scale_entities=False):
     entity_atlas = load_entity_atlas()
     gui_atlas = load_gui_atlas()
     solid_block_atlas = load_solid_block_atlas()

@@ -4,6 +4,8 @@ from atlas import load_atlases
 from event.game_events import GameEvents, EventHandler
 from state.game_state import GameStateStack
 from state.editor_state import EditorState
+from state.performance_measurement import PerformanceMeasurement
+from state.test_mario_physics import TestMarioPhysics
 import config
 from timer import game_timer
 from state.test_gui import TestGui
@@ -33,10 +35,10 @@ def run():
 
     state_stack = GameStateStack()
 
-    # PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
+    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     # state_stack.push(TestGui(game_events, atlas))
     #state_stack.push(EditorState(game_events, atlas))
-    state_stack.push(TestLevel(game_events, atlas))
+    # state_stack.push(TestLevel(game_events, atlas))
 
     game_timer.reset()
 

@@ -1,8 +1,7 @@
 import os
 import pygame
 from pygame import Rect, PixelArray
-from level.tile import Tile, Classification
-from util import make_vector
+from tools.TileExtractor.tile import Tile, Classification
 import config
 
 

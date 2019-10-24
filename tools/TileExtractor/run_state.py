@@ -6,7 +6,7 @@ from entities import EntityManager, Layer
 import config
 from util import make_vector
 from .tile_identifier import TileIdentifier
-from level.tile import Classification
+from tools.TileExtractor.tile import Classification
 
 
 class RunState(GameState, EventHandler):

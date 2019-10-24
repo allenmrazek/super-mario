@@ -47,12 +47,12 @@ class TestMarioPhysics(GameState):
         self.height_measurement_image_rect.bottom = config.screen_rect.bottom
 
         # create bottom blocks
-        ts = TileSet("NES - Super Mario Bros - Tileset.png", 16)
+        #ts = TileSet("NES - Super Mario Bros - Tileset.png", 16)
         block_size = 16 * config.rescale_factor
 
         y_pos = config.screen_rect.height - block_size
 
-        blocks = [Block(position=make_vector(x_pos, y_pos), idx=1, tileset=ts, cmanager=self.collision)
+        blocks = [Block(position=make_vector(x_pos, y_pos), animation=atlas.load_static("tile_013"), cmanager=self.collision)
                       for x_pos in range(-config.screen_rect.width, 2 * config.screen_rect.width,
                                          block_size)]
 
@@ -61,7 +61,8 @@ class TestMarioPhysics(GameState):
         x_pos = config.screen_rect.width - 16 * config.rescale_factor * 6
 
         blocks.extend(
-            [Block(position=make_vector(x_pos + i * block_size, y_pos - i * block_size), idx=1, tileset=ts,
+            [Block(position=make_vector(x_pos + i * block_size, y_pos - i * block_size),
+                   animation=atlas.load_static("tile_013"),
                    cmanager=self.collision) for i in range(0, 6)]
         )
 
