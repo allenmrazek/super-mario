@@ -1,4 +1,5 @@
 from .game_state import GameState
+from level import Level
 import config
 
 
@@ -7,12 +8,14 @@ class TestLevel(GameState):
         super().__init__(game_events)
 
         self.atlas = atlas
+        self.level = Level.create_default(atlas)
 
     def update(self, dt):
-        pass
+        self.level.update(dt)
 
     def draw(self, screen):
         screen.fill(config.default_background_color)
+        self.level.draw(screen)
 
     @property
     def finished(self):

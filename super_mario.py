@@ -35,10 +35,10 @@ def run():
 
     state_stack = GameStateStack()
 
-    PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
+    #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     # state_stack.push(TestGui(game_events, atlas))
     #state_stack.push(EditorState(game_events, atlas))
-    # state_stack.push(TestLevel(game_events, atlas))
+    state_stack.push(TestLevel(game_events, atlas))
 
     game_timer.reset()
 
@@ -49,7 +49,7 @@ def run():
         game_events.do_events()
         game_timer.update()
 
-        # todo: fixed timestep, or max timestep?
+        # todo: fixed times tep, or max time step?
         accumulator += game_timer.elapsed
 
         while accumulator > config.PHYSICS_DT:
