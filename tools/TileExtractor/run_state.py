@@ -6,7 +6,7 @@ from entities import EntityManager, Layer
 import config
 from util import make_vector
 from .tile_identifier import TileIdentifier
-from tools.TileExtractor.tile import Classification
+from .tile_identifier import Classification
 
 
 class RunState(GameState, EventHandler):
@@ -22,7 +22,7 @@ class RunState(GameState, EventHandler):
 
         # create classifier dialog
         self.classifier_dialog = Dialog(
-            make_vector(config.screen_rect.centerx, config.screen_rect.bottom - 128),
+            config.screen_rect.center,
             (128, 256),
             background=atlas.load_sliced("bkg_square"),
             font=font,
@@ -67,6 +67,18 @@ class RunState(GameState, EventHandler):
             on_click_callback=self.classify_solid_interactive
         )
 
+        # create 'pickup' button
+        pickup = Button(
+            make_vector(0, 0),
+            size=button_size,
+            background=atlas.load_sliced("bkg_square"),
+            font=font,
+            text="Pickup",
+            text_color=pygame.Color('black'),
+            mouseover_image=atlas.load_sliced("bkg_square_hl"),
+            on_click_callback=self.classify_pickup
+        )
+
         # create 'skip' button
         skip = Button(
             make_vector(0, 0),
@@ -79,7 +91,7 @@ class RunState(GameState, EventHandler):
             on_click_callback=self.classify_ignore
         )
 
-        buttons = [background_button, solid_noninteractive, solid_interactive, skip]
+        buttons = [background_button, solid_noninteractive, solid_interactive, pickup, skip]
 
         y_pos = self.classifier_dialog.get_title_bar_bottom()
 
@@ -92,14 +104,13 @@ class RunState(GameState, EventHandler):
         self.classifier_dialog.add_child(background_button)
 
         self.classifier_dialog.height = y_pos
-        self.classifier_dialog.position = config.screen_rect.center
 
         self.classifier_dialog.layout()
 
         self.entities.register(self.classifier_dialog)
         game_events.register(self.classifier_dialog)
 
-        self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/bg-1-1_uw.png", None)
+        self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/bg-2-1.png", None, (0, 0))
         self.tile_identifier.locate_next()
         self.classifier_dialog.enabled = False
         
@@ -134,4 +145,8 @@ class RunState(GameState, EventHandler):
 
     def classify_ignore(self):
         self.tile_identifier.set_classification(Classification.Ignore)
+        self.tile_identifier.locate_next()
+
+    def classify_pickup(self):
+        self.tile_identifier.set_classification(Classification.Pickup)
         self.tile_identifier.locate_next()

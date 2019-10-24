@@ -9,17 +9,19 @@ class Classification(Enum):
     Background = "atlas_background_blocks"
     SolidNoninteractive = "atlas_solid_blocks"
     SolidInteractive = "atlas_interactive_blocks"
+    Pickup = "atlas_pickups"
     Ignore = "atlas_ignored_blocks"
     NotClassified = "unknown"
 
 
 class TileNameGenerator:
-    base_name = "tile_"
+    base_name = "_tile_"
     ext = ".png"
 
-    def __init__(self, directory):
+    def __init__(self, directory, classification):
         self.counter = 0
         self.directory = directory
+        self.base_name = f'{classification.name}{TileNameGenerator.base_name}'
 
     @property
     def current_filename(self):
@@ -38,7 +40,7 @@ class TileNameGenerator:
 class Tile:
     def __init__(self, surface, classification):
         self.surface = surface
-        self.classication = classification
+        self.classification = classification
 
     @staticmethod
     def load_from_file(path, classification):
@@ -77,7 +79,7 @@ class Tile:
         # generate a name for this tile based on its classification
         directory = os.path.join("../../images/", classification.value)
 
-        filename = next(iter(TileNameGenerator(directory)))
+        filename = next(iter(TileNameGenerator(directory, classification)))
 
         pygame.image.save(tile.surface.convert(), filename)
 

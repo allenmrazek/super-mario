@@ -12,8 +12,11 @@ def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelAr
     with PixelArray(tile_anchor.surface) as anchor_pixels:
         for yanchor in range(anchor_size[1]):
             for xanchor in range(anchor_size[0]):
-                anchor_pixel = anchor_pixels[xanchor, yanchor]
-                target_pixel = target_pixels[target_rect.x + xanchor, target_rect.y + yanchor]
+                try:
+                    anchor_pixel = anchor_pixels[xanchor, yanchor]
+                    target_pixel = target_pixels[target_rect.x + xanchor, target_rect.y + yanchor]
+                except IndexError:
+                    continue
 
                 anchor_color = tile_anchor.surface.unmap_rgb(anchor_pixel)
                 target_color = target_surface.unmap_rgb(target_pixel)
@@ -30,7 +33,7 @@ def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelAr
 
 
 class TileIdentifier:
-    def __init__(self, target_file, world_trans_color):
+    def __init__(self, target_file, world_trans_color, guess_anchor=None):
         if not os.path.exists(target_file) or not os.path.isfile(target_file):
             raise FileNotFoundError
 
@@ -60,7 +63,7 @@ class TileIdentifier:
         self.known_tiles.extend(
             self._load_tiles_from("../../images/atlas_ignored_blocks/", Classification.Ignore))
 
-        self.anchor_position = self._find_anchor(self.world, self.world_trans_color)
+        self.anchor_position = self._find_anchor(self.world, guess_anchor)
         tile_width, tile_height = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (16, 16)
         self.startx, self.starty = self.anchor_position[0] % tile_width, self.anchor_position[1] % tile_height
 
@@ -85,8 +88,11 @@ class TileIdentifier:
     def is_transparent(surface, pixels, rect, world_transparent):
         for y in range(rect.top, rect.bottom):
             for x in range(rect.left, rect.right):
-                if surface.unmap_rgb(pixels[x, y]) != world_transparent:
-                    return False
+                try:
+                    if surface.unmap_rgb(pixels[x, y]) != world_transparent:
+                        return False
+                except IndexError:
+                    continue
 
         return True
 
@@ -100,7 +106,8 @@ class TileIdentifier:
             while self.search_rect.bottom < self.world.get_height():
                 print(f"searching along {self.search_rect.top}-{self.search_rect.bottom}")
 
-                while self.search_rect.right < self.world.get_width():
+                while self.search_rect.right < self.world.get_width() \
+                        and self.search_rect.bottom < self.world.get_height():
                     exists = False
 
                     # check for all transparent
@@ -133,7 +140,7 @@ class TileIdentifier:
     def set_classification(self, classification):
         # classify selected tile as given arg
         tile = Tile.create_from_surface(self.world, self.search_rect, self.world_trans_color, classification)
-        tile.classication = classification
+        tile.classification = classification
 
         self.known_tiles.append(tile)
 
@@ -151,7 +158,7 @@ class TileIdentifier:
                 png_name in [x for x in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, x))
                              and os.path.splitext(x)[1][-3:] == 'png']]
 
-    def _find_anchor(self, surface, trans_color):
+    def _find_anchor(self, surface, guess_anchor):
         # load all known anchors: these are used to identify the grid blocks are positioned on
         anchors = TileIdentifier._load_tiles_from("../../images/editor/anchors/", Classification.NotClassified)
 
@@ -161,6 +168,12 @@ class TileIdentifier:
 
         search_rect = anchors[0].surface.get_rect()
         sr = surface.get_rect()
+
+        if guess_anchor is not None:
+            search_rect.x, search_rect.y = guess_anchor
+            sr.left, sr.top = guess_anchor
+            sr.width -= guess_anchor[0]
+            sr.height -= guess_anchor[1]
 
         # advance through surface, looking for any matches to anchor hashes
         search_hash = 0
@@ -176,7 +189,10 @@ class TileIdentifier:
                     search_rect.x, search_rect.y = x, y
 
                     for known in anchors:
-                        if is_exact_match_to_anchor(known, self.world, search_pixels,
+                        # don't use background blocks to identify anchors; they seem to not always
+                        # align to a regular grid
+                        if known.classification != Classification.Background and \
+                                is_exact_match_to_anchor(known, self.world, search_pixels,
                                                     search_rect, self.world_trans_color) \
                                 and not self.is_transparent(surface, search_pixels, search_rect, self.world_trans_color):
                             print("anchor found at ", x, ", ", y)
