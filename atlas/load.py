@@ -10,13 +10,13 @@ def get_atlas_path(atlas_name):
     return os.path.join("images", f"atlas_{atlas_name}.png")
 
 
-def _load_all_as_static(atlas_name):
+def _load_all_as_static(atlas_name, rescale=True):
     path = get_atlas_path(atlas_name)
 
     if not os.path.exists(path):
         return SpriteAtlas(tf_use_rescale_factor=False)
 
-    atlas = SpriteAtlas(path, tf_use_rescale_factor=True)
+    atlas = SpriteAtlas(path, rescale)
     kwargs = {"color_key": config.transparent_color}
 
     for name in atlas.sprite_names:
@@ -64,7 +64,7 @@ def load_entity_atlas():
 
 
 def load_gui_atlas():
-    atlas = SpriteAtlas(get_atlas_path("gui"), tf_use_rescale_factor=False)
+    atlas = SpriteAtlas(get_atlas_path("gui"), tf_use_rescale_factor=False, convert=False)
     kwargs = {"color_key": config.transparent_color}
 
     def load_slice(name, hl_name, dims, **kw):
@@ -119,11 +119,22 @@ def load_interactive_block_atlas():
     # todo: actually load animations here
 
 
+def load_misc_atlas():
+    atlas = SpriteAtlas(get_atlas_path("misc"), tf_use_rescale_factor=True)
+    kwargs = {"color_key": config.transparent_color}
+
+    atlas.initialize_static("misc_gray_bricks", **kwargs)
+    atlas.initialize_static("green_square")
+
+    return atlas
+
+
 def load_atlases():
     entity_atlas = load_entity_atlas()
     gui_atlas = load_gui_atlas()
     solid_block_atlas = load_solid_block_atlas()
     background_block_atlas = load_background_block_atlas()
     interactive_block_atlas = load_interactive_block_atlas()
+    misc_atlas = load_misc_atlas()
 
-    return entity_atlas + gui_atlas + solid_block_atlas + background_block_atlas + interactive_block_atlas
+    return entity_atlas + gui_atlas + solid_block_atlas + background_block_atlas + interactive_block_atlas + misc_atlas

@@ -1,4 +1,5 @@
-from entities.block import Block
+from entities import Block
+from entities import Drawable
 from util import make_vector
 
 
@@ -10,4 +11,7 @@ class AssetManager:
         self.atlas = atlas
 
     def load_test_block(self, collision_manager):
-        return Block(make_vector(0, 0), self.atlas.load_static("brown_square"), collision_manager)
+        return Block(make_vector(0, 0), self.atlas.load_static("misc_gray_bricks"), collision_manager)
+
+    def load_test_background(self):
+        return Drawable(make_vector(0, 0), self.atlas.load_static("green_square"))

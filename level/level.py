@@ -37,13 +37,35 @@ class Level(EventHandler):
     def create_default(atlas):
         lvl = Level(atlas)
 
-        # create background blocks on floor
+        # fill background
+        # ~240 FPS without background
+        # usable framerate with background -> optimize later
+        
+        # ctr = 0
+        #
+        # bkg_block = lvl.asset_manager.load_test_background().animation
+        #
+        # num_across = config.screen_rect.width // bkg_block.width
+        # num_down = config.screen_rect.height // bkg_block.height
+        #
+        # expected = num_across * num_down
+        #
+        # for xpos in range(0, config.screen_rect.width, bkg_block.width):
+        #     for ypos in range(0, config.screen_rect.height, bkg_block.height):
+        #         bkg = lvl.asset_manager.load_test_background()
+        #         bkg.position = make_vector(xpos, ypos)
+        #         lvl.add_entity(bkg)
+        #         ctr += 1
+        #
+        # print("number of bkg drawables: ", ctr)
+
+        # create solid blocks on floor
         for xpos in range(-config.screen_rect.width, config.screen_rect.width * 2, 16 * config.rescale_factor):
             block = lvl.asset_manager.load_test_block(lvl.collider_manager)
             block.position = make_vector(xpos, config.screen_rect.bottom - block.height)
             lvl.add_entity(block)
 
-        # create small layer 4 blocks high on left
+        # create small solid layer 4 blocks high on left
         for xpos in range(0, 16 * config.rescale_factor * 4, 16 * config.rescale_factor):
             block = lvl.asset_manager.load_test_block(lvl.collider_manager)
             block.position = make_vector(xpos, config.screen_rect.bottom - block.height * 5)

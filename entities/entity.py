@@ -58,23 +58,23 @@ class Entity(ABC):
         self._position = copy_vector(pos)
         self._rect.x, self._rect.y = pos
 
-    @property
-    def x(self):
-        return self._position.x
-
-    @x.setter
-    def x(self, x):
-        self._position.x = x
-        self._rect.x = x
-
-    @property
-    def y(self):
-        return self._position.y
-
-    @y.setter
-    def y(self, y):
-        self._position.y = y
-        self._rect.y = y
+    # @property
+    # def x(self):
+    #     return self._position.x
+    #
+    # @x.setter
+    # def x(self, x):
+    #     self._position.x = x
+    #     self._rect.x = x
+    #
+    # @property
+    # def y(self):
+    #     return self._position.y
+    #
+    # @y.setter
+    # def y(self, y):
+    #     self._position.y = y
+    #     self._rect.y = y
 
     @property
     def width(self):

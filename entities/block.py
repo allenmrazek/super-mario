@@ -1,26 +1,16 @@
-from pygame.sprite import Rect
-from entities.entity import Entity, Layer
-from entities.collider import Collider
+from .entity import Layer
+from .drawable import Drawable
+from .collider import Collider
 
 
-class Block(Entity):
+class Block(Drawable):
     def __init__(self, position, animation, cmanager):
-        assert animation is not None
+        assert cmanager is not None
 
-        r = Rect(position[0], position[1], animation.width, animation.height)
-        super().__init__(r)
+        super().__init__(position, animation)
 
         self.collider = Collider.from_entity(self, cmanager, 0)
-        self.position = position
-        self.animation = animation
-
         cmanager.register(self.collider)
-
-    def update(self, dt):
-        pass  # basic blocks don't do any thinking
-
-    def draw(self, screen):
-        screen.blit(self.animation.image, self.position)
 
     @property
     def collision_mask(self):
@@ -38,4 +28,7 @@ class Block(Entity):
     @position.setter
     def position(self, new_pos):
         super(Block, self.__class__).position.fset(self, new_pos)
-        self.collider.position = new_pos
+
+        # todo: better solution to resolve circular properties?
+        if hasattr(self, "collider"):
+            self.collider.position = new_pos

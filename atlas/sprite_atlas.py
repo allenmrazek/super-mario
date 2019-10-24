@@ -30,7 +30,7 @@ class InvalidDimensionsError(SpriteAtlasError):
 
 
 class SpriteAtlas:
-    def __init__(self, atlas_path=None, tf_use_rescale_factor=True):
+    def __init__(self, atlas_path=None, tf_use_rescale_factor=True, convert=True):
         # use the descriptor file to load subsurfaces
         self.sprite_rects = {}
 
@@ -80,10 +80,14 @@ class SpriteAtlas:
                 self.sprite_rects[name] = rect
         else:
             self.__sprite_rects = {}
+            self.atlas = None
 
         self.animations = {}
         self.statics = {}  # statics aren't initialized to anything by default so user can specify color key if wanted
         self.sliced = {}
+
+        if convert and self.atlas is not None:
+            self.atlas = self.atlas.convert(pygame.display.get_surface())
 
     @property
     def sprite_names(self):
