@@ -20,3 +20,9 @@ class TestLevel(GameState):
     @property
     def finished(self):
         return False
+
+    def activated(self):
+        self.game_events.register(self.level)
+
+    def deactivated(self):
+        self.game_events.unregister(self.level)

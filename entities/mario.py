@@ -153,7 +153,6 @@ class Mario(Entity):
         decelerating = True if ((acceleration_direction > 0. and self._velocity.x < 0.) or
                                 (acceleration_direction < 0. and self._velocity.x > 0.)) else False
 
-        #self._facing_right = True if self.input_state.right else False  # one or the other dir keys is pressed
         if self.input_state.right:
             self._facing_right = True
         else:
@@ -369,6 +368,10 @@ class Mario(Entity):
 
     def get_velocity(self):
         return copy_vector(self._velocity)
+
+    def set_position(self, pos):
+        self.collider.move(pos)
+        self.airborne_collider.move(pos)
 
 
 class _DirectionSet(NamedTuple):
