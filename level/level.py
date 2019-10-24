@@ -18,8 +18,8 @@ class Level(EventHandler):
         self.player_input = PlayerInputHandler()
         self.mario = Mario(self.player_input, atlas, self.collider_manager)
         self.entity_manager.register(self.mario)
-        #self.mario.set_position(make_vector(0, config.screen_rect.height - 16))
-        self.mario.set_position(config.screen_rect.center)
+        self.mario.position = make_vector(config.screen_rect.centerx, 0)
+        #self.mario.position = make_vector(config.screen_rect.centerx, config.screen_rect.bottom - self.mario.height)
 
     def add_entity(self, entity):
         self.entity_manager.register(entity)
@@ -38,7 +38,7 @@ class Level(EventHandler):
         lvl = Level(atlas)
 
         # create background blocks on floor
-        for xpos in range(0, config.screen_rect.width, 16 * config.rescale_factor):
+        for xpos in range(-config.screen_rect.width, config.screen_rect.width * 2, 16 * config.rescale_factor):
             block = lvl.asset_manager.load_test_block(lvl.collider_manager)
             block.position = make_vector(xpos, config.screen_rect.bottom - block.height)
             lvl.add_entity(block)

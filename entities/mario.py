@@ -103,8 +103,8 @@ class Mario(Entity):
         self.run_timer = 0.
 
         # create colliders for mario
-        self.collider = Collider(self, cmanager, Layer.Block | Layer.Active)
-        self.airborne_collider = Collider(self, cmanager, Layer.Block)
+        self.collider = Collider.from_entity(self, cmanager, Layer.Block | Layer.Active)
+        self.airborne_collider = Collider.from_entity(self, cmanager,Layer.Block)
 
     def update(self, dt):
         if self.is_running and not self.input_state.dash:
@@ -271,6 +271,7 @@ class Mario(Entity):
         if self._velocity.y < 0.:
             self._airborne = True
         else:
+            # airborne collider is essentially a teleport without movement, no need to update its position
             collisions = self.airborne_collider.test(self.get_position() + make_vector(0, 1))
 
             if collisions:
@@ -319,8 +320,10 @@ class Mario(Entity):
                 if self._velocity.y > air_max_vertical_velocity else self._velocity.y
 
             # try and move downward if we can
-            # todo: invoke callbacks? or leave that for ColliderManager?
+            # todo: invoke callbacks? or leave that for ColliderManager? collisions ignored for now
+            self.collider.position = self.position
             collisions = self.collider.iterative_move(self.position + make_vector(0., self._velocity.y) * dt)
+            self.position = self.collider.position
         else:
             self.jumped = self.jumped and self.input_state.jump
 
@@ -329,12 +332,14 @@ class Mario(Entity):
         new_position = make_vector(self._velocity.x * dt, 0.)
 
         # attempt to move to new position, if we can
+        self.collider.position = self.position
         collisions = self.collider.iterative_move(self.position + new_position)
+        self.position = self.collider.position
+
         # todo: handle collision callbacks?
 
-        if collisions:  # immediately stop horizontal movement on collision
+        if collisions:  # immediately stop horizontal movement on horizontal collision
             self._velocity.x = 0.
-
 
     @property
     def is_running(self):
@@ -368,10 +373,6 @@ class Mario(Entity):
 
     def get_velocity(self):
         return copy_vector(self._velocity)
-
-    def set_position(self, pos):
-        self.collider.move(pos)
-        self.airborne_collider.move(pos)
 
 
 class _DirectionSet(NamedTuple):

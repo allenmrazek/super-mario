@@ -44,28 +44,27 @@ class GameStateStack:
     def top(self):
         return self._states[0] if len(self._states) > 0 else None
 
-    @top.setter
-    def top(self, state):
-        assert state is not None
-
-        if state is not self.top and self.top is not None:
-            self.top.deactivated()
-
-        self._states.insert(0, state)
-        self.top.activated()
-
     def push(self, state):
         assert state is not None
-        self.top = state
+
+        if self.top is not None:
+            self.top.deactivated()
+
+        self._states.append(state)
+        self.top.activated()
 
     def pop(self):
         top = self.top
 
         if top is not None:
+            # deactivate current top
+            top.deactivated()
+
             old_top = self._states.pop(0)
 
-            # get new top and let it know it just became active
+            # get new top (if any) and let it know it just became active
             top = self.top
+
             if top:
                 top.activated()
 
@@ -92,3 +91,10 @@ class GameStateStack:
 
         if top:
             top.event(event)
+
+    def get_next(self, state):
+        idx = self._states.index(state)
+
+        if idx > 0:
+            return self._states[idx - 1]
+        return None

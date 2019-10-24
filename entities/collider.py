@@ -17,17 +17,30 @@ class Collision:
 
 
 class Collider:
-    __slots__ = ['entity', 'manager', 'mask']
+    """A collider is not much more than a fancy rect controlled by some parent entity. Entities can use colliders
+    to test for collisions against other colliders.  Every collider is associated with some entity (entities can have
+    multiple colliders associated with them)"""
+    __slots__ = ['entity', 'manager', 'mask', '_position', 'rect', 'layer']
 
     """Important note: Colliders are intended to be managed by their associated Entity"""
-    def __init__(self, entity, manager, mask):
+    def __init__(self, entity, manager, mask, position, rect, layer):
         assert entity is not None
         assert manager is not None
         assert isinstance(mask, int)
 
         self.entity = entity
         self.manager = manager
-        self.mask = mask
+        self.mask = mask or 0
+        self._position = copy_vector(position)
+        self.rect = rect.copy()
+        self.layer = layer
+
+    @staticmethod
+    def from_entity(entity, manager, mask):
+        assert entity is not None
+        assert isinstance(manager, ColliderManager)
+
+        return Collider(entity, manager, mask or 0, entity.position, entity.rect, entity.layer)
 
     def move(self, new_pixel_position):
         return self.manager.move(self, new_pixel_position)
@@ -42,23 +55,17 @@ class Collider:
         return self.manager.iterative_move(self, new_pixel_position)
 
     @property
-    def layer(self):
-        return self.entity.layer
-
-    @property
-    def rect(self):
-        return self.entity.rect
-
-    @property
     def position(self):
-        return self.entity.position
+        return self._position
 
     @position.setter
     def position(self, val):
-        self.entity.position = val
+        self._position = val
+        self.rect.x, self.rect.y = self._position.x, self._position.y
 
 
 class ColliderManager:
+    """Colliders use an instance of this to test against other colliders"""
     def __init__(self):
         self._colliders = set()
 

@@ -17,12 +17,14 @@ class _Measurement(NamedTuple):
 
 
 class PerformanceMeasurement(GameState):
-    def __init__(self, game_events, target_state: GameState):
+    def __init__(self, state_stack, game_events, target_state: GameState):
         super().__init__(game_events)
 
         assert target_state is not None
 
         self.target_state = target_state
+        self.state_stack = state_stack
+
         self.entities = EntityManager({Layer.Interface: set()}, [Layer.Interface])
 
         text_position = make_vector(config.screen_rect.right, config.screen_rect.top)
@@ -104,13 +106,19 @@ class PerformanceMeasurement(GameState):
             max(self.draw_performance.max_overall, self.draw_performance.max)
         )
 
+    def activated(self):
+        self.target_state.activated()
+
+    def deactivated(self):
+        self.target_state.deactivated()
+
     @property
     def finished(self):
         return self.target_state.finished
 
     @staticmethod
     def measure(state_stack: GameStateStack, target_state: GameState):
-        pm = PerformanceMeasurement(target_state.game_events, target_state)
+        pm = PerformanceMeasurement(state_stack, target_state.game_events, target_state)
         state_stack.push(pm)
 
     def _do_update_info_text(self):
