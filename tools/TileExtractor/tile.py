@@ -42,6 +42,7 @@ class Tile:
         self.surface = surface
         self.classification = classification
 
+
     @staticmethod
     def load_from_file(path, classification):
         """Load an already-extracted tile. Assumes transparent color (magenta) should be ignored in hash
@@ -60,6 +61,7 @@ class Tile:
         # remember: rect might have multiple tiles. Most of the time it doesn't, but convenient to handle the
         # situation here where it will be invisible to tile extractor
         surf = surface.subsurface(rect).convert(24)
+        surf.set_alpha(None)
 
         with pygame.PixelArray(surf) as pixels:
             # convert any world-transparent pixels to config transparent pixels (magenta)
@@ -69,6 +71,8 @@ class Tile:
 
                     if clr == surf_transparent:
                         pixels[x, y] = surf.map_rgb(config.transparent_color)
+                    else:
+                        pixels[x, y] = surf.map_rgb(clr.r, clr.g, clr.b)
 
             tile = Tile(surf, Classification.NotClassified)
 
@@ -88,4 +92,3 @@ class Tile:
         filename = next(iter(TileNameGenerator(directory, classification)))
 
         pygame.image.save(tile.surface.convert(), filename)
-

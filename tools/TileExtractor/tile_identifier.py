@@ -1,5 +1,6 @@
 import os
 import itertools
+import math
 import pygame
 from pygame import Rect, PixelArray
 from tools.TileExtractor.tile import Tile, Classification
@@ -11,6 +12,9 @@ def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelAr
     anchor_size = tile_anchor.surface.get_rect().size
     matches = 0
 
+    if isinstance(trans_color, pygame.Color):
+        trans_color = trans_color[:3]
+
     with PixelArray(tile_anchor.surface) as anchor_pixels:
         for yanchor in range(anchor_size[1]):
             for xanchor in range(anchor_size[0]):
@@ -20,19 +24,23 @@ def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelAr
                 except IndexError:
                     continue
 
-                anchor_color = tile_anchor.surface.unmap_rgb(anchor_pixel)
-                target_color = target_surface.unmap_rgb(target_pixel)
+                anchor_color = tile_anchor.surface.unmap_rgb(anchor_pixel)[:3]
+                target_color = target_surface.unmap_rgb(target_pixel)[:3]
 
                 if anchor_color == config.transparent_color and target_color == trans_color:
                     continue  # transparent pixels don't need to match, they just need to both be transparent
 
-                if anchor_pixel != target_pixel:
-                    return False
+                if anchor_color != target_color:
+                    # allow some slop in corner, since there are bizarre color cases (compression artifacts?) where
+                    # colors don't quite match up even though extremely visually similar
+                    for i, comp in enumerate(anchor_color):
+                        if math.fabs(comp - target_color[i]) > 10.:
+                            return False
 
                 matches += 1
 
     if tf_strict:
-        return matches > (0.90 * anchor_size[0] * anchor_size[1])  # we want a really good match
+        return matches > (0.70 * anchor_size[0] * anchor_size[1])  # we want a really good match
     return matches > 0
 
 
@@ -68,8 +76,11 @@ class TileIdentifier:
             self._load_tiles_from("../../images/atlas_ignored_blocks/", Classification.Ignore))
 
         self.anchor_position = self._find_anchor(self.world, guess_anchor)
-        tile_width, tile_height = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (16, 16)
+        tile_width, tile_height = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (8, 8)
         self.startx, self.starty = self.anchor_position[0] % tile_width, self.anchor_position[1] % tile_height
+
+        self.magnify_surface = pygame.Surface((tile_width * 8, tile_width * 8)).convert(24)
+        self.temp = pygame.Surface((tile_width, tile_height)).convert(24)
 
         if self.anchor_position is not None:
             self._finished = False
@@ -102,7 +113,7 @@ class TileIdentifier:
         return True
 
     def locate_next(self):
-        movement = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (16, 16)
+        movement = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (8, 8)
 
         print("identifying next tile to classify ...")
 
@@ -159,6 +170,17 @@ class TileIdentifier:
         screen.blit(self.world, draw_rect)
 
         pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(0, 0, self.search_rect.width, self.search_rect.height), 3)
+
+        # create enlarged version of draw rect
+        self.temp.fill((0, 255, 0))
+        self.temp.blit(self.world, (0, 0), self.search_rect)
+
+        pygame.transform.scale(self.temp, self.magnify_surface.get_rect().size, self.magnify_surface)
+
+        mag_loc = self.magnify_surface.get_rect()
+        mag_loc.bottom = config.screen_rect.bottom
+
+        screen.blit(self.magnify_surface, mag_loc)
 
     @staticmethod
     def _load_tiles_from(dir_path, classification):
