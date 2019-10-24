@@ -110,7 +110,7 @@ class RunState(GameState, EventHandler):
         self.entities.register(self.classifier_dialog)
         game_events.register(self.classifier_dialog)
 
-        self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/bg-1-1_uw.png", None, (0, 0))
+        self.tile_identifier = TileIdentifier("../../images/editor/level_backgrounds/bg-1-2-start.png", None, (0, 0))
         self.tile_identifier.locate_next()
         self.classifier_dialog.enabled = False
         
