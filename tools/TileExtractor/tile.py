@@ -2,7 +2,7 @@ import os
 from enum import Enum
 import pygame
 import config
-from atlas.load import get_atlas_path
+from assets.load import get_atlas_path
 
 
 class Classification(Enum):

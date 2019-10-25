@@ -5,6 +5,7 @@ from util import make_vector
 from entities.gui.drawing import smart_draw
 
 
+# todo: scrollable contents (this isn't complete)
 class ScrollableContents(Element):
     def __init__(self, relative_pos, visible_size, scrollable_size, content):
         super().__init__(relative_pos)

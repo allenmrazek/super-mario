@@ -60,7 +60,6 @@ class Option(Button):
         # todo: invoke callback?
 
     def clicked(self):
-        print("option clicked!")
         self.selected = not self.selected
 
 

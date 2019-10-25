@@ -1,6 +1,6 @@
 from entities.entity import Layer, EntityManager
 from entities.collider import ColliderManager
-from . import AssetManager
+from assets import AssetManager
 import config
 from util import make_vector
 from entities.mario import Mario
@@ -9,14 +9,14 @@ from event.game_events import EventHandler
 
 
 class Level(EventHandler):
-    def __init__(self, atlas):
+    def __init__(self, assets):
         super().__init__()
 
         self.entity_manager = EntityManager.create_default()
         self.collider_manager = ColliderManager()
-        self.asset_manager = AssetManager(atlas)
+        self.asset_manager = assets
         self.player_input = PlayerInputHandler()
-        self.mario = Mario(self.player_input, atlas, self.collider_manager)
+        self.mario = Mario(self.player_input, assets.character_atlas, self.collider_manager)
         self.entity_manager.register(self.mario)
         self.mario.position = make_vector(config.screen_rect.centerx, 0)
         #self.mario.position = make_vector(config.screen_rect.centerx, config.screen_rect.bottom - self.mario.height)
@@ -34,8 +34,8 @@ class Level(EventHandler):
         self.player_input.handle_event(evt, game_events)
 
     @staticmethod
-    def create_default(atlas):
-        lvl = Level(atlas)
+    def create_default(assets):
+        lvl = Level(assets)
 
         # fill background
         # ~240 FPS without background

@@ -1,9 +1,8 @@
 from .game_state import GameState
-from .game_state import GameStateStack
-from entities.gui import Frame, Window
+from entities.gui import Frame
 from editor.dialogs import ToolDialog, LayerDialog, TileDialog
 from entities.entity import EntityManager, Layer
-from level.asset_manager import AssetManager
+from assets.asset_manager import AssetManager
 import config
 from util import make_vector
 
@@ -26,7 +25,7 @@ class EditorState(GameState):
         self.layer_dialog = EditorState.create_layer_dialog(atlas)
         self.frame.add_child(self.layer_dialog)
 
-        self.foreground_tile_dialog = EditorState.create_tile_dialog(atlas)
+        self.foreground_tile_dialog = EditorState.create_tile_dialog(atlas, self.assets)
         self.frame.add_child(self.foreground_tile_dialog)
 
     def draw(self, screen):

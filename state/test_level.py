@@ -4,11 +4,11 @@ import config
 
 
 class TestLevel(GameState):
-    def __init__(self, game_events, atlas):
+    def __init__(self, game_events, assets):
         super().__init__(game_events)
 
-        self.atlas = atlas
-        self.level = Level.create_default(atlas)
+        self.assets = assets
+        self.level = Level.create_default(assets)
 
     def update(self, dt):
         self.level.update(dt)

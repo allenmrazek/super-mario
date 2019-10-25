@@ -1,6 +1,5 @@
 import os
 import pygame
-from atlas import load_atlases
 from event.game_events import GameEvents, EventHandler
 from state.game_state import GameStateStack
 from state.editor_state import EditorState
@@ -10,6 +9,7 @@ import config
 from timer import game_timer
 from state.test_gui import TestGui
 from state.test_level import TestLevel
+from assets import AssetManager
 
 
 class _QuitListener(EventHandler):
@@ -27,7 +27,7 @@ def run():
     pygame.init()
     screen = pygame.display.set_mode(config.screen_size)
     pygame.display.set_caption("Super Mario")
-    atlas = load_atlases()
+    assets = AssetManager()
 
     # initialize states
     game_events = GameEvents()
@@ -37,9 +37,9 @@ def run():
 
     #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     # state_stack.push(TestGui(game_events, atlas))
-    state_stack.push(EditorState(game_events, atlas))
+    #state_stack.push(EditorState(game_events, atlas))
     #state_stack.push(TestLevel(game_events, atlas))
-    #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, atlas))
+    PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets))
     game_timer.reset()
 
     # timer initialize

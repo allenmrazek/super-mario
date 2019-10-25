@@ -15,16 +15,16 @@ def run():
     screen = pygame.display.set_mode(config.screen_size)
     pygame.display.set_caption("Tile Extractor")
 
-    import atlas
+    import assets
 
-    real_get_atlas_path = atlas.get_atlas_path
+    real_get_atlas_path = assets.get_atlas_path
 
     def editor_path(atlas_name):
         return os.path.join("../../", real_get_atlas_path(atlas_name))
 
-    atlas.load.get_atlas_path = editor_path
+    assets.load.get_atlas_path = editor_path
 
-    sprite_atlas = atlas.load_gui_atlas()
+    sprite_atlas = assets.load_gui_atlas()
 
     # initialize states
     game_events = GameEvents()

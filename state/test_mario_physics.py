@@ -5,7 +5,6 @@ from entities.block import Block
 from entities.collider import ColliderManager
 from entities.entity import EntityManager
 from event.player_input import PlayerInputHandler
-from tileset import TileSet
 import config
 from util import make_vector
 
@@ -47,7 +46,6 @@ class TestMarioPhysics(GameState):
         self.height_measurement_image_rect.bottom = config.screen_rect.bottom
 
         # create bottom blocks
-        #ts = TileSet("NES - Super Mario Bros - Tileset.png", 16)
         block_size = 16 * config.rescale_factor
 
         y_pos = config.screen_rect.height - block_size

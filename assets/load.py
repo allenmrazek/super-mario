@@ -25,8 +25,8 @@ def _load_all_as_static(atlas_name, rescale=True):
     return atlas
 
 
-def load_entity_atlas():
-    atlas = SpriteAtlas(get_atlas_path("mario"))
+def load_character_atlas():
+    atlas = SpriteAtlas(get_atlas_path("characters"))
 
     # stationary
     atlas.initialize_static("mario_stand_right", config.transparent_color)
@@ -127,14 +127,3 @@ def load_misc_atlas():
     atlas.initialize_static("green_square")
 
     return atlas
-
-
-def load_atlases():
-    entity_atlas = load_entity_atlas()
-    gui_atlas = load_gui_atlas()
-    solid_block_atlas = load_solid_block_atlas()
-    background_block_atlas = load_background_block_atlas()
-    interactive_block_atlas = load_interactive_block_atlas()
-    misc_atlas = load_misc_atlas()
-
-    return entity_atlas + gui_atlas + solid_block_atlas + background_block_atlas + interactive_block_atlas + misc_atlas
