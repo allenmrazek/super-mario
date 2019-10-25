@@ -30,6 +30,10 @@ class InvalidDimensionsError(SpriteAtlasError):
 
 
 class SpriteAtlas:
+    """An atlas is a grouped set of surfaces. By itself, it doesn't do much
+    more than read the main surface into memory along with a txt file that describes
+    the surfaces contained within the atlas. This information can be used to create
+    specific Animation instances for later use by calling appropriate methods on the atlas"""
     def __init__(self, atlas_path=None, tf_use_rescale_factor=True, convert=True):
         # use the descriptor file to load subsurfaces
         self.sprite_rects = {}

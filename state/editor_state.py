@@ -1,8 +1,9 @@
 from .game_state import GameState
 from .game_state import GameStateStack
 from entities.gui import Frame, Window
-from editor.dialogs import ToolDialog, LayerDialog
+from editor.dialogs import ToolDialog, LayerDialog, TileDialog
 from entities.entity import EntityManager, Layer
+from level.asset_manager import AssetManager
 import config
 from util import make_vector
 
@@ -10,6 +11,8 @@ from util import make_vector
 class EditorState(GameState):
     def __init__(self, game_events, atlas):
         super().__init__(game_events)
+
+        self.assets = AssetManager(atlas)
 
         # frame to contain all other windows
         self.frame = Frame(make_vector(0, 0), config.screen_rect.size)
@@ -22,6 +25,9 @@ class EditorState(GameState):
 
         self.layer_dialog = EditorState.create_layer_dialog(atlas)
         self.frame.add_child(self.layer_dialog)
+
+        self.foreground_tile_dialog = EditorState.create_tile_dialog(atlas)
+        self.frame.add_child(self.foreground_tile_dialog)
 
     def draw(self, screen):
         screen.fill(config.default_background_color)
@@ -52,6 +58,14 @@ class EditorState(GameState):
     @staticmethod
     def create_layer_dialog(atlas):
         dialog = LayerDialog(atlas)
+
+        # todo
+
+        return dialog
+
+    @staticmethod
+    def create_tile_dialog(atlas, asset_manager):
+        dialog = TileDialog(atlas, asset_manager.solid_tileset)
 
         # todo
 

@@ -40,7 +40,7 @@ class Level(EventHandler):
         # fill background
         # ~240 FPS without background
         # usable framerate with background -> optimize later
-        
+
         # ctr = 0
         #
         # bkg_block = lvl.asset_manager.load_test_background().animation

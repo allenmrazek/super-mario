@@ -9,6 +9,9 @@ class AssetManager:
         assert atlas is not None
 
         self.atlas = atlas
+        self.background_tileset = None
+        self.solid_tileset = None
+
 
     def load_test_block(self, collision_manager):
         return Block(make_vector(0, 0), self.atlas.load_static("misc_gray_bricks"), collision_manager)

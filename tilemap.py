@@ -1,10 +1,8 @@
 import os
-from tileset import TileSet
 
 
 class TileMap:
-    def __init__(self, tile_set: TileSet, size):
-        self.tile_set = tile_set
+    def __init__(self, size):
         self.map = []
         self.width, self.height = size[0], size[1]
 
@@ -19,6 +17,10 @@ class TileMap:
             raise FileNotFoundError
 
         raise NotImplementedError  # todo: file format
+
+    @staticmethod
+    def create_with_filled(size, tile):
+        map = TileMap(size)
 
     def save_to_file(self, filename):
         raise NotImplementedError
