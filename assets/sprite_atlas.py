@@ -91,7 +91,8 @@ class SpriteAtlas:
         self.sliced = {}
 
         if convert and self.atlas is not None:
-            self.atlas = self.atlas.convert(pygame.display.get_surface())
+            #self.atlas = self.atlas.convert(pygame.display.get_surface())
+            self.atlas = self.atlas.convert()
 
     @property
     def sprite_names(self):

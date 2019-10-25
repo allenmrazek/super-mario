@@ -22,8 +22,3 @@ class AssetManager:
         self.gui_atlas = load_gui_atlas()
         self.misc_atlas = load_misc_atlas()
 
-    def load_test_block(self, collision_manager):
-        return Block(make_vector(0, 0), self.misc_atlas.load_static("misc_gray_bricks"), collision_manager)
-
-    def load_test_background(self):
-        return Drawable(make_vector(0, 0), self.misc_atlas.load_static("green_square"))

@@ -105,12 +105,12 @@ def load_gui_atlas():
     return atlas
 
 
-def load_solid_block_atlas():
-    return _load_all_as_static("solid_blocks")
+def load_solid_block_atlas(tf_rescale=True):
+    return _load_all_as_static("solid_blocks", rescale=tf_rescale)
 
 
-def load_background_block_atlas():
-    return _load_all_as_static("background_blocks")
+def load_background_block_atlas(tf_rescale=True):
+    return _load_all_as_static("background_blocks", rescale=tf_rescale)
 
 
 def load_interactive_block_atlas():

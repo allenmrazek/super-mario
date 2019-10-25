@@ -9,13 +9,20 @@ import config
 
 def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelArray, target_rect: Rect, trans_color,
                              tf_strict=False):
-    anchor_size = tile_anchor.surface.get_rect().size
+    if isinstance(tile_anchor, Tile):
+        tile_surface = tile_anchor.surface
+    elif isinstance(tile_anchor, pygame.Surface):
+        tile_surface = tile_anchor
+    else:
+        raise NotImplementedError
+
+    anchor_size = tile_surface.get_rect().size
     matches = 0
 
     if isinstance(trans_color, pygame.Color):
         trans_color = trans_color[:3]
 
-    with PixelArray(tile_anchor.surface) as anchor_pixels:
+    with PixelArray(tile_surface) as anchor_pixels:
         for yanchor in range(anchor_size[1]):
             for xanchor in range(anchor_size[0]):
                 try:
@@ -24,7 +31,7 @@ def is_exact_match_to_anchor(tile_anchor, target_surface, target_pixels: PixelAr
                 except IndexError:
                     continue
 
-                anchor_color = tile_anchor.surface.unmap_rgb(anchor_pixel)[:3]
+                anchor_color = tile_surface.unmap_rgb(anchor_pixel)[:3]
                 target_color = target_surface.unmap_rgb(target_pixel)[:3]
 
                 if anchor_color == config.transparent_color and target_color == trans_color:
@@ -75,7 +82,8 @@ class TileIdentifier:
         self.known_tiles.extend(
             self._load_tiles_from("../../images/atlas_ignored_blocks/", Classification.Ignore))
 
-        self.anchor_position = self._find_anchor(self.world, guess_anchor)
+        self.anchor_position = TileIdentifier.find_anchor(self.world, guess_anchor, self.world_trans_color)
+
         tile_width, tile_height = self.known_tiles[0].surface.get_rect().size if len(self.known_tiles) > 0 else (8, 8)
         self.startx, self.starty = self.anchor_position[0] % tile_width, self.anchor_position[1] % tile_height
 
@@ -190,9 +198,22 @@ class TileIdentifier:
 
         return list(itertools.chain.from_iterable([Tile.load_from_file(f, classification) for f in files]))
 
-    def _find_anchor(self, surface, guess_anchor):
+    @staticmethod
+    def find_anchor(surface, guess_anchor, world_trans_color):
         # load all known anchors: these are used to identify the grid blocks are positioned on
-        anchors = TileIdentifier._load_tiles_from("../../images/editor/anchors/", Classification.NotClassified)
+
+        anchor_dirs = ["../../images/editor/anchors/", "images/editor/anchors/"]
+        anchors = None
+
+        for anchor_dir in anchor_dirs:
+            try:
+                anchors = TileIdentifier._load_tiles_from(anchor_dir, Classification.NotClassified)
+                break
+            except FileNotFoundError:
+                pass
+
+        if anchors is None:
+            raise FileNotFoundError
 
         # we'll extend known anchors with all other known tiles as well, since calculating hash is expensive while
         # comparing them is not
@@ -212,8 +233,6 @@ class TileIdentifier:
             sr.height -= guess_anchor[1]
 
         # advance through surface, looking for any matches to anchor hashes
-        search_hash = 0
-
         print("searching for anchor ...")
 
         with pygame.PixelArray(surface) as search_pixels:
@@ -225,9 +244,10 @@ class TileIdentifier:
                     search_rect.x, search_rect.y = x, y
 
                     for known in anchors:
-                        if is_exact_match_to_anchor(known, self.world, search_pixels,
-                                                    search_rect, self.world_trans_color, tf_strict=True) \
-                                and not self.is_transparent(surface, search_pixels, search_rect, self.world_trans_color):
+                        if is_exact_match_to_anchor(known, surface, search_pixels,
+                                                    search_rect, world_trans_color, tf_strict=True) \
+                                and not TileIdentifier.is_transparent(surface, search_pixels, search_rect,
+                                                                      world_trans_color):
                             print("anchor found at ", x, ", ", y)
 
                             return x, y
