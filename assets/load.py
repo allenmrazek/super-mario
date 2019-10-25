@@ -105,18 +105,8 @@ def load_gui_atlas():
     return atlas
 
 
-def load_solid_block_atlas(tf_rescale=True):
-    return _load_all_as_static("solid_blocks", rescale=tf_rescale)
-
-
-def load_background_block_atlas(tf_rescale=True):
-    return _load_all_as_static("background_blocks", rescale=tf_rescale)
-
-
-def load_interactive_block_atlas():
-    return _load_all_as_static("interactive_blocks")
-
-    # todo: actually load animations here
+def load_tile_atlas(tf_rescale=True):
+    return _load_all_as_static("tiles", rescale=tf_rescale)
 
 
 def load_misc_atlas():

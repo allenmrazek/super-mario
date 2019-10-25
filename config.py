@@ -6,7 +6,7 @@ debug_jumps = True
 screen_size = 1024, 675
 screen_rect = Rect(0, 0, *screen_size)
 
-base_tile_dimensions = (8, 8)  # tiles on disk are treated as this dimension
+base_tile_dimensions = (16, 16)  # tiles on disk are treated as this dimension
 rescale_factor = 2  # all loaded sprites and images will be rescaled by this value
 
 transparent_color = Color('magenta')

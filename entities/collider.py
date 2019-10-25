@@ -2,18 +2,16 @@ import math
 from util import can_collide
 from util import distance_squared
 from util import copy_vector
-
+from entities.entity import Layer
 import config
 
 
 class Collision:
-    __slots__ = ['moving_entity', 'stationary_entity', 'moving_collider', 'stationary_collider']
+    __slots__ = ['moved_collider', 'hit_thing']
 
-    def __init__(self, moved_collider, hit_collider):
-        self.moving_entity = moved_collider.entity
-        self.stationary_entity = hit_collider.entity
-        self.moving_collider = moved_collider
-        self.stationary_collider = hit_collider
+    def __init__(self, moved_collider, hit_thing):
+        self.moved_collider = moved_collider
+        self.hit_thing = hit_thing  # not necessarily a collider or entity (could be a grid position)
 
 
 class Collider:
@@ -66,8 +64,9 @@ class Collider:
 
 class ColliderManager:
     """Colliders use an instance of this to test against other colliders"""
-    def __init__(self):
+    def __init__(self, map):
         self._colliders = set()
+        self.map = map
 
     def register(self, collider: Collider):
         self._colliders.add(collider)
@@ -80,6 +79,10 @@ class ColliderManager:
         collider.position = copy_vector(new_pixel_position)
         collider.rect.x, collider.rect.y = collider.position.x, collider.position.y
         collisions = []
+
+        # check for collisions against world grid, if applicable
+        if can_collide(collider.mask, Layer.Block.value):
+            collisions.extend(self.get_world_collisions(collider))
 
         for other_collider in (c for c in self._colliders if c is not collider):
             if not can_collide(collider.mask, other_collider.layer):
@@ -133,5 +136,25 @@ class ColliderManager:
             else:
                 # halve distance
                 dist *= 0.5
+
+        return collisions
+
+    def get_world_collisions(self, collider):
+        # determine which grid square(s) the collider is in
+        left, right = collider.rect.left // self.map.tile_width, collider.rect.right // self.map.tile_width
+        top, bottom = collider.rect.top // self.map.tile_height, collider.rect.bottom // self.map.tile_height
+
+        collisions = []
+
+        for x in range(left, right + 1):
+            if x < 0 or x >= self.map.width:
+                continue
+
+            for y in range(top, bottom + 1):
+                if y < 0 or y >= self.map.height:
+                    continue
+
+                if not self.map.get_passable((x, y)):
+                    collisions.append(Collision(moved_collider=collider, hit_thing=(x, y)))
 
         return collisions
