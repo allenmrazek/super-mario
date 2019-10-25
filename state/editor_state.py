@@ -19,11 +19,11 @@ class EditorState(GameState):
         self.entity_manager = EntityManager({Layer.Interface: set()}, [Layer.Interface])
         self.entity_manager.register(self.frame)
 
-        # self.tool_dialog = EditorState.create_tool_dialog(self.assets.gui_atlas)
-        # self.frame.add_child(self.tool_dialog)
-        #
-        # self.layer_dialog = EditorState.create_layer_dialog(self.assets.gui_atlas)
-        # self.frame.add_child(self.layer_dialog)
+        self.tool_dialog = EditorState.create_tool_dialog(self.assets.gui_atlas)
+        self.frame.add_child(self.tool_dialog)
+
+        self.layer_dialog = EditorState.create_layer_dialog(self.assets.gui_atlas)
+        self.frame.add_child(self.layer_dialog)
 
         self.tile_dialog = EditorState.create_tile_dialog(self.assets)
         self.frame.add_child(self.tile_dialog)

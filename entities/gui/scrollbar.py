@@ -45,7 +45,8 @@ class Scrollbar(Element):
     HORIZONTAL_HEIGHT = 16
 
     def __init__(self, relative_position, sb_type, width_or_height, sb_background,
-                 sb_button_background, sb_max_value, sb_min_value=0, sb_button_mouseover=None):
+                 sb_button_background, sb_max_value, sb_min_value=0, sb_button_mouseover=None,
+                 on_value_changed_callback=None):
         if sb_type == ScrollbarType.VERTICAL:
             initial_rect = Rect(*relative_position, Scrollbar.VERTICAL_WIDTH, width_or_height)
         else:
@@ -60,8 +61,8 @@ class Scrollbar(Element):
         self.sb_button = sb_button_background
         self.max_value = sb_max_value
         self.min_value = sb_min_value
-        self._delta_value = sb_max_value - sb_min_value
         self.current_value = sb_min_value
+        self.on_value_changed = on_value_changed_callback
 
         # create slider button
         self.slider = _SliderButton(make_vector(self.width // 2, self.height // 2), None, self, sb_button_background, sb_button_mouseover)
@@ -92,7 +93,7 @@ class Scrollbar(Element):
             # compute ratio of sb movement on bar
             ratio = relative.y / self.height
 
-            self.value = ratio * self._delta_value + self.min_value
+            self.value = ratio * (self.max_value - self.min_value) + self.min_value
 
         elif self.sb_type == ScrollbarType.HORIZONTAL:
             # try to align thumb button with x mouse coordinates
@@ -109,7 +110,7 @@ class Scrollbar(Element):
             # compute ratio of sb movement on bar
             ratio = relative.x / self.width
 
-            self.value = ratio * self._delta_value + self.min_value
+            self.value = ratio * (self.max_value - self.min_value) + self.min_value
 
     @property
     def value(self):
@@ -117,14 +118,14 @@ class Scrollbar(Element):
 
     @value.setter
     def value(self, new_value):
-        self.current_value = new_value
+        self.current_value = min(max(new_value, self.min_value), self.max_value)
 
         # position slider for new value
         # map value into 0...1 range
         delta = self.max_value - self.min_value
 
         if delta > 0:
-            ratio = (new_value - self.min_value) / (self.max_value - self.min_value)
+            ratio = (self.current_value - self.min_value) / (self.max_value - self.min_value)
         else:
             ratio = 0.
 
@@ -134,3 +135,6 @@ class Scrollbar(Element):
             self.slider.relative_position.y = self.height * ratio
 
         self.layout()
+
+        if self.on_value_changed is not None:
+            self.on_value_changed(self.current_value)
