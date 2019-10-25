@@ -77,7 +77,8 @@ class TilePickerDialog(Dialog):
         tile_y = (self.selected_tile_idx // self.tileset.num_tiles_per_col) * self.tileset.tile_height
 
         # account for scrolling
-        top_left = self.scrollable.get_absolute_position() + make_vector(tile_x - self.scrollable.get_scroll().x, tile_y - self.scrollable.get_scroll().y)
+        top_left = self.scrollable.get_absolute_position() + make_vector(tile_x - self.scrollable.get_scroll().x,
+                                                                         tile_y - self.scrollable.get_scroll().y)
         r = pygame.Rect(*top_left, self.tileset.tile_width, self.tileset.tile_height)
         r.inflate_ip(2, 2)
 
