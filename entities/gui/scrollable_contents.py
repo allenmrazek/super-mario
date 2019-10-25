@@ -3,33 +3,43 @@ from .element import Element
 from entities.gui import Button, Window
 from util import make_vector
 from entities.gui.drawing import smart_draw
+from util import copy_vector
 
 
-# todo: scrollable contents (this isn't complete)
 class ScrollableContents(Element):
-    def __init__(self, relative_pos, visible_size, scrollable_size, content):
-        super().__init__(relative_pos)
+    def __init__(self, relative_pos, visible_size, content):
+        super().__init__(relative_pos, initial_rect=Rect(0, 0, *visible_size))
 
-        assert scrollable_size[0] >= visible_size[0]
-        assert scrollable_size[1] >= visible_size[1]
+        assert isinstance(content, Surface)
 
-        self.visible_rect = Rect(*relative_pos, *visible_size)
-        self.content_rect = Rect(*relative_pos, *scrollable_size)
+        self.content_rect = Rect(0, 0, *content.get_rect().size)
         self.scroll_pos = make_vector(0, 0)
-        self.content_surface = content
-        self.visible_surface = Surface(visible_size)
+        self.content = content
+        self.set_scroll(self.scroll_pos)
+
+        self.set_scroll((16, 16))
 
     def set_scroll(self, pos):
-        self.scroll_pos = (min(pos[0], self.content_rect.width - self.visible_rect.width),
-                           min(pos[1], self.content_rect.height - self.visible_rect.height))
+        hscroll = max(0, self.content_rect.width - self.width)
+        vscroll = max(0, self.content_rect.height - self.height)
 
-        # update content
-        dest = self.visible_rect.copy()
-        dest.x, dest.y = 0, 0
+        self.scroll_pos = min(hscroll, pos[0]),\
+                          min(vscroll, pos[1])
 
-        src = self.visible_rect.copy()
-        src.x, src.y = self.scroll_pos[0], self.scroll_pos[1]
-        src.width -= self.scroll_pos[0]
-        src.height -= self.scroll_pos[1]
+        # compute visible area of content given this scroll position
+        self.content_rect.x, self.content_rect.y = self.scroll_pos
 
-        smart_draw(self.visible_surface, self.content_surface, dest, src)
+    def get_scroll(self):
+        return copy_vector(self.scroll_pos)
+
+    def draw(self, screen):
+        existing_cr = screen.get_clip()
+
+        screen_rect = self.get_absolute_rect()
+        screen.set_clip(screen_rect)
+
+        super().draw(screen)
+
+        smart_draw(screen, self.content, screen_rect.topleft, self.content_rect)
+
+        screen.set_clip(existing_cr)

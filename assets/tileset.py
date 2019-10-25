@@ -27,7 +27,8 @@ class TileSet:
 
         for x in range(0, surface.get_width(), self.tile_width):
             for y in range(0, surface.get_height(), self.tile_height):
-                src_rect.x, src_rect.y = x + x // self.tile_width, y + y // self.tile_height
+                src_rect.x, src_rect.y = x + x // self.tile_width * config.rescale_factor,\
+                                         y + y // self.tile_height * config.rescale_factor
 
                 if src_rect.right >= surface.get_width() or src_rect.bottom >= surface.get_height():
                     continue
