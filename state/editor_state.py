@@ -1,6 +1,6 @@
 from .game_state import GameState
 from entities.gui import Frame
-from editor.dialogs import ToolDialog, LayerDialog, TileDialog
+from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog
 from entities.entity import EntityManager, Layer
 from assets.asset_manager import AssetManager
 import config
@@ -64,7 +64,7 @@ class EditorState(GameState):
 
     @staticmethod
     def create_tile_dialog(asset_manager):
-        dialog = TileDialog(asset_manager)
+        dialog = TilePickerDialog(asset_manager)
 
         # todo
 

@@ -17,8 +17,6 @@ class ScrollableContents(Element):
         self.content = content
         self.set_scroll(self.scroll_pos)
 
-        self.set_scroll((16, 16))
-
     def set_scroll(self, pos):
         hscroll = max(0, self.content_rect.width - self.width)
         vscroll = max(0, self.content_rect.height - self.height)

@@ -61,14 +61,16 @@ class Scrollbar(Element):
         self.sb_button = sb_button_background
         self.max_value = sb_max_value
         self.min_value = sb_min_value
-        self.current_value = sb_min_value
-        self.on_value_changed = on_value_changed_callback
+        self.on_value_changed = None
 
         # create slider button
         self.slider = _SliderButton(make_vector(self.width // 2, self.height // 2), None, self, sb_button_background, sb_button_mouseover)
         self.add_child(self.slider)
 
         self.layout()
+
+        self.value = sb_min_value
+        self.on_value_changed = on_value_changed_callback
 
     def draw(self, screen):
         smart_draw(screen, self.background, self.get_absolute_rect())

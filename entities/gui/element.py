@@ -47,6 +47,9 @@ class Element(Entity, EventHandler):
         return Layer.Interface
 
     def handle_event(self, evt, game_events):
+        self.handle_event_children(evt, game_events)
+
+    def handle_event_children(self, evt, game_events):
         # give children a chance to handle events
         # note: things drawn LAST should be updated FIRST, hence the reversal
         for child in reversed(self.children):
