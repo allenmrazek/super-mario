@@ -85,6 +85,8 @@ def load_gui_atlas():
     load_slice("control_small", "control_small_hl", (7, 7), **kwargs)
     load_slice("control_small_block", "control_small_block_hl", (7, 7), **kwargs)
     load_slice("control_small_block2", "control_small_block2_hl", (7, 7), **kwargs)
+    load_slice("sb_thumb_h", "sb_thumb_h_hl", (4, 4), **kwargs)
+    load_slice("sb_thumb_v", "sb_thumb_v_hl", (4, 4), **kwargs)
 
     atlas.initialize_static("option_button", **kwargs)
     atlas.initialize_static("option_button_checked_heavy", **kwargs)
@@ -95,7 +97,7 @@ def load_gui_atlas():
     def load_tool_static(name, hl_name):
         atlas.initialize_static(name)
         atlas.initialize_static_from_surface(hl_name, generated_selected_version_circle(atlas.load_static(name).image,
-                                                                                 pygame.Color('yellow')))
+                                                                                        pygame.Color('yellow')))
 
     load_tool_static("pencil", "pencil_hl")
     load_tool_static("paint", "paint_hl")

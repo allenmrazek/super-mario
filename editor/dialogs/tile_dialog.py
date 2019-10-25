@@ -1,5 +1,6 @@
 import pygame
-from entities.gui import Text, Texture, Window, Dialog, Button, Option, OptionGroup, Anchor, ScrollableContents
+from entities.gui import Text, Texture, Window, Dialog, Button, Option, OptionGroup, Anchor, \
+    ScrollableContents, ScrollbarType, Scrollbar
 import config
 from util import make_vector
 
@@ -7,7 +8,7 @@ from util import make_vector
 
 
 class TileDialog(Dialog):
-    SIZE = (128, 256)
+    SIZE = (256, 256)
 
     def __init__(self, assets):
         font = pygame.font.SysFont(None, 24)
@@ -46,17 +47,34 @@ class TileDialog(Dialog):
 
         self.scrollable = ScrollableContents(
             make_vector(10, self.up.rect.height + self.get_title_bar_bottom()),
-            (TileDialog.SIZE[0] - 20, TileDialog.SIZE[1] - self.get_title_bar_bottom() - self.up.rect.height - 10),
+            (TileDialog.SIZE[0] - 30, TileDialog.SIZE[1] - self.get_title_bar_bottom() - self.up.rect.height - 20),
             temp_surf
         )
+
+        self.layout()  # ensure scrollable is positioned
 
         def down_click():
             self.scrollable.set_scroll(self.scrollable.get_scroll() + make_vector(1, 1))
 
         self.down.on_click = down_click
 
+        # create scrollbars
+        self.vertical_scroll = Scrollbar(make_vector(self.scrollable.rect.right, self.scrollable.rect.top),
+                                         ScrollbarType.VERTICAL, self.scrollable.rect.height,
+                                         assets.gui_atlas.load_sliced("control_small_block2"),
+                                         assets.gui_atlas.load_sliced("sb_thumb_v"), 100,
+                                         sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_v_hl"))
+
+        self.horizontal_scroll = Scrollbar(make_vector(self.scrollable.rect.left, self.scrollable.rect.bottom),
+                                           ScrollbarType.HORIZONTAL, self.scrollable.rect.width,
+                                           assets.gui_atlas.load_sliced("control_small_block2"),
+                                           assets.gui_atlas.load_sliced("sb_thumb_h"), 100,
+                                           sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_h_hl"))
+
         self.add_child(self.down)
         self.add_child(self.up)
         self.add_child(self.scrollable)
+        self.add_child(self.vertical_scroll)
+        self.add_child(self.horizontal_scroll)
 
         self.layout()

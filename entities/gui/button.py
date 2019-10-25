@@ -24,7 +24,6 @@ class Button(Element):
             self._text = Text(make_vector(size[0] // 2, size[1] // 2), text, font, text_color, anchor=Anchor.CENTER)
 
             self.add_child(self._text)
-            #self._text.layout()
 
         self.on_click = on_click_callback
         self._click_down = False
@@ -32,8 +31,7 @@ class Button(Element):
         self.layout()
 
     def draw(self, screen):
-        #smart_draw(screen, self._background if not self._mouseover else self._background_mouseover, self.rect)
-        smart_draw(screen, (255, 0, 0), self.rect)
+        smart_draw(screen, self._background if not self._mouseover else self._background_mouseover, self.rect)
 
         super().draw(screen)
 
@@ -58,7 +56,7 @@ class Button(Element):
                 self._click_down = False
 
         if evt.type == pygame.MOUSEMOTION:
-            self._mouseover = self.get_absolute_rect().collidepoint(*evt.pos)
+            self._mouseover = self.rect.collidepoint(*evt.pos)
 
     def clicked(self):
         if self.on_click:
