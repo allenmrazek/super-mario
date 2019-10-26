@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Sized
 from pygame.sprite import Rect
 from enum import IntFlag
 from util import copy_vector
@@ -30,11 +29,11 @@ class Entity(ABC):
         self._position = make_vector(rect.x, rect.y)  # rect only int values
 
     @abstractmethod
-    def update(self, dt):
+    def update(self, dt, view_rect):
         pass
 
     @abstractmethod
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         pass
 
     @property
@@ -114,26 +113,26 @@ class EntityManager:
 
         self.layers[entity.layer].remove(entity)
 
-    def update(self, dt):
+    def update(self, dt, view_rect):
         # todo: update only screen and a quarter
-        def update_entity(entity):
-            entity.update(dt)
+        def update_entity(entity, vr):
+            entity.update(dt, vr)
 
-        self._do_on_each_layer(update_entity)
+        self._do_on_each_layer(update_entity, view_rect)
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         # todo: draw only screen and a quarter
-        def draw_entity(entity):
-            entity.draw(screen)
+        def draw_entity(entity, vr):
+            entity.draw(screen, vr)
 
-        self._do_on_each_layer(draw_entity)
+        self._do_on_each_layer(draw_entity, view_rect)
 
-    def _do_on_each_layer(self, fn):
+    def _do_on_each_layer(self, fn, view_rect):
         for layer in self.ordering:
             for entity in self.layers[layer]:
                 if hasattr(entity, "enabled"):
                     if entity.enabled:
-                        fn(entity)
+                        fn(entity, view_rect)
 
                 else:
-                    fn(entity)
+                    fn(entity, view_rect)

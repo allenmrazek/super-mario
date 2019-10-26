@@ -18,7 +18,7 @@ class _TitleBar(Element):
 
         self.layout()
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         # draw title bar
         r = screen.get_rect().clip(self.get_absolute_rect())
 
@@ -30,7 +30,7 @@ class _TitleBar(Element):
 
         screen.set_clip(current_clip)
 
-    def update(self, dt):
+    def update(self, dt, view_rect):
         pass
 
     def handle_event(self, evt, game_events):

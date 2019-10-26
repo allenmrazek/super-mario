@@ -1,12 +1,10 @@
 import math
-from typing import NamedTuple
 from pygame import Vector2
 from .entity import Entity, Layer
 from entities.collider import ColliderManager
 from entities.collider import Collider
 from animation import Animation
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
-import config
 from util import copy_vector
 from util import make_vector
 
@@ -44,7 +42,7 @@ class Mario(Entity):
         self.collider = Collider.from_entity(self, cmanager, Layer.Block | Layer.Active)
         self.airborne_collider = Collider.from_entity(self, cmanager,Layer.Block)
 
-    def update(self, dt):
+    def update(self, dt, view_rect):
         if self.is_running and not self.input_state.dash:
             self._run_frame_counter = min(self._run_frame_counter + 1, num_frames_hold_speed + 1)
         else:
@@ -69,13 +67,14 @@ class Mario(Entity):
         self.animator.update(self, dt)
 
         if self.debug_trajectory:
-            self.debug_trajectory.update(self)
+            self.debug_trajectory.update(self, view_rect)
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         if self.debug_trajectory:
-            self.debug_trajectory.draw(screen)
+            self.debug_trajectory.draw(screen, view_rect)
 
-        screen.blit(self.animator.image, self.rect)
+        true_pos = make_vector(*self.rect.topleft) - make_vector(*view_rect.topleft)
+        screen.blit(self.animator.image, true_pos)
 
     @property
     def layer(self):

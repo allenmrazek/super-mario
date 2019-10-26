@@ -30,10 +30,10 @@ class Button(Element):
         self._mouseover = False
         self.layout()
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         smart_draw(screen, self._background if not self._mouseover else self._background_mouseover, self.rect)
 
-        super().draw(screen)
+        super().draw(screen, view_rect)
 
     def handle_event(self, evt, game_events):
         super().handle_event(evt, game_events)

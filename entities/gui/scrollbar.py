@@ -74,11 +74,11 @@ class Scrollbar(Element):
         self.value = sb_min_value
         self.on_value_changed = on_value_changed_callback
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         smart_draw(screen, self.background, self.get_absolute_rect())
-        super().draw(screen)
+        super().draw(screen, view_rect)
 
-    def update(self, dt):
+    def update(self, dt, view_rect):
         pass
 
     def on_slider_moved(self, absolute):

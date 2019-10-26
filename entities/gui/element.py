@@ -32,15 +32,15 @@ class Element(Entity, EventHandler):
         self.position = self.relative_position
         self.enabled = True
 
-    def update(self, dt):
+    def update(self, dt, view_rect):
         for child in self.children:
             if child.enabled:
-                child.update(dt)
+                child.update(dt, view_rect)
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         for child in self.children:
             if child.enabled:
-                child.draw(screen)
+                child.draw(screen, view_rect)
 
     @property
     def layer(self):

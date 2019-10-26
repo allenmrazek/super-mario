@@ -25,7 +25,7 @@ class _ModeDrawHelper(Element):
 
         self.draw_callback = draw_callback
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         self.draw_callback(screen)
 
 
@@ -99,7 +99,7 @@ class EditorState(GameState, EventHandler):
     def draw(self, screen):
         screen.fill(self.level.background_color)
         self.level.draw(screen)
-        self.entity_manager.draw(screen)
+        self.entity_manager.draw(screen, self.level.view_rect)
 
     def set_mode(self, new_mode):
         if new_mode is self.place_mode:
@@ -125,7 +125,7 @@ class EditorState(GameState, EventHandler):
         self.current_mode = new_mode
 
     def update(self, dt):
-        self.entity_manager.update(dt)
+        self.entity_manager.update(dt, self.level.view_rect)
 
     @property
     def finished(self):

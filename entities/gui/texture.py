@@ -15,7 +15,7 @@ class Texture(Element):
         super().__init__(position, initial_rect=background.get_rect(), anchor=anchor)
         self.background = background
 
-    def draw(self, screen):
-        super().draw(screen)
+    def draw(self, screen, view_rect):
+        super().draw(screen, view_rect)
 
         smart_draw(screen, self.background, self.rect)

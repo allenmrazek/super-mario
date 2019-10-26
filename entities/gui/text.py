@@ -25,10 +25,10 @@ class Text(Element):
     def handle_event(self, evt, game_events):
         pass
 
-    def update(self, dt):
+    def update(self, dt, view_rect):
         pass
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         if self._next_text != self._text:
             # only create text surfaces when old ones are in need of updating
             self._create_text_surface()

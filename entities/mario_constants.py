@@ -36,6 +36,7 @@ momentum_backward_low_initial_speed = frames_to_seconds_squared * mstpv('00098')
 momentum_slow_start_max_velocity = frames_to_seconds * mstpv('01900')
 momentum_fast_start_max_velocity = frames_to_seconds * mstpv('02900')
 
+
 # air physics constants
 class JumpParameters(NamedTuple):
     initial_speed: float  # horizontal speed threshold

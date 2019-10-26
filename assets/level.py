@@ -16,7 +16,7 @@ class Level(EventHandler):
         super().__init__()
 
         self.entity_manager = EntityManager.create_default()
-        self.tile_map = TileMap((200, 100), assets.tileset)
+        self.tile_map = TileMap((20, 10), assets.tileset)
         self.collider_manager = ColliderManager(self.tile_map)
         self.background_color = (0, 0, 0)
 
@@ -33,11 +33,13 @@ class Level(EventHandler):
         self.entity_manager.register(entity)
 
     def update(self, dt):
-        self.entity_manager.update(dt)
+        self.entity_manager.update(dt, self.view_rect)
 
     def draw(self, screen):
-        self.tile_map.draw(screen, self._view_rect)
-        self.entity_manager.draw(screen)
+        vr = self.view_rect # send copy: don't want our private stuff messed with
+
+        self.tile_map.draw(screen, vr)
+        self.entity_manager.draw(screen, vr)
 
     def handle_event(self, evt, game_events):
         self.player_input.handle_event(evt, game_events)

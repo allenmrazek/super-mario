@@ -63,7 +63,7 @@ class PerformanceMeasurement(GameState):
         self.update_call_count += 1
         self.update_total_ticks += elapsed_ticks
 
-        self.entities.update(dt)
+        self.entities.update(dt, pygame.Rect(0, 0, 0, 0))
 
         self.update_performance = _Measurement(
             min(self.update_performance.min, elapsed_ticks),
@@ -98,7 +98,7 @@ class PerformanceMeasurement(GameState):
         self.draw_call_count += 1
         self.draw_total_ticks += elapsed
 
-        self.entities.draw(screen)
+        self.entities.draw(screen, pygame.Rect(0, 0, 0, 0))
         self.draw_performance = _Measurement(
             min(self.draw_performance.min, elapsed),
             self.draw_performance.avg,

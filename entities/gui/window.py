@@ -27,7 +27,7 @@ class Window(Frame):
         self._start_drag = pygame.Vector2()
         self._mouseover = False
 
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen: pygame.Surface, view_rect):
         # pygame seems to just set coordinates to 0 if rect is outside of screen and you try and blit it?
         # so ensure only visible portion of window onscreen is drawn
         r = screen.get_rect().clip(self.rect)
@@ -39,7 +39,7 @@ class Window(Frame):
         screen.set_clip(r)
 
         # draw children
-        super().draw(screen)
+        super().draw(screen, view_rect)
 
         # restore screen as we found it
         screen.set_clip(clipping_rect)

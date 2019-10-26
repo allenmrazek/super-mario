@@ -72,8 +72,8 @@ class TilePickerDialog(Dialog):
         # this will re-dispatch the event, including to parent classes
         super().handle_event(evt, game_events)
 
-    def draw(self, screen: pygame.Surface):
-        super().draw(screen)
+    def draw(self, screen: pygame.Surface, view_rect):
+        super().draw(screen, view_rect)
 
         # calc position of selected tile, ignoring scroll position for the moment
         coords = tile_index_to_coords(self.selected_tile_idx, self.tileset)

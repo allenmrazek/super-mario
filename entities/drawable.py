@@ -12,8 +12,8 @@ class Drawable(Entity):
         self.position = position
         self.animation = animation
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         screen.blit(self.animation.image, self.position)
 
-    def update(self, dt):
+    def update(self, dt, view_rect):
         pass

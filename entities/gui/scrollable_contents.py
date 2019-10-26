@@ -30,13 +30,13 @@ class ScrollableContents(Element):
     def get_scroll(self):
         return copy_vector(self.scroll_pos)
 
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         existing_cr = screen.get_clip()
 
         screen_rect = self.get_absolute_rect()
         screen.set_clip(screen_rect)
 
-        super().draw(screen)
+        super().draw(screen, view_rect)
 
         smart_draw(screen, self.content, screen_rect.topleft, self.content_rect)
 
