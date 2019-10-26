@@ -66,6 +66,15 @@ class Map:
 
         return self.map[tile_position[0]][tile_position[1]].passable
 
+    def clip_to_bounds(self, tile_coords):
+        tx = min(max(tile_coords[0], 0), self.width - 1)
+        ty = min(max(tile_coords[1], 0), self.height - 1)
+
+        return tx, ty
+
+    def is_in_bounds(self, tile_coords):
+        return 0 <= tile_coords[0] < self.width and 0 <= tile_coords[1] < self.height
+
     @property
     def tile_width(self):
         return self.tileset.tile_width

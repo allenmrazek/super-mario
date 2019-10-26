@@ -48,3 +48,25 @@ def make_vector(x, y):
 
 def can_collide(mask1, mask2):
     return (mask1 & mask2) != 0
+
+
+def pixel_coords_to_tile_coords(pixel_coords, tileset):
+    x_coord = int(pixel_coords[0] / tileset.tile_width)
+    y_coord = int(pixel_coords[1] / tileset.tile_height)
+
+    return x_coord, y_coord
+
+
+def tile_coords_to_pixel_coords(tile_coords, tileset):
+    return tile_coords[0] * tileset.tile_width, tile_coords[1] * tileset.tile_height
+
+
+def tile_index_to_coords(idx, tileset):
+    tile_x = (idx % tileset.num_tiles_per_row)
+    tile_y = (idx // tileset.num_tiles_per_col)
+
+    return tile_x, tile_y
+
+
+def tile_coords_to_index(tile_coords, tileset):
+    raise NotImplementedError

@@ -1,6 +1,6 @@
 from .game_state import *
-from .test_mario_physics import *
-from .test_gui import TestGui
-from .test_level import TestLevel
+from state.test_mario_physics import *
+from state.test_level import TestLevel
 
+# todo: update imports
 __all__ = ["GameState", "GameStateStack", "TestMarioPhysics", "TestGui", "TestLevel"]

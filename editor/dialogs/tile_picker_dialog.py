@@ -2,6 +2,9 @@ import pygame
 from entities.gui import Dialog, ScrollableContents, ScrollbarType, Scrollbar
 import config
 from util import make_vector
+from util import tile_coords_to_pixel_coords
+from util import pixel_coords_to_tile_coords
+from util import tile_index_to_coords
 
 
 class TilePickerDialog(Dialog):
@@ -73,8 +76,10 @@ class TilePickerDialog(Dialog):
         super().draw(screen)
 
         # calc position of selected tile, ignoring scroll position for the moment
-        tile_x = (self.selected_tile_idx % self.tileset.num_tiles_per_row) * self.tileset.tile_width
-        tile_y = (self.selected_tile_idx // self.tileset.num_tiles_per_col) * self.tileset.tile_height
+        coords = tile_index_to_coords(self.selected_tile_idx, self.tileset)
+
+        tile_x = coords[0] * self.tileset.tile_width
+        tile_y = coords[1] * self.tileset.tile_height
 
         # account for scrolling
         top_left = self.scrollable.get_absolute_position() + make_vector(tile_x - self.scrollable.get_scroll().x,
@@ -97,7 +102,7 @@ class TilePickerDialog(Dialog):
         relative_pos += self.scrollable.get_scroll()
 
         # calculate a tile x and y (in terms of tiles, not pixels) on the tile sheet
-        tile_x, tile_y = int(relative_pos.x / self.tileset.tile_width), int(relative_pos.y / self.tileset.tile_height)
+        tile_x, tile_y = pixel_coords_to_tile_coords(relative_pos, self.tileset)
 
         # convert to index
         self.selected_tile_idx = tile_y * self.tileset.num_tiles_per_row + tile_x
@@ -108,7 +113,7 @@ class TilePickerDialog(Dialog):
                             self.tileset.tile_height * self.tileset.num_tiles_per_col))
 
         for idx in range(self.tileset.tile_count):
-            coords = self._index_to_tile_coordinates(idx)
+            coords = tile_index_to_coords(idx, self.tileset)
             pos = (coords[0] * self.tileset.tile_width, coords[1] * self.tileset.tile_height)
             self.tileset.blit(s, pos, idx)
 
@@ -116,9 +121,3 @@ class TilePickerDialog(Dialog):
         s.set_colorkey(self.tileset.surface.get_colorkey())
 
         return s
-
-    def _index_to_tile_coordinates(self, idx):
-        tile_x = (idx % self.tileset.num_tiles_per_row)
-        tile_y = (idx // self.tileset.num_tiles_per_col)
-
-        return tile_x, tile_y

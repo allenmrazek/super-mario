@@ -1,4 +1,4 @@
-from .game_state import GameState
+from state.game_state import GameState
 from level import Level
 import config
 

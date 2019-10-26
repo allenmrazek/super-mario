@@ -2,19 +2,16 @@ import os
 import pygame
 from event.game_events import GameEvents, EventHandler
 from state.game_state import GameStateStack
-from state.editor_state import EditorState
-from state.performance_measurement import PerformanceMeasurement
-from state.test_mario_physics import TestMarioPhysics
+from editor.editor_state import EditorState
 import config
 from timer import game_timer
-from state.test_gui import TestGui
-from state.test_level import TestLevel
 from assets import AssetManager
 
 
 class _QuitListener(EventHandler):
     def handle_event(self, evt, game_events):
-        if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
+        if evt.type == pygame.QUIT or\
+                (not self.is_consumed(evt) and evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
             exit(0)
 
 

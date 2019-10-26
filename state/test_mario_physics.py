@@ -1,5 +1,5 @@
 import pygame
-from .game_state import GameState
+from state.game_state import GameState
 from entities import Mario
 from entities.block import Block
 from entities.collider import ColliderManager
@@ -7,16 +7,18 @@ from entities.entity import EntityManager
 from event.player_input import PlayerInputHandler
 import config
 from util import make_vector
+from level import Level
 
 
 class TestMarioPhysics(GameState):
-    def __init__(self, game_events, atlas):
+    def __init__(self, game_events, assets):
         super().__init__(game_events)
 
+        self.level = Level(assets)
         self.entity_manager = EntityManager.create_default()
-        self.collision = ColliderManager()
+        self.collision = ColliderManager(self.level.map)
         self.mario_input = PlayerInputHandler()
-        self.mario = Mario(self.mario_input, atlas, self.collision)
+        self.mario = Mario(self.mario_input, assets.character_atlas, self.collision)
         self.font = pygame.font.SysFont(None, 24)
         self.velocity = self.font.render("Vel: 0", True, (255, 255, 255))
         self.running = self.font.render("Walking", True, (255, 255, 255))
@@ -46,26 +48,27 @@ class TestMarioPhysics(GameState):
         self.height_measurement_image_rect.bottom = config.screen_rect.bottom
 
         # create bottom blocks
-        block_size = 16 * config.rescale_factor
-
-        y_pos = config.screen_rect.height - block_size
-
-        blocks = [Block(position=make_vector(x_pos, y_pos), animation=atlas.load_static("tile_013"), cmanager=self.collision)
-                      for x_pos in range(-config.screen_rect.width, 2 * config.screen_rect.width,
-                                         block_size)]
-
-        # create a few blocks to jump on in a staircase shape
-        y_pos -= 16 * config.rescale_factor
-        x_pos = config.screen_rect.width - 16 * config.rescale_factor * 6
-
-        blocks.extend(
-            [Block(position=make_vector(x_pos + i * block_size, y_pos - i * block_size),
-                   animation=atlas.load_static("tile_013"),
-                   cmanager=self.collision) for i in range(0, 6)]
-        )
-
-        for block in blocks:
-            self.entity_manager.register(block)  # let block do its own collision registration
+        # todo: update for new level object
+        # block_size = 16 * config.rescale_factor
+        #
+        # y_pos = config.screen_rect.height - block_size
+        #
+        # blocks = [Block(position=make_vector(x_pos, y_pos), animation=atlas.load_static("tile_013"), cmanager=self.collision)
+        #               for x_pos in range(-config.screen_rect.width, 2 * config.screen_rect.width,
+        #                                  block_size)]
+        #
+        # # create a few blocks to jump on in a staircase shape
+        # y_pos -= 16 * config.rescale_factor
+        # x_pos = config.screen_rect.width - 16 * config.rescale_factor * 6
+        #
+        # blocks.extend(
+        #     [Block(position=make_vector(x_pos + i * block_size, y_pos - i * block_size),
+        #            animation=atlas.load_static("tile_013"),
+        #            cmanager=self.collision) for i in range(0, 6)]
+        # )
+        #
+        # for block in blocks:
+        #     self.entity_manager.register(block)  # let block do its own collision registration
 
         self.entity_manager.register(self.mario)
         self.game_events.register(self.mario_input)

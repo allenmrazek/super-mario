@@ -58,24 +58,6 @@ class Entity(ABC):
         self._position = copy_vector(pos)
         self._rect.x, self._rect.y = pos
 
-    # @property
-    # def x(self):
-    #     return self._position.x
-    #
-    # @x.setter
-    # def x(self, x):
-    #     self._position.x = x
-    #     self._rect.x = x
-    #
-    # @property
-    # def y(self):
-    #     return self._position.y
-    #
-    # @y.setter
-    # def y(self, y):
-    #     self._position.y = y
-    #     self._rect.y = y
-
     @property
     def width(self):
         return self.rect.width
@@ -94,27 +76,18 @@ class Entity(ABC):
 
 
 class EntityManager:
-    def __init__(self, layers: dict, ordering: list):
-        assert layers is not None and len(layers.keys()) > 0
-        assert ordering is not None and len(ordering) > 0
+    def __init__(self, layer_ordering: list):
+        assert layer_ordering is not None and len(layer_ordering) > 0
 
-        self.layers = layers
-        self.ordering = ordering
+        self.ordering = layer_ordering
+        self.layers = dict(zip(layer_ordering, [set() for _ in range(len(layer_ordering))]))
 
     @staticmethod
     def create_default():
         # create a default entity manager. This should be sufficient in most cases
-        layers = {
-            Layer.Background: set(),
-            Layer.Block: set(),
-            Layer.Mario: set(),
-            Layer.Active: set(),
-            Layer.Overlay: set(),
-        }
-
         ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active, Layer.Overlay]
 
-        return EntityManager(layers, ordering)
+        return EntityManager(ordering)
 
     def register(self, *args):
         try:

@@ -1,4 +1,4 @@
-from .game_state import GameState
+from state.game_state import GameState
 from entities.block import Block
 from entities.entity import EntityManager
 from entities.collider import ColliderManager
