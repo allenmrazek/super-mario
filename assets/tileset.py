@@ -60,6 +60,10 @@ class TileSet:
         return self._tile_height
 
     @property
+    def tile_size(self):
+        return self._tile_width, self.tile_height
+
+    @property
     def num_tiles_per_row(self):
         return self._across
 

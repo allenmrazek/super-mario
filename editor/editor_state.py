@@ -4,13 +4,13 @@ import copy
 import pygame
 from state.game_state import GameState, state_stack
 from state.test_level import TestLevel
-from entities.gui import Frame, Element, Anchor
+from entities.gui import Frame, Element, Anchor, Scrollbar, ScrollbarType
 from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog, ModeDialog
 from entities.entity import EntityManager, Layer
 from assets.asset_manager import AssetManager
 import config
 from util import make_vector, bind_callback_parameters
-from level import Level
+from assets import Level
 from event import EventHandler
 from util import pixel_coords_to_tile_coords
 from .place_mode import PlaceMode
@@ -45,6 +45,27 @@ class EditorState(GameState, EventHandler):
         self.frame = Frame(make_vector(0, 0), config.screen_rect.size)
         self.entity_manager.register(self.frame)
 
+        # scrollbars to move map
+        self.scroll_map_horizontal = Scrollbar(pygame.Vector2(*config.screen_rect.bottomleft) + make_vector(10, -20),
+                                               ScrollbarType.HORIZONTAL, config.screen_rect.width - 20,
+                                               self.assets.gui_atlas.load_sliced("option_button"),
+                                               self.assets.gui_atlas.load_sliced("sb_thumb_h"),
+                                               self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
+                                               sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_h_hl"),
+                                               on_value_changed_callback=bind_callback_parameters(self.on_horizontal_scroll))
+
+        self.scroll_map_vertical = Scrollbar(pygame.Vector2(*config.screen_rect.topright) + make_vector(-20, 10),
+                                             ScrollbarType.VERTICAL, config.screen_rect.height - 40,
+                                               self.assets.gui_atlas.load_sliced("option_button"),
+                                               self.assets.gui_atlas.load_sliced("sb_thumb_v"),
+                                               self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
+                                               sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_v_hl"),
+                                               on_value_changed_callback=bind_callback_parameters(self.on_vertical_scroll))
+
+        self.frame.add_child(self.scroll_map_horizontal)
+        self.frame.add_child(self.scroll_map_vertical)
+
+        # ... the various dialogs used by editor
         self.tool_dialog = ToolDialog(self.assets.gui_atlas)
         self.frame.add_child(self.tool_dialog)
 
@@ -57,8 +78,8 @@ class EditorState(GameState, EventHandler):
         # editor states to handle relevant actions
         self.current_mode = None
 
-        self.place_mode = PlaceMode(self.tile_dialog, self.level.map)
-        self.passable_mode = PassableMode(self.level.map)
+        self.place_mode = PlaceMode(self.tile_dialog, self.level)
+        self.passable_mode = PassableMode(self.level)
         self.set_mode(self.passable_mode)
 
         self.mode_dialog = ModeDialog(self.assets.gui_atlas,
@@ -127,3 +148,13 @@ class EditorState(GameState, EventHandler):
                 # easiest way to handle this is to serialize our level, then load it rather than some
                 # complicated deepcopy incomplementation
                 state_stack.push(TestLevel(self.game_events, self.assets, self.level))
+
+    def on_horizontal_scroll(self, new_val):
+        existing = self.level.position
+        existing.x = new_val
+        self.level.position = existing
+
+    def on_vertical_scroll(self, new_val):
+        existing = self.level.position
+        existing.y = new_val
+        self.level.position = existing

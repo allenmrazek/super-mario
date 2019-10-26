@@ -1,0 +1,1 @@
+python -m cProfile -o profile.dat super_mario.py && echo "Generating report ..." && gprof2dot -f pstats profile.dat | dot -Tsvg -o profile.svg

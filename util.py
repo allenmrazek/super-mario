@@ -73,8 +73,8 @@ def tile_coords_to_index(tile_coords, tileset):
 
 
 def bind_callback_parameters(to_call, *args):
-    def _callback():
-        to_call(*args)
+    def _callback(*more_args):
+        to_call(*args, *more_args)
 
     return _callback
 

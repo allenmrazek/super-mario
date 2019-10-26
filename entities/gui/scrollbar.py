@@ -47,6 +47,8 @@ class Scrollbar(Element):
     def __init__(self, relative_position, sb_type, width_or_height, sb_background,
                  sb_button_background, sb_max_value, sb_min_value=0, sb_button_mouseover=None,
                  on_value_changed_callback=None):
+        # todo: to implement anchor, some assumptions in positioning code need fixing. low priority for now
+
         if sb_type == ScrollbarType.VERTICAL:
             initial_rect = Rect(*relative_position, Scrollbar.VERTICAL_WIDTH, width_or_height)
         else:

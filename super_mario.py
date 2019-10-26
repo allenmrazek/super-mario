@@ -2,6 +2,7 @@ import os
 import pygame
 from event.game_events import GameEvents, EventHandler
 from state.game_state import state_stack
+from state import PerformanceMeasurement
 from editor.editor_state import EditorState
 import config
 from timer import game_timer
@@ -32,7 +33,8 @@ def run():
 
 
     #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
-    state_stack.push(EditorState(game_events, assets))
+    #state_stack.push()
+    PerformanceMeasurement.measure(state_stack, EditorState(game_events, assets))
     #state_stack.push(TestLevel(game_events, atlas))
     #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets))
     game_timer.reset()

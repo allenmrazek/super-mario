@@ -1,6 +1,7 @@
 from .sprite_atlas import SpriteAtlas
 from .load import *
 from .asset_manager import AssetManager
-from .map import Map
+from .tile_map import TileMap
+from .level import Level
 
-__all__ = ['SpriteAtlas', 'AssetManager', 'Map']
+__all__ = ['SpriteAtlas', 'AssetManager', 'TileMap', 'Level']

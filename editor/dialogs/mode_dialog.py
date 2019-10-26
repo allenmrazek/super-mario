@@ -16,7 +16,7 @@ class ModeDialog(Dialog):
 
         width, height = 256, 256
 
-        pos = make_vector(0, r.bottom - height)
+        pos = make_vector(0, r.bottom - height - 100)
 
         super().__init__(pos, (width, height), gui_atlas.load_sliced("bkg_rounded"),
                          font=font, title=title)

@@ -4,28 +4,35 @@ from util import pixel_coords_to_tile_coords, tile_coords_to_pixel_coords
 
 
 class PassableMode(EditorMode):
-    def __init__(self, level_map):
+    def __init__(self, level):
         super().__init__()
 
-        self.level_map = level_map
+        self.level = level
+        self.tile_map = level.tile_map
 
     def draw(self, screen):
-        tile_size = (self.level_map.tileset.tile_width, self.level_map.tileset.tile_height)
+        tile_size = self.tile_map.tileset.tile_size
+        view_region = self.level.view_rect
+        view_position = self.level.position
 
         # draw grid bits
-        draw_grid(screen, config.editor_grid_color, tile_size)
+        draw_grid(screen, config.editor_grid_color, tile_size, view_region)
 
         # draw impassable tiles
         r = pygame.Rect(0, 0, *tile_size)
 
         alt_down = pygame.key.get_mods() & pygame.KMOD_ALT
 
-        for x in range(0, self.level_map.width):
-            for y in range(0, self.level_map.height):
-                passable = self.level_map.get_passable((x, y))
+        x_min, y_min, x_max, y_max = self.tile_map.view_region_to_tile_region(view_region)
+
+        for x in range(x_min, x_max):
+            for y in range(y_min, y_max):
+                passable = self.tile_map.get_passable((x, y))
 
                 if not passable:
-                    r.topleft = tile_coords_to_pixel_coords((x, y), self.level_map.tileset)
+                    r.topleft = tile_coords_to_pixel_coords((x, y), self.tile_map.tileset)
+                    r.x -= view_position[0]
+                    r.y -= view_position[1]
 
                     # draw a nice big X through this tile
                     pygame.gfxdraw.line(screen, r.topleft[0], r.topleft[1], r.bottomright[0], r.bottomright[1],
@@ -35,14 +42,15 @@ class PassableMode(EditorMode):
                     if alt_down:
                         pygame.gfxdraw.box(screen, r, (255, 0, 100))
 
-        draw_selection_square(screen, self.level_map, config.editor_grid_overlay_color)
+        draw_selection_square(screen, self.tile_map, config.editor_grid_overlay_color, self.level.view_rect)
 
     def on_map_click(self, evt, screen_mouse_pos):
-        coords = pixel_coords_to_tile_coords(screen_mouse_pos, self.level_map.tileset)
+        coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position,
+                                             self.tile_map.tileset)
 
-        if self.level_map.is_in_bounds(coords):
+        if self.tile_map.is_in_bounds(coords):
             # as a super rough test thing, let's try and change a tile with this
-            self.level_map.set_passable(coords, not self.level_map.get_passable(coords))
+            self.tile_map.set_passable(coords, not self.tile_map.get_passable(coords))
 
     def on_map_mousedown(self, evt, screen_mouse_pos):
         pass

@@ -7,7 +7,7 @@ from entities.entity import EntityManager
 from event.player_input import PlayerInputHandler
 import config
 from util import make_vector
-from level import Level
+from assets import Level
 
 
 class TestMarioPhysics(GameState):
@@ -46,29 +46,6 @@ class TestMarioPhysics(GameState):
         self.height_measurement_image.set_colorkey(pygame.Color('magenta'))
         self.height_measurement_image_rect = self.height_measurement_image.get_rect()
         self.height_measurement_image_rect.bottom = config.screen_rect.bottom
-
-        # create bottom blocks
-        # todo: update for new level object
-        # block_size = 16 * config.rescale_factor
-        #
-        # y_pos = config.screen_rect.height - block_size
-        #
-        # blocks = [Block(position=make_vector(x_pos, y_pos), animation=atlas.load_static("tile_013"), cmanager=self.collision)
-        #               for x_pos in range(-config.screen_rect.width, 2 * config.screen_rect.width,
-        #                                  block_size)]
-        #
-        # # create a few blocks to jump on in a staircase shape
-        # y_pos -= 16 * config.rescale_factor
-        # x_pos = config.screen_rect.width - 16 * config.rescale_factor * 6
-        #
-        # blocks.extend(
-        #     [Block(position=make_vector(x_pos + i * block_size, y_pos - i * block_size),
-        #            animation=atlas.load_static("tile_013"),
-        #            cmanager=self.collision) for i in range(0, 6)]
-        # )
-        #
-        # for block in blocks:
-        #     self.entity_manager.register(block)  # let block do its own collision registration
 
         self.entity_manager.register(self.mario)
         self.game_events.register(self.mario_input)

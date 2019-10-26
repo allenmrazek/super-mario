@@ -25,7 +25,6 @@ class GameState(ABC):
         pass
 
     def deactivated(self):
-        """Script is no longer topmost on stack. Not called for popped states"""
         pass
 
 
@@ -93,6 +92,7 @@ class GameStateStack:
             top.event(event)
 
     def get_next(self, state):
+        # given a state, return the next state that would run once state finishes
         idx = self._states.index(state)
 
         if idx > 0:

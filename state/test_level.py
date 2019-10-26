@@ -1,7 +1,7 @@
 import pygame
 from state.game_state import GameState
 from event import EventHandler
-from level import Level
+from assets import Level
 import config
 
 
