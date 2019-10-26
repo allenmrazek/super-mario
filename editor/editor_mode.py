@@ -6,7 +6,11 @@ class EditorMode(ABC):
         super().__init__()
 
     @abstractmethod
-    def on_map_click(self, screen_mousepos):
+    def on_map_click(self, evt, screen_mouse_pos):
+        pass
+
+    @abstractmethod
+    def on_map_mousedown(self, evt, screen_mouse_pos):
         pass
 
     @abstractmethod

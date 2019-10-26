@@ -18,3 +18,6 @@ default_background_color = Color('black')
 default_text_color = Color('white')
 default_window_toolbar_color = Color('blue')
 default_window_background = Color('red')
+
+editor_grid_color = (255, 0, 0, 128)
+editor_grid_overlay_color = (255, 0, 0, 255)

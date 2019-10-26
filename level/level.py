@@ -1,3 +1,4 @@
+import copy
 from entities.entity import Layer, EntityManager
 from entities.collider import ColliderManager
 from assets.map import Map

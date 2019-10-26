@@ -42,7 +42,7 @@ class GameStateStack:
 
     @property
     def top(self):
-        return self._states[0] if len(self._states) > 0 else None
+        return self._states[len(self._states) - 1] if len(self._states) > 0 else None
 
     def push(self, state):
         assert state is not None
@@ -60,7 +60,7 @@ class GameStateStack:
             # deactivate current top
             top.deactivated()
 
-            old_top = self._states.pop(0)
+            old_top = self._states.pop(len(self._states) - 1)
 
             # get new top (if any) and let it know it just became active
             top = self.top
@@ -98,3 +98,6 @@ class GameStateStack:
         if idx > 0:
             return self._states[idx - 1]
         return None
+
+
+state_stack = GameStateStack()

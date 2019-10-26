@@ -1,7 +1,7 @@
 import os
 import pygame
 from event.game_events import GameEvents, EventHandler
-from state.game_state import GameStateStack
+from state.game_state import state_stack
 from editor.editor_state import EditorState
 import config
 from timer import game_timer
@@ -30,10 +30,8 @@ def run():
     game_events = GameEvents()
     game_events.register(_QuitListener())
 
-    state_stack = GameStateStack()
 
     #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
-    # state_stack.push(TestGui(game_events, atlas))
     state_stack.push(EditorState(game_events, assets))
     #state_stack.push(TestLevel(game_events, atlas))
     #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets))
@@ -46,7 +44,7 @@ def run():
         game_events.do_events()
         game_timer.update()
 
-        # todo: fixed times tep, or max time step?
+        # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
 
         while accumulator > config.PHYSICS_DT:

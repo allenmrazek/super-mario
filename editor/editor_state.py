@@ -1,7 +1,9 @@
 from abc import abstractmethod, ABC
 import random
+import copy
 import pygame
-from state.game_state import GameState
+from state.game_state import GameState, state_stack
+from state.test_level import TestLevel
 from entities.gui import Frame, Element, Anchor
 from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog
 from entities.entity import EntityManager, Layer
@@ -12,6 +14,7 @@ from level import Level
 from event import EventHandler
 from util import pixel_coords_to_tile_coords
 from .place_mode import PlaceMode
+from .passable_mode import PassableMode
 
 
 class _ModeDrawHelper(Element):
@@ -53,13 +56,27 @@ class EditorState(GameState, EventHandler):
 
         # editor states to handle relevant actions
 
+        self.current_mode = None
+
         self.place_mode = PlaceMode(self.tile_dialog, self.level.map)
-        self.current_mode = self.place_mode
+        self.passable_mode = PassableMode(self.level.map)
+        self.set_mode(self.passable_mode)
 
     def draw(self, screen):
         screen.fill(config.default_background_color)
         self.level.draw(screen)
         self.entity_manager.draw(screen)
+
+    def set_mode(self, new_mode):
+        if new_mode is self.place_mode:
+            # turn on/off relevant dialogs
+            pass
+        elif new_mode is self.passable_mode:
+            self.tile_dialog.enabled = False
+            self.tool_dialog.enabled = False
+            self.layer_dialog.enabled = False
+
+            self.current_mode = new_mode
 
     def update(self, dt):
         self.entity_manager.update(dt)
@@ -83,12 +100,22 @@ class EditorState(GameState, EventHandler):
         # if absolutely nothing handled the event, the user has tried to do some kind of interaction
         # with the map itself
         if not self.is_consumed(evt):
-            if evt.type == pygame.MOUSEBUTTONDOWN or (evt.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0]):
-                coords = pixel_coords_to_tile_coords(evt.pos, self.level.map.tileset)
+            if evt.type == pygame.MOUSEBUTTONDOWN:
+                self.consume(evt)
+                self.current_mode.on_map_click(evt, pygame.mouse.get_pos())
 
-                if self.level.map.is_in_bounds(coords):
-                    # as a super rough test thing, let's try and change a tile with this
-                    self.level.map.set_tile(coords, self.tile_dialog.selected_tile_idx)
+            elif evt.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0]:
+                self.consume(evt)
+                self.current_mode.on_map_mousedown(evt, pygame.mouse.get_pos())
+
+            elif evt.type == pygame.KEYDOWN and evt.key == pygame.K_t:
+                # copy level state -> we don't want the actual movement and deaths of entities to be reflected
+                # in our copy of the level
+                print("warning: shallow copy of level")
+
+                # easiest way to handle this is to serialize our level, then load it rather than some
+                # complicated deepcopy incomplementation
+                state_stack.push(TestLevel(self.game_events, self.assets, self.level))
 
     @staticmethod
     def create_tool_dialog(atlas):
