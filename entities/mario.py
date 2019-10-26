@@ -1,78 +1,16 @@
 import math
 from typing import NamedTuple
 from pygame import Vector2
-from pygame import Rect
 from .entity import Entity, Layer
 from entities.collider import ColliderManager
 from entities.collider import Collider
-from util import mario_str_to_pixel_value as mstpv
 from animation import Animation
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 import config
 from util import copy_vector
 from util import make_vector
 
-
-frames_to_seconds = 60.  # mario speeds defined in terms of 60 fps with original resolution
-frames_to_seconds_squared = frames_to_seconds ** 2
-
-frames_to_seconds *= config.rescale_factor  # apply any scaling factor, so proportions are kept
-frames_to_seconds_squared *= config.rescale_factor
-
-# horizontal movement constants
-min_walk_velocity = frames_to_seconds * mstpv('00130')
-max_walk_velocity = frames_to_seconds * mstpv('01900')
-max_run_velocity = frames_to_seconds * mstpv('02900')
-skid_turnaround_velocity = frames_to_seconds * mstpv('00900')
-
-walking_acceleration = frames_to_seconds_squared * mstpv('00098')
-running_acceleration = frames_to_seconds_squared * mstpv('000E4')
-release_deceleration = frames_to_seconds_squared * mstpv('000D0')
-skid_deceleration = frames_to_seconds_squared * mstpv('001A0')
-
-num_frames_hold_speed = 10
-
-# momentum constants
-momentum_velocity_threshold = frames_to_seconds * mstpv('01900')
-momentum_start_jump_threshold = frames_to_seconds * mstpv('01D000')
-
-momentum_forward_slow = frames_to_seconds_squared * mstpv('00098')
-momentum_forward_fast = frames_to_seconds_squared * mstpv('000E4')
-
-momentum_backward_fast = frames_to_seconds_squared * mstpv('000E4')  # used when current speed > velocity threshold
-momentum_backward_high_initial_speed = frames_to_seconds_squared * mstpv('000D0')  # low cur speed, high initial
-momentum_backward_low_initial_speed = frames_to_seconds_squared * mstpv('00098')  # low cur speed, low initial
-
-momentum_slow_start_max_velocity = frames_to_seconds * mstpv('01900')
-momentum_fast_start_max_velocity = frames_to_seconds * mstpv('02900')
-
-
-# air physics constants
-class _JumpParameters(NamedTuple):
-    initial_speed: float  # horizontal speed threshold
-    initial_velocity_y: float  # mario velocity set to this value when jumping
-    jump_button_gravity: float  # gravity applied at this rate when jump button held
-    gravity: float  # gravity applied at this rate unless jump button held
-
-    @staticmethod
-    def create(i_h_speed, initial_velocity_y, jump_gravity, gravity):
-        return _JumpParameters(
-            frames_to_seconds * mstpv(i_h_speed),
-            frames_to_seconds * mstpv(initial_velocity_y),
-            frames_to_seconds_squared * mstpv(jump_gravity),
-            frames_to_seconds_squared * mstpv(gravity))
-
-
-vertical_physics_parameters = [
-    _JumpParameters.create('01000', '04000', '00200', '00700'),
-    _JumpParameters.create('024FF', '04000', '001E0', '00600'),
-    _JumpParameters.create('FFFFF', '05000', '00280', '00900')
-]
-
-level_entry_vertical_physics = _JumpParameters.create('00000', '00000', '00280', '00280')
-
-air_max_vertical_velocity = frames_to_seconds * mstpv('04800')
-air_velocity_when_max_exceeded = frames_to_seconds * mstpv('04000')
+from .mario_constants import *
 
 
 class Mario(Entity):
@@ -297,7 +235,7 @@ class Mario(Entity):
 
             # note: the initial horizontal speed when jump began is of interest in mid-air momentum calculations,
             # so copy jump stats and insert current horizontal velocity into it
-            self._jump_stats = _JumpParameters(math.fabs(self._velocity.x), *jump_stats[1:])
+            self._jump_stats = JumpParameters(math.fabs(self._velocity.x), *jump_stats[1:])
 
             return
 

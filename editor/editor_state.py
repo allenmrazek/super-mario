@@ -59,7 +59,7 @@ class EditorState(GameState, EventHandler):
                                              ScrollbarType.VERTICAL, config.screen_rect.height - 40,
                                                self.assets.gui_atlas.load_sliced("option_button"),
                                                self.assets.gui_atlas.load_sliced("sb_thumb_v"),
-                                               self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
+                                               self.level.tile_map.height * self.level.tile_map.tileset.tile_height,
                                                sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_v_hl"),
                                                on_value_changed_callback=bind_callback_parameters(self.on_vertical_scroll))
 
