@@ -8,7 +8,7 @@ from util import make_vector, bind_callback_parameters
 
 class ModeDialog(Dialog):
 
-    def __init__(self, gui_atlas, on_tile_mode_callback, on_passable_mode_callback):
+    def __init__(self, gui_atlas, on_tile_mode_callback, on_passable_mode_callback, on_config_mode_callback):
         font = pygame.font.SysFont("", 24)
 
         r = config.screen_rect.copy()
@@ -20,7 +20,6 @@ class ModeDialog(Dialog):
 
         super().__init__(pos, (width, height), gui_atlas.load_sliced("bkg_rounded"),
                          font=font, title=title)
-
 
 
         # create an entry for each mode
@@ -52,3 +51,15 @@ class ModeDialog(Dialog):
                                       mouseover_image=gui_atlas.load_sliced("option_button_hl"))
 
         self.add_child(passable_mode_button)
+
+        # config mode
+        config_mode_button = Button(make_vector(10, passable_mode_button.relative_position.y + passable_mode_button.height),
+                                      size=button_size,
+                                      background=gui_atlas.load_sliced("option_button"),
+                                      font=font,
+                                      text="Edit Settings",
+                                      on_click_callback=bind_callback_parameters(on_config_mode_callback),
+                                      text_color=button_text_color,
+                                      mouseover_image=gui_atlas.load_sliced("option_button_hl"))
+
+        self.add_child(config_mode_button)

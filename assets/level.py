@@ -18,6 +18,8 @@ class Level(EventHandler):
         self.entity_manager = EntityManager.create_default()
         self.tile_map = TileMap((200, 100), assets.tileset)
         self.collider_manager = ColliderManager(self.tile_map)
+        self.background_color = (0, 0, 0)
+
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
         self.mario = Mario(self.player_input, assets.character_atlas, self.collider_manager)

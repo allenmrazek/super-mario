@@ -78,3 +78,6 @@ def bind_callback_parameters(to_call, *args):
 
     return _callback
 
+
+def clamp(val, min_val, max_val):
+    return max(min(val, max_val), min_val)

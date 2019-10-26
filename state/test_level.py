@@ -17,7 +17,7 @@ class TestLevel(GameState, EventHandler):
         self.level.update(dt)
 
     def draw(self, screen):
-        screen.fill(config.default_background_color)
+        screen.fill(self.level.background_color)
         self.level.draw(screen)
 
     @property

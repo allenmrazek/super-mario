@@ -5,7 +5,7 @@ import pygame
 from state.game_state import GameState, state_stack
 from state.test_level import TestLevel
 from entities.gui import Frame, Element, Anchor, Scrollbar, ScrollbarType
-from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog, ModeDialog
+from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog, ModeDialog, LevelConfigDialog
 from entities.entity import EntityManager, Layer
 from assets.asset_manager import AssetManager
 import config
@@ -15,6 +15,7 @@ from event import EventHandler
 from util import pixel_coords_to_tile_coords
 from .place_mode import PlaceMode
 from .passable_mode import PassableMode
+from .config_mode import ConfigMode
 
 
 class _ModeDrawHelper(Element):
@@ -75,21 +76,28 @@ class EditorState(GameState, EventHandler):
         self.tile_dialog = TilePickerDialog(self.assets)
         self.frame.add_child(self.tile_dialog)
 
+        self.config_dialog = LevelConfigDialog(self.level, self.assets.gui_atlas)
+        self.frame.add_child(self.config_dialog)
+
         # editor states to handle relevant actions
         self.current_mode = None
 
         self.place_mode = PlaceMode(self.tile_dialog, self.level)
         self.passable_mode = PassableMode(self.level)
-        self.set_mode(self.passable_mode)
+        self.config_mode = ConfigMode()
+
+        self.set_mode(self.place_mode)
 
         self.mode_dialog = ModeDialog(self.assets.gui_atlas,
                                       on_tile_mode_callback=bind_callback_parameters(self.set_mode, self.place_mode),
                                       on_passable_mode_callback=
-                                      bind_callback_parameters(self.set_mode, self.passable_mode))
+                                      bind_callback_parameters(self.set_mode, self.passable_mode),
+                                      on_config_mode_callback=bind_callback_parameters(self.set_mode, self.config_mode))
+
         self.frame.add_child(self.mode_dialog)
 
     def draw(self, screen):
-        screen.fill(config.default_background_color)
+        screen.fill(self.level.background_color)
         self.level.draw(screen)
         self.entity_manager.draw(screen)
 
@@ -99,12 +107,18 @@ class EditorState(GameState, EventHandler):
             self.tile_dialog.enabled = True
             self.tool_dialog.enabled = True
             self.layer_dialog.enabled = True
+            self.config_dialog.enabled = False
 
         elif new_mode is self.passable_mode:
             self.tile_dialog.enabled = False
             self.tool_dialog.enabled = False
             self.layer_dialog.enabled = False
-
+            self.config_dialog.enabled = False
+        elif new_mode is self.config_mode:
+            self.tile_dialog.enabled = False
+            self.tool_dialog.enabled = False
+            self.layer_dialog.enabled = False
+            self.config_dialog.enabled = True
         else:
             raise NotImplementedError  # unknown mode
 
