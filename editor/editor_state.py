@@ -5,11 +5,11 @@ import pygame
 from state.game_state import GameState, state_stack
 from state.test_level import TestLevel
 from entities.gui import Frame, Element, Anchor
-from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog
+from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog, ModeDialog
 from entities.entity import EntityManager, Layer
 from assets.asset_manager import AssetManager
 import config
-from util import make_vector
+from util import make_vector, bind_callback_parameters
 from level import Level
 from event import EventHandler
 from util import pixel_coords_to_tile_coords
@@ -45,22 +45,27 @@ class EditorState(GameState, EventHandler):
         self.frame = Frame(make_vector(0, 0), config.screen_rect.size)
         self.entity_manager.register(self.frame)
 
-        self.tool_dialog = EditorState.create_tool_dialog(self.assets.gui_atlas)
+        self.tool_dialog = ToolDialog(self.assets.gui_atlas)
         self.frame.add_child(self.tool_dialog)
 
-        self.layer_dialog = EditorState.create_layer_dialog(self.assets.gui_atlas)
+        self.layer_dialog = LayerDialog(self.assets.gui_atlas)
         self.frame.add_child(self.layer_dialog)
 
-        self.tile_dialog = EditorState.create_tile_dialog(self.assets)
+        self.tile_dialog = TilePickerDialog(self.assets)
         self.frame.add_child(self.tile_dialog)
 
         # editor states to handle relevant actions
-
         self.current_mode = None
 
         self.place_mode = PlaceMode(self.tile_dialog, self.level.map)
         self.passable_mode = PassableMode(self.level.map)
         self.set_mode(self.passable_mode)
+
+        self.mode_dialog = ModeDialog(self.assets.gui_atlas,
+                                      on_tile_mode_callback=bind_callback_parameters(self.set_mode, self.place_mode),
+                                      on_passable_mode_callback=
+                                      bind_callback_parameters(self.set_mode, self.passable_mode))
+        self.frame.add_child(self.mode_dialog)
 
     def draw(self, screen):
         screen.fill(config.default_background_color)
@@ -70,13 +75,19 @@ class EditorState(GameState, EventHandler):
     def set_mode(self, new_mode):
         if new_mode is self.place_mode:
             # turn on/off relevant dialogs
-            pass
+            self.tile_dialog.enabled = True
+            self.tool_dialog.enabled = True
+            self.layer_dialog.enabled = True
+
         elif new_mode is self.passable_mode:
             self.tile_dialog.enabled = False
             self.tool_dialog.enabled = False
             self.layer_dialog.enabled = False
 
-            self.current_mode = new_mode
+        else:
+            raise NotImplementedError  # unknown mode
+
+        self.current_mode = new_mode
 
     def update(self, dt):
         self.entity_manager.update(dt)
@@ -116,27 +127,3 @@ class EditorState(GameState, EventHandler):
                 # easiest way to handle this is to serialize our level, then load it rather than some
                 # complicated deepcopy incomplementation
                 state_stack.push(TestLevel(self.game_events, self.assets, self.level))
-
-    @staticmethod
-    def create_tool_dialog(atlas):
-        dialog = ToolDialog(atlas)
-
-        # todo: set up callbacks?
-
-        return dialog
-
-    @staticmethod
-    def create_layer_dialog(atlas):
-        dialog = LayerDialog(atlas)
-
-        # todo
-
-        return dialog
-
-    @staticmethod
-    def create_tile_dialog(asset_manager):
-        dialog = TilePickerDialog(asset_manager)
-
-        # todo
-
-        return dialog

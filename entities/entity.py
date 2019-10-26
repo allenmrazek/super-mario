@@ -80,7 +80,7 @@ class EntityManager:
         assert layer_ordering is not None and len(layer_ordering) > 0
 
         self.ordering = layer_ordering
-        self.layers = dict(zip(layer_ordering, [set() for _ in range(len(layer_ordering))]))
+        self.layers = dict(zip(layer_ordering, [list() for _ in range(len(layer_ordering))]))
 
     @staticmethod
     def create_default():
@@ -105,7 +105,7 @@ class EntityManager:
 
     def _register_internal(self, entity):
         assert entity.layer in self.layers.keys()
-        self.layers[entity.layer].add(entity)
+        self.layers[entity.layer].append(entity)
 
     def unregister(self, entity):
         assert isinstance(entity, Entity)

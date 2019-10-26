@@ -88,6 +88,8 @@ def load_gui_atlas():
     load_slice("sb_thumb_h", "sb_thumb_h_hl", (4, 4), **kwargs)
     load_slice("sb_thumb_v", "sb_thumb_v_hl", (4, 4), **kwargs)
 
+    load_slice("option_button", "option_button_hl", (4, 4))
+
     atlas.initialize_static("option_button", **kwargs)
     atlas.initialize_static("option_button_checked_heavy", **kwargs)
     atlas.initialize_static("option_button_checked_light", **kwargs)

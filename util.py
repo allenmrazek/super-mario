@@ -70,3 +70,11 @@ def tile_index_to_coords(idx, tileset):
 
 def tile_coords_to_index(tile_coords, tileset):
     raise NotImplementedError
+
+
+def bind_callback_parameters(to_call, *args):
+    def _callback():
+        to_call(*args)
+
+    return _callback
+
