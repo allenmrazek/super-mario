@@ -11,11 +11,12 @@ epsilon_sqr = sys.float_info.epsilon ** 2
 
 
 class Collision:
-    __slots__ = ['moved_collider', 'hit_collider', 'hit_block']
+    __slots__ = ['moved_collider', 'hit_collider', 'hit_block', 'hit_block_rect']
 
-    def __init__(self, moved_collider, hit_thing):
+    def __init__(self, moved_collider, hit_thing, block_rect=None):
         self.hit_collider = hit_thing if isinstance(hit_thing, Collider) else None
         self.hit_block = hit_thing if isinstance(hit_thing, tuple) else None
+        self.hit_block_rect = block_rect
         self.moved_collider = moved_collider
 
 
@@ -129,10 +130,9 @@ class ColliderManager:
 
         return collisions
 
-    def iterative_move(self, collider, new_pixel_position, iterations=config.PHYSICS_COLLISION_ITERATIONS, tf_dispatch_events=False):
+    def iterative_move(self, collider, new_pixel_position, tf_dispatch_events=False):
         """Special type of move that advances towards coordinates by teleporting repeatedly. If the first teleport
-        hits something, distance is halved and the move is attempted again. Continues until all iterations have
-        been attempted. If no movement was possible, returns collisions of latest attempt"""
+        hits something, distance is halved and the move is attempted again. Returns amount moved"""
         initial = collider.position
 
         dsquared = distance_squared(initial, new_pixel_position)
@@ -143,7 +143,10 @@ class ColliderManager:
         direction = (new_pixel_position - initial).normalize()
         collisions = []
 
-        for _ in range(iterations):
+        while True:
+            if dist < 0.5: # can't move any distance that will change current pixel
+                break
+
             collisions = self.try_move(collider, initial + direction * dist)
 
             if len(collisions) == 0:
@@ -155,7 +158,7 @@ class ColliderManager:
         if tf_dispatch_events:
             ColliderManager.dispatch_events(collider, collisions)
 
-        return collisions
+        return dist
 
     def get_world_collisions(self, collider):
         # determine which grid square(s) the collider is in
@@ -179,7 +182,7 @@ class ColliderManager:
                     r.topleft = (x * self.tile_map.tile_width, y * self.tile_map.tile_height)
 
                     if r.colliderect(collider.rect):
-                        collisions.append(Collision(moved_collider=collider, hit_thing=(x, y)))
+                        collisions.append(Collision(moved_collider=collider, hit_thing=(x, y), block_rect=r.copy()))
 
         return collisions
 

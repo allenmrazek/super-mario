@@ -59,10 +59,11 @@ class Goomba(Entity):
         vel = make_vector(0, self.velocity.y)
         target_pos = self.position + vel * dt
         self.movement_collider.position = self.position
-        collisions = self.movement_collider.try_move(target_pos, False)
+        collisions = self.movement_collider.try_move(target_pos, False)  # type: list
 
         if collisions:  # couldn't get that close: try and move as close as we can
             # note: we don't set airborne here because it's possible it wasn't a block that prevented movement
+
             self.movement_collider.iterative_move(target_pos)
             ColliderManager.dispatch_events(self.movement_collider, collisions)
 
