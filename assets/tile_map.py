@@ -28,11 +28,11 @@ class TileMap:
             self.set_tile((x, self.height - 1), 0)
             self.set_passable((x, self.height - 1), False)
 
-        # temp: set blocks randomly
-        for x in range(0, self.width):
-            for y in range(0, self.height):
-                self.set_tile((x, y), random.randint(0, self.tileset.tile_count - 1))
-
+        # # temp: set blocks randomly
+        # for x in range(0, self.width):
+        #     for y in range(0, self.height):
+        #         self.set_tile((x, y), random.randint(0, self.tileset.tile_count - 1))
+        #
         # set bounds of rect to all the same block, to make distinct
         for x in range(0, self.width):
             self.set_tile((x, 0), 0)

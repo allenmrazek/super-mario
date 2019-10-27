@@ -28,6 +28,8 @@ def _load_all_as_static(atlas_name, rescale=True):
 def load_character_atlas():
     atlas = SpriteAtlas(get_atlas_path("characters"))
 
+    frame_width, frame_height = [16 * config.rescale_factor] * 2
+
     # stationary
     atlas.initialize_static("mario_stand_right", config.transparent_color)
     atlas.initialize_static_from_surface("mario_stand_left",
@@ -36,8 +38,8 @@ def load_character_atlas():
 
     # running (left and right)
     atlas.initialize_animation("mario_run_right",
-                               16 * config.rescale_factor,
-                               16 * config.rescale_factor,
+                               frame_width,
+                               frame_height,
                                0.2, config.transparent_color)
 
     run_right = atlas.load_animation("mario_run_right")  # type: Animation
@@ -59,6 +61,10 @@ def load_character_atlas():
 
     atlas.initialize_static_from_surface(
         "mario_skid_right", pygame.transform.flip(atlas.load_static("mario_skid_left").frames[0], True, False))
+
+    # goomba enemy
+    atlas.initialize_animation("goomba", frame_width, frame_height, .25, config.transparent_color)
+    atlas.initialize_static("goomba_squashed", config.transparent_color)
 
     return atlas
 

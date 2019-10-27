@@ -1,4 +1,6 @@
-mario_jump_right = 0 16 16 16
+goomba = 0 16 32 16
+goomba_squashed = 0 48 16 8
+mario_jump_right = 32 16 16 16
 mario_run_right = 0 0 48 16
-mario_skid_left = 16 16 16 16
-mario_stand_right = 32 16 16 16
+mario_skid_left = 0 32 16 16
+mario_stand_right = 16 32 16 16

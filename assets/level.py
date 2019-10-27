@@ -8,6 +8,7 @@ from util import make_vector, copy_vector
 from entities.mario import Mario
 from event import PlayerInputHandler
 from event.game_events import EventHandler
+from entities.characters import Goomba
 
 
 class Level(EventHandler):
@@ -16,15 +17,25 @@ class Level(EventHandler):
         super().__init__()
 
         self.entity_manager = EntityManager.create_default()
-        self.tile_map = TileMap((20, 10), assets.tileset)
+        self.tile_map = TileMap((30, 20), assets.tileset)
         self.collider_manager = ColliderManager(self.tile_map)
         self.background_color = (0, 0, 0)
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
-        self.mario = Mario(self.player_input, assets.character_atlas, self.collider_manager)
-        self.entity_manager.register(self.mario)
-        self.mario.position = make_vector(config.screen_rect.centerx, 0)
+        # self.mario = Mario(self.player_input, assets.character_atlas, self.collider_manager)
+        # self.entity_manager.register(self.mario)
+        # self.mario.position = make_vector(config.screen_rect.centerx, 0)
+
+        self.goomba = Goomba(assets, self.collider_manager)
+        self.goomba.position = make_vector(200, 10 * 32 - 32 - 32)
+        self.entity_manager.register(self.goomba)
+        self.goomba2 = Goomba(assets, self.collider_manager)
+        self.goomba2.position = make_vector(38, 19 * 32 - 33)
+        self.entity_manager.register(self.goomba2)
+
+        # self.goomba.position = make_vector(*config.screen_rect.center)
+        # self.goomba2.position = make_vector(*config.screen_rect.center)
 
         self._scroll_position = make_vector(0, 0)
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)

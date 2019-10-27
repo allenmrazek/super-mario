@@ -6,12 +6,13 @@ from util import make_vector
 
 
 class Layer(IntFlag):
-    Background = 1 << 0
-    Block = 1 << 1
-    Mario = 1 << 2
-    Active = 1 << 3
-    Interface = 1 << 4
-    Overlay = 1 << 5
+    Background = 1 << 0     # behind blocks
+    Block = 1 << 1          # layer blocks are drawn on
+    Mario = 1 << 2          # take a guess
+    Enemy = 1 << 3          # take another guess
+    Active = 1 << 4         # "active" things: think fireballs and projectiles; mario death animations
+    Interface = 1 << 5      # interface stuff here
+    Overlay = 1 << 6        # a final layer that absolutely will overlay everything. Use sparingly
 
     @staticmethod
     def count():
@@ -84,7 +85,7 @@ class EntityManager:
     @staticmethod
     def create_default():
         # create a default entity manager. This should be sufficient in most cases
-        ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active, Layer.Overlay]
+        ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Enemy, Layer.Active, Layer.Interface, Layer.Overlay]
 
         return EntityManager(ordering)
 
