@@ -3,6 +3,30 @@ import random
 import pygame
 from animation import Animation
 import config
+from util import tile_index_to_coords
+
+
+# class TileMapSerializer(json.JSONEncoder):
+#     def default(self, o):
+#         if isinstance(o, TileMap):
+#             values = {"width": o.width, "height": o.height}
+#
+#             square_encoder = MapSquareSerializer()
+#
+#             values["tiles"] = [square_encoder.encode(o.tile_map[x][y]) for x in range(o.width) for y in range(o.height)]
+#
+#             return values
+#         else:
+#             super().default(o)
+#
+#     def decode(self, values):
+#         tmd = MapSquareSerializer()
+#
+#         tm = tmd.decode(values)
+#
+#         tiles = tmd.decode(values["tiles"])
+#
+#         return tm
 
 
 class TileMap:
@@ -15,13 +39,34 @@ class TileMap:
             self.idx = idx
             self.passable = passable
 
+        def serialize(self):
+            values = {}
+
+            if self.idx is not None:
+                values['idx'] = str(self.idx)
+
+            if not self.passable:
+                values['passable'] = str(self.passable)
+
+            return values
+
+        def deserialize(self, values):
+            if 'idx' in values:
+                self.idx = int(values['idx'])
+            else:
+                self.idx = None
+
+            if 'passable' in values:
+                self.passable = False
+            else:
+                self.passable = True
+
     def __init__(self, map_size, tileset):
         self.tile_map = []
         self.tileset = tileset
         self.width, self.height = map_size
 
-        for _ in range(self.width):
-            self.tile_map.append([TileMap.MapSquare() for _ in range(self.height)])
+        self._create_map()
 
         # make bottom row of blocks
         for x in range(0, self.width):
@@ -45,6 +90,10 @@ class TileMap:
             self.set_passable((0, y), False)
             self.set_tile((self.width - 1, y), 0)
             self.set_passable((self.width - 1, y), False)
+
+    def _create_map(self):
+        for _ in range(self.width):
+            self.tile_map.append([TileMap.MapSquare() for _ in range(self.height)])
 
     def view_region_to_tile_region(self, view_region):
         # converts a viewing rectangle into visible tile coordinates
@@ -111,3 +160,20 @@ class TileMap:
     @property
     def tile_height(self):
         return self.tileset.tile_height
+
+    def serialize(self):
+        return {"width": self.width,
+                "height": self.height,
+                "tile_map": [self.tile_map[x][y].serialize() for x in range(self.width) for y in range(self.height)]}
+
+    def deserialize(self, values):
+        self.width = int(values['width'])
+        self.height = int(values['height'])
+
+        self._create_map()
+
+        tiles = values["tile_map"]  # type: list
+
+        for x in range(self.width):
+            for y in range(self.height):
+                self.tile_map[x][y].deserialize(tiles.pop(0))

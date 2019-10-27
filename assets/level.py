@@ -9,6 +9,11 @@ from entities.characters import Mario
 from event import PlayerInputHandler
 from event.game_events import EventHandler
 from entities.characters import Goomba
+import json
+
+
+
+
 
 
 class Level(EventHandler):
@@ -20,6 +25,7 @@ class Level(EventHandler):
         self.tile_map = TileMap((30, 20), assets.tileset)
         self.collider_manager = ColliderManager(self.tile_map)
         self.background_color = (0, 0, 0)
+        self.filename = "test_level.lvl"
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
@@ -31,6 +37,17 @@ class Level(EventHandler):
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)
 
         self.spawn_mario()
+
+        # encoder = EncoderTest()
+        # print(encoder.encode(self))
+        #
+        # other = json.JSONDecoder(object_hook=decode_level).decode(encoder.encode(self))
+
+        # print(self.to_json())
+        # self.background_color = (255, 0, 0)
+        # self.from_json(self.to_json())
+
+        #print(json.dumps(self.serialize()))
 
     def add_entity(self, entity):
         self.entity_manager.register(entity)
@@ -59,6 +76,17 @@ class Level(EventHandler):
 
         self.mario.enabled = False
         self.entity_manager.unregister(self.mario)
+
+    def serialize(self):
+        return {"name": "unknown",
+                "filename": self.filename,
+                "background_color": self.background_color,
+                "tile_map": self.tile_map.serialize()}
+
+    def deserialize(self, values):
+        self.filename = values["filename"]
+        self.background_color = tuple(values["background_color"])
+        self.tile_map.deserialize(values["tile_map"])
 
     @property
     def view_rect(self):

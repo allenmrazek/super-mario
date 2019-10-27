@@ -2,7 +2,7 @@ from .behavior import Behavior
 from ...effects import MarioDeath
 from entities.collider import Collider, ColliderManager, Collision
 from entities import Layer
-from util import make_vector
+from util import make_vector, world_to_screen
 import config
 
 
@@ -26,7 +26,10 @@ class DamageMario(Behavior):
 
     def draw(self, screen, view_rect):
         if config.debug_hitboxes:
-            screen.fill((0, 255, 0), self.hitbox.rect)
+            r = self.hitbox.rect.copy()
+            r.topleft = world_to_screen(self.hitbox.position, view_rect) + self.hitbox_offset
+            r = screen.get_rect().clip(r)
+            screen.fill((0, 255, 0), r)
 
     def on_mario_collision(self, collision):
         # todo: logic which downgrades mario?

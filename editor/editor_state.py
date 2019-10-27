@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 import random
 import copy
+import json
 import pygame
 from state.game_state import GameState, state_stack
 from state.test_level import TestLevel
@@ -157,11 +158,13 @@ class EditorState(GameState, EventHandler):
             elif evt.type == pygame.KEYDOWN and evt.key == pygame.K_t:
                 # copy level state -> we don't want the actual movement and deaths of entities to be reflected
                 # in our copy of the level
-                print("warning: shallow copy of level")
 
                 # easiest way to handle this is to serialize our level, then load it rather than some
                 # complicated deepcopy incomplementation
-                state_stack.push(TestLevel(self.game_events, self.assets, self.level))
+                test_level = Level(self.assets)
+                test_level.deserialize(self.level.serialize())
+
+                state_stack.push(TestLevel(self.game_events, self.assets, test_level))
 
     def on_horizontal_scroll(self, new_val):
         existing = self.level.position

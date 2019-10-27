@@ -6,7 +6,7 @@ from entities.collider import Collider
 from animation import Animation
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 from util import copy_vector
-from util import make_vector
+from util import make_vector, world_to_screen
 import config
 from .mario_constants import *
 
@@ -45,6 +45,7 @@ class Mario(Entity):
 
         self.hitbox = Collider.from_entity(self, cmanager, 0)
         self.hitbox.rect.width, self.hitbox.rect.height = 10 * config.rescale_factor, 14 * config.rescale_factor
+        self.hitbox.position = self.position + make_vector(3 * config.rescale_factor, 2 * config.rescale_factor)
 
         self.enabled = True
 
@@ -85,7 +86,13 @@ class Mario(Entity):
         screen.blit(self.animator.image, true_pos)
 
         if config.debug_hitboxes:
-            screen.fill((0, 255, 0), self.hitbox.rect)
+            self.hitbox.position = self.position + make_vector(3 * config.rescale_factor, 2 * config.rescale_factor)
+            r = self.hitbox.rect.copy()
+            # todo: factor hitbox out of mario
+
+            r.topleft = world_to_screen(self.hitbox.position, view_rect)
+            r = screen.get_rect().clip(r)
+            screen.fill((0, 255, 0), r)
 
     @property
     def layer(self):

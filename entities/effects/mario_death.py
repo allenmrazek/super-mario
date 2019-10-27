@@ -8,7 +8,8 @@ from util import world_to_screen
 Stay in place 0.25 seconds
 Apply upward velocity roughly equivalent to 4 tiles of jump height
 pass off bottom of screen
-end
+remove effect
+respawn mario
 """
 
 
