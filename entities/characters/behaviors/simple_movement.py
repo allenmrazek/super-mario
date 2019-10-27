@@ -1,16 +1,19 @@
+from .behavior import Behavior
 from util import make_vector
 from entities.characters.parameters import EnemyParameters
 from entities.collider import Collider
 from entities import Layer
 
 
-class SimpleMovement:
+class SimpleMovement(Behavior):
     """Side-to-side movement, moving left initially, changes direction on hitting an enemy or block
     (to left or right)"""
     def __init__(self, entity, collider_manager, parameters, movement_collider=None):
         assert entity is not None
         assert collider_manager is not None
         assert parameters is not None
+
+        super().__init__()
 
         self.entity = entity
         self.movement_collider = movement_collider or Collider.from_entity(entity,
@@ -48,6 +51,9 @@ class SimpleMovement:
         if self._reverse_direction:
             self.velocity.x *= -1.
             self._reverse_direction = False
+
+    def draw(self, screen, view_rect):
+        pass
 
     def _handle_vertical_movement(self, dt):
         # todo: what if it jumps onto another enemy?

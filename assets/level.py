@@ -5,7 +5,7 @@ from entities.collider import ColliderManager
 from assets.tile_map import TileMap
 import config
 from util import make_vector, copy_vector
-from entities.mario import Mario
+from entities.characters import Mario
 from event import PlayerInputHandler
 from event.game_events import EventHandler
 from entities.characters import Goomba
@@ -41,7 +41,7 @@ class Level(EventHandler):
         self.entity_manager.update(dt, self.view_rect)
 
     def draw(self, screen):
-        vr = self.view_rect # send copy: don't want our private stuff messed with
+        vr = self.view_rect  # send copy: don't want our private stuff messed with
 
         self.tile_map.draw(screen, vr)
         self.entity_manager.draw(screen, vr)

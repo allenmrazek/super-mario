@@ -1,6 +1,6 @@
 import math
 from pygame import Vector2
-from .entity import Entity, Layer
+from .. import Entity, Layer
 from entities.collider import ColliderManager
 from entities.collider import Collider
 from animation import Animation

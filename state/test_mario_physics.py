@@ -1,7 +1,6 @@
 import pygame
 from state.game_state import GameState
-from entities import Mario
-from entities.block import Block
+from entities.characters import Mario
 from entities.collider import ColliderManager
 from entities.entity import EntityManager
 from event.player_input import PlayerInputHandler
