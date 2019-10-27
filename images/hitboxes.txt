@@ -1,0 +1,6 @@
+// use unscaled coordinates
+// (i.e. assume size-on-disk images for reference)
+// These are all rects, with left, top, width, height
+
+goomba=3, 5, 10, 7
+mario=3, 2, 10, 14

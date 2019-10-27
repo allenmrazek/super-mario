@@ -131,8 +131,8 @@ class ColliderManager:
 
     def iterative_move(self, collider, new_pixel_position, iterations=config.PHYSICS_COLLISION_ITERATIONS, tf_dispatch_events=False):
         """Special type of move that advances towards coordinates by teleporting repeatedly. If the first teleport
-        hits something, distance is halved and the move is attempted again. If no movement could be made, returns
-        current collision values"""
+        hits something, distance is halved and the move is attempted again. Continues until all iterations have
+        been attempted. If no movement was possible, returns collisions of latest attempt"""
         initial = collider.position
 
         dsquared = distance_squared(initial, new_pixel_position)
@@ -165,6 +165,7 @@ class ColliderManager:
         collisions = []
         r = Rect(left * self.tile_map.tile_width, top * self.tile_map.tile_height, self.tile_map.tile_width, self.tile_map.tile_height)
 
+        # each of these tiles is potentially intersecting the collider
         for x in range(left, right + 1):
             if x < 0 or x >= self.tile_map.width:
                 continue
@@ -174,7 +175,9 @@ class ColliderManager:
                     continue
 
                 if not self.tile_map.get_passable((x, y)):
+                    # a non-passable tile might be within range: now use a pixel-perfect collision test
                     r.topleft = (x * self.tile_map.tile_width, y * self.tile_map.tile_height)
+
                     if r.colliderect(collider.rect):
                         collisions.append(Collision(moved_collider=collider, hit_thing=(x, y)))
 

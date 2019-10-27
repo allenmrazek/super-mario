@@ -1,8 +1,12 @@
 import math
 from entities import Entity, Layer
 from entities import Collider, ColliderManager
-from .enemy_constants import goomba_parameters
-from util import make_vector
+from .parameters import EnemyParameters
+from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa
+import config
+
+# Goomba
+goomba_parameters = EnemyParameters.create(100, 100, 100, 100, mstvpa('00600'))
 
 
 class Goomba(Entity):
@@ -13,7 +17,9 @@ class Goomba(Entity):
 
         self.movement_collider = Collider.from_entity(self, collider_manager, Layer.Block | Layer.Enemy)
         self.airborne_collider = Collider.from_entity(self, collider_manager, Layer.Block)
-
+        self.hitbox = Collider.from_entity(self, collider_manager, Layer.Mario)
+        self.hitbox.rect.width = 10 * config.rescale_factor
+        self.hitbox.rect.height = 7 * config.rescale_factor
         self.movement_collider.on_collision = self._on_hit
 
         collider_manager.register(self.movement_collider)
@@ -35,6 +41,8 @@ class Goomba(Entity):
         if not self.airborne:
             self.animation.update(dt)  # only move legs if on the ground
 
+        self.hitbox.position = self.position + make_vector(3 * config.rescale_factor, 5 * config.rescale_factor)
+
     def _handle_vertical_movement(self, dt):
         # todo: what if it jumps onto another enemy?
         if self._reverse_direction:
@@ -47,13 +55,6 @@ class Goomba(Entity):
             self.velocity.y = 0
         else:
             self.velocity.y += (self.parameters.gravity * dt)
-
-            # if math.fabs(self.velocity.y) > self.parameters.max_vertical_velocity:
-            #     # little note to remind me later to look at any edge cases if they happen
-            #     if self.velocity.y < 0:
-            #         print("warning: capping max upwards velocity")
-            #
-            #     self.velocity.y = math.copysign(self.parameters.max_vertical_velocity, self.velocity.y)
 
         vel = make_vector(0, self.velocity.y)
         target_pos = self.position + vel * dt
@@ -85,7 +86,9 @@ class Goomba(Entity):
         super().draw(screen, view_rect)
 
         screen.blit(self.animation.image, make_vector(*self.position) - make_vector(*view_rect.topleft))
-        self.debug_collision(screen)
+
+        if config.debug_hitboxes:
+            screen.fill((0, 255, 0), self.hitbox.rect)
 
     def _on_hit(self, collision):
         if collision.hit_block:
@@ -102,15 +105,3 @@ class Goomba(Entity):
     @property
     def layer(self):
         return Layer.Enemy
-
-    def debug_collision(self, screen):
-        left, right = self.rect.left // 32, self.rect.right // 32
-        top, bottom = self.rect.top // 32, self.rect.bottom // 32
-
-        import pygame
-
-        # for x in range(left, right + 1):
-        #     for y in range(top, bottom + 1):
-        #         r = pygame.Rect(x * 32, y * 32, 32, 32)
-        #
-        #         screen.fill((255, 0, 255), r)

@@ -7,7 +7,7 @@ from animation import Animation
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 from util import copy_vector
 from util import make_vector
-
+import config
 from .mario_constants import *
 
 
@@ -42,6 +42,11 @@ class Mario(Entity):
         self.collider = Collider.from_entity(self, cmanager, Layer.Block | Layer.Active)
         self.airborne_collider = Collider.from_entity(self, cmanager,Layer.Block)
 
+        self.hitbox = Collider.from_entity(self, cmanager, 0)
+        self.hitbox.rect.width, self.hitbox.rect.height = 10 * config.rescale_factor, 14 * config.rescale_factor
+
+        cmanager.register(self.hitbox)
+
     def update(self, dt, view_rect):
         if self.is_running and not self.input_state.dash:
             self._run_frame_counter = min(self._run_frame_counter + 1, num_frames_hold_speed + 1)
@@ -66,6 +71,8 @@ class Mario(Entity):
         # update animation
         self.animator.update(self, dt)
 
+        self.hitbox.position = self.position + make_vector(3 * config.rescale_factor, 2 * config.rescale_factor)
+
         if self.debug_trajectory:
             self.debug_trajectory.update(self, view_rect)
 
@@ -75,6 +82,9 @@ class Mario(Entity):
 
         true_pos = make_vector(*self.rect.topleft) - make_vector(*view_rect.topleft)
         screen.blit(self.animator.image, true_pos)
+
+        if config.debug_hitboxes:
+            screen.fill((0, 255, 0), self.hitbox.rect)
 
     @property
     def layer(self):

@@ -1,7 +1,13 @@
 import math
 import pygame
+import config
 
 block_size = 16  # 16 pixels on a side
+frames_to_seconds = 60.  # mario speeds defined in terms of 60 fps with original resolution
+frames_to_seconds_squared = frames_to_seconds ** 2
+
+frames_to_seconds *= config.rescale_factor  # apply any scaling factor, so proportions are kept
+frames_to_seconds_squared *= config.rescale_factor
 
 
 def mario_str_to_pixel_value(str_mario_value):
@@ -16,8 +22,32 @@ def mario_str_to_pixel_value(str_mario_value):
     subsubpixel_value = int(str_mario_value[3:4], 16)
     subsubsubpixel_value = int(str_mario_value[4:5], 16)
 
-    return block_value * block_size + pixel_value + subpixel_value / 16. + subsubpixel_value / (16. ** 2) + \
-        subsubsubpixel_value / (16. ** 3)
+    return (block_value * block_size + pixel_value + subpixel_value / 16. + subsubpixel_value / (16. ** 2) +
+            subsubsubpixel_value / (16. ** 3))
+
+
+def mario_str_to_pixel_value_velocity(str_mario_value):
+    return mario_str_to_pixel_value(str_mario_value) * frames_to_seconds
+
+
+def mario_str_to_pixel_value_acceleration(str_mario_value):
+    return mario_str_to_pixel_value(str_mario_value) * frames_to_seconds_squared  # time squared
+
+
+def temp(str_mario_value):
+    """Given a classic mario velocity string, convert into a magnitude suitable for the game"""
+
+    if str_mario_value[0:2].lower() == "0x":
+        str_mario_value = str_mario_value[2:]
+
+    block_value = int(str_mario_value[:1], 16)
+    pixel_value = int(str_mario_value[1:2], 16)
+    subpixel_value = int(str_mario_value[2:3], 16)
+    subsubpixel_value = int(str_mario_value[3:4], 16)
+    subsubsubpixel_value = int(str_mario_value[4:5], 16)
+
+    return (block_value * block_size + pixel_value + subpixel_value / 16. + subsubpixel_value / (16. ** 2) +
+            subsubsubpixel_value / (16. ** 3)) * frames_to_seconds_squared
 
 
 def distance_squared(p1, p2):
