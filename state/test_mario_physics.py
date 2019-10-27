@@ -16,7 +16,7 @@ class TestMarioPhysics(GameState):
 
         self.level = Level(assets)
         self.entity_manager = EntityManager.create_default()
-        self.collision = ColliderManager(self.level.map)
+        self.collision = ColliderManager(self.level.tile_map)
         self.mario_input = PlayerInputHandler()
         self.mario = Mario(self.mario_input, assets.character_atlas, self.collision)
         self.font = pygame.font.SysFont(None, 24)

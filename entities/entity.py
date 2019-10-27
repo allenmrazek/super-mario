@@ -85,7 +85,7 @@ class EntityManager:
     @staticmethod
     def create_default():
         # create a default entity manager. This should be sufficient in most cases
-        ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Enemy, Layer.Active, Layer.Interface, Layer.Overlay]
+        ordering = [Layer.Background, Layer.Block, Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
 
         return EntityManager(ordering)
 

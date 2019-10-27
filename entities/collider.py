@@ -10,6 +10,17 @@ import config
 epsilon_sqr = sys.float_info.epsilon ** 2
 
 
+def value_in_range(value, min_value, max_value):
+    return (value >= min_value) and (value <= max_value)
+
+
+def rect_overlap(A, B):
+    x_overlap = value_in_range(A.x, B.x, B.x + B.width) or value_in_range(B.x, A.x, A.x + A.width)
+    y_overlap = value_in_range(A.y, B.y, B.y + B.height) or value_in_range(B.y, A.y, A.y + A.height)
+
+    return x_overlap and y_overlap
+
+
 class Collision:
     __slots__ = ['moved_collider', 'hit_collider', 'hit_block', 'hit_block_rect']
 
@@ -119,7 +130,7 @@ class ColliderManager:
         collider's position IS NOT MODIFIED"""
         pos = collider.position
 
-        collisions = self.move(collider, new_pixel_position)
+        collisions = self.move(collider, new_pixel_position, tf_dispatch_events=tf_dispatch_events)
 
         if collisions:
             # undo movement
@@ -152,7 +163,6 @@ class ColliderManager:
 
         dist = math.sqrt(dsquared)
         direction = (new_pixel_position - initial).normalize()
-        collisions = []
 
         while True:
             collisions = self.try_move(collider, initial + direction * dist)
@@ -163,7 +173,7 @@ class ColliderManager:
                 # halve distance
                 dist *= 0.5
 
-                if dist < 0.5:
+                if dist < 0.005:
                     break
 
         if tf_dispatch_events:
@@ -173,8 +183,8 @@ class ColliderManager:
 
     def get_world_collisions(self, collider):
         # determine which grid square(s) the collider is in
-        left, right = collider.rect.left // self.tile_map.tile_width, collider.rect.right // self.tile_map.tile_width
-        top, bottom = collider.rect.top // self.tile_map.tile_height, collider.rect.bottom // self.tile_map.tile_height
+        left, right = int(collider.rect.left / self.tile_map.tile_width), int(collider.rect.right / self.tile_map.tile_width)
+        top, bottom = int(collider.rect.top / self.tile_map.tile_height), int(collider.rect.bottom / self.tile_map.tile_height)
 
         collisions = []
         r = Rect(left * self.tile_map.tile_width, top * self.tile_map.tile_height, self.tile_map.tile_width, self.tile_map.tile_height)
@@ -190,15 +200,16 @@ class ColliderManager:
 
                 if not self.tile_map.get_passable((x, y)):
                     # a non-passable tile might be within range: now use a pixel-perfect collision test
-                    r.topleft = (x * self.tile_map.tile_width, y * self.tile_map.tile_height)
+                    r.x = x * self.tile_map.tile_width
+                    r.y = y * self.tile_map.tile_height
 
-                    if r.colliderect(collider.rect):
+                    if collider.rect.colliderect(r):
                         collisions.append(Collision(moved_collider=collider, hit_thing=(x, y), block_rect=r.copy()))
 
         return collisions
 
     @staticmethod
     def dispatch_events(collider, collisions):
-        for c in (collision for collision in collisions):
+        for c in collisions:
             if collider.on_collision is not None and c.hit_collider is not collider:
                 collider.on_collision(c)
