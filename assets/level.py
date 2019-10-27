@@ -24,15 +24,13 @@ class Level(EventHandler):
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
         self.mario = Mario(self.player_input, assets.character_atlas, self.collider_manager)
-        self.entity_manager.register(self.mario)
-        self.mario.position = make_vector(config.screen_rect.centerx, 33)
-
-        self.goomba = Goomba(assets, self.collider_manager)
-        self.goomba.position = make_vector(config.screen_rect.centerx + 60, 33)
+        self.goomba = Goomba(self, make_vector(config.screen_rect.centerx + 60, 33))
         self.entity_manager.register(self.goomba)
 
         self._scroll_position = make_vector(0, 0)
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)
+
+        self.spawn_mario()
 
     def add_entity(self, entity):
         self.entity_manager.register(entity)
@@ -48,6 +46,19 @@ class Level(EventHandler):
 
     def handle_event(self, evt, game_events):
         self.player_input.handle_event(evt, game_events)
+
+    def spawn_mario(self):
+        # todo: avoid double spawn?
+        self.entity_manager.register(self.mario)
+        self.mario.enabled = True
+        self.mario.reset()
+        self.mario.position = make_vector(config.screen_rect.centerx, 33)
+
+    def kill_mario(self):
+        assert self.mario.enabled
+
+        self.mario.enabled = False
+        self.entity_manager.unregister(self.mario)
 
     @property
     def view_rect(self):

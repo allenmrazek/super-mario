@@ -16,6 +16,8 @@ class SimpleMovement(Behavior):
         super().__init__()
 
         self.entity = entity
+        self.collider_manager = collider_manager
+
         self.movement_collider = movement_collider or Collider.from_entity(entity,
                                                                            collider_manager, Layer.Block | Layer.Enemy)
         self.parameters = parameters  # type: EnemyParameters
@@ -39,6 +41,9 @@ class SimpleMovement(Behavior):
         # private state
         self._airborne = False
         self._reverse_direction = False
+
+    def finish(self):
+        self.collider_manager.unregister(self.movement_collider)
 
     @property
     def is_airborne(self):

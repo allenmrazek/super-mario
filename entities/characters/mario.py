@@ -32,6 +32,7 @@ class Mario(Entity):
         self.jumped = False
         self._facing_right = True  # this value is "sticky": if no input, then is dir of last input
         self._airborne = False
+        self._enabled = False
 
         # temp: set initial position of mario
         self.position = make_vector(config.screen_rect.centerx, config.screen_rect.height / 2.)
@@ -40,12 +41,12 @@ class Mario(Entity):
 
         # create colliders for mario
         self.collider = Collider.from_entity(self, cmanager, Layer.Block | Layer.Active)
-        self.airborne_collider = Collider.from_entity(self, cmanager,Layer.Block)
+        self.airborne_collider = Collider.from_entity(self, cmanager, Layer.Block)
 
         self.hitbox = Collider.from_entity(self, cmanager, 0)
         self.hitbox.rect.width, self.hitbox.rect.height = 10 * config.rescale_factor, 14 * config.rescale_factor
 
-        cmanager.register(self.hitbox)
+        self.enabled = True
 
     def update(self, dt, view_rect):
         if self.is_running and not self.input_state.dash:
@@ -89,6 +90,31 @@ class Mario(Entity):
     @property
     def layer(self):
         return Layer.Mario
+
+    @property
+    def enabled(self):
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, tf):
+        if not tf and self._enabled:
+            self.cmanager.unregister(self.hitbox)
+            self._enabled = False
+        elif tf and not self._enabled:
+            self.cmanager.register(self.hitbox)
+            self._enabled = True
+
+    def reset(self):
+        # reset parameters besides position
+        self._velocity = Vector2()
+        self._run_frame_counter = 0
+        self._use_skid_deceleration = False
+        self._skidding = False
+        self._jump_stats = level_entry_vertical_physics
+        self._falling_gravity = self._jump_stats.gravity
+        self.jumped = False
+        self._facing_right = True
+        self._airborne = False
 
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether
@@ -327,6 +353,9 @@ class Mario(Entity):
 
     def get_velocity(self):
         return copy_vector(self._velocity)
+
+    def bounce(self, new_velocity):
+        self._velocity = copy_vector(new_velocity)
 
 
 class _DirectionSet(NamedTuple):

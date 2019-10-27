@@ -30,13 +30,13 @@ def load_character_atlas():
 
     frame_width, frame_height = [16 * config.rescale_factor] * 2
 
-    # stationary
+    # stationary mario
     atlas.initialize_static("mario_stand_right", config.transparent_color)
     atlas.initialize_static_from_surface("mario_stand_left",
                                          pygame.transform.flip
                                          (atlas.load_static("mario_stand_right").frames[0], True, False))
 
-    # running (left and right)
+    # running mario (left and right)
     atlas.initialize_animation("mario_run_right",
                                frame_width,
                                frame_height,
@@ -46,21 +46,24 @@ def load_character_atlas():
     left_run_frames = [pygame.transform.flip(f, True, False) for f in run_right.frames]
     atlas.initialize_animation_from_frames("mario_run_left", left_run_frames, run_right.duration)
 
-    # walking (left and right)
+    # walking mario (left and right)
     # same frames as running, just slower
     atlas.initialize_animation_from_frames("mario_walk_right", run_right.frames, 0.4)
     atlas.initialize_animation_from_frames("mario_walk_left", left_run_frames, 0.4)
 
-    # jumping (left and right)
+    # jumping mario (left and right)
     atlas.initialize_static("mario_jump_right", config.transparent_color)
     atlas.initialize_static_from_surface(
         "mario_jump_left", pygame.transform.flip(atlas.load_static("mario_jump_right").frames[0], True, False))
 
-    # skidding (left and right)
+    # skidding mario (left and right)
     atlas.initialize_static("mario_skid_left", config.transparent_color)
 
     atlas.initialize_static_from_surface(
         "mario_skid_right", pygame.transform.flip(atlas.load_static("mario_skid_left").frames[0], True, False))
+
+    # death
+    atlas.initialize_static("mario_dead", config.transparent_color)
 
     # goomba enemy
     atlas.initialize_animation("goomba", frame_width, frame_height, .25, config.transparent_color)

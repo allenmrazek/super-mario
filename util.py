@@ -111,3 +111,13 @@ def bind_callback_parameters(to_call, *args):
 
 def clamp(val, min_val, max_val):
     return max(min(val, max_val), min_val)
+
+
+def world_to_screen(position, view_rect):
+    return make_vector(position[0] - view_rect.x, position[1] - view_rect.y)
+
+
+def get_corpse_position(entity_rect: pygame.Rect, corpse_rect: pygame.Rect):
+    corpse_rect.midbottom = entity_rect.midbottom
+
+    return make_vector(*corpse_rect.topleft)
