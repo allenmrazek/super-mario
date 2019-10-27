@@ -59,6 +59,17 @@ class Collider:
     def iterative_move(self, new_pixel_position, tf_dispatch_events=False):
         return self.manager.iterative_move(self, new_pixel_position, tf_dispatch_events=tf_dispatch_events)
 
+    def approach(self, new_pixel_position, tf_dispatch_events=False):
+        collisions = self.try_move(new_pixel_position, tf_dispatch_events=False)
+
+        if collisions:
+            self.iterative_move(new_pixel_position, False)
+
+            if tf_dispatch_events:
+                ColliderManager.dispatch_events(self, collisions)
+
+        return collisions
+
     @property
     def position(self):
         return self._position
@@ -144,9 +155,6 @@ class ColliderManager:
         collisions = []
 
         while True:
-            if dist < 0.5: # can't move any distance that will change current pixel
-                break
-
             collisions = self.try_move(collider, initial + direction * dist)
 
             if len(collisions) == 0:
@@ -154,6 +162,9 @@ class ColliderManager:
             else:
                 # halve distance
                 dist *= 0.5
+
+                if dist < 0.5:
+                    break
 
         if tf_dispatch_events:
             ColliderManager.dispatch_events(collider, collisions)

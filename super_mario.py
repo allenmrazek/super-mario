@@ -50,13 +50,16 @@ def run():
 
         # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
+        updated = False
 
         while accumulator > config.PHYSICS_DT:
+            updated = True
             state_stack.update(config.PHYSICS_DT)
             accumulator -= config.PHYSICS_DT
 
-        state_stack.draw(screen)
-        pygame.display.flip()
+        if updated:
+            state_stack.draw(screen)
+            pygame.display.flip()
 
     exit(0)
 

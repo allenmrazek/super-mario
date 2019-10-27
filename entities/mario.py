@@ -210,7 +210,7 @@ class Mario(Entity):
     def _handle_vertical_movement(self, dt):
         """The main tricky bit with this is to remember that it's not just jumping that gets mario into the air:
         falling off ledges, off disappearing blocks, and enemy impact counts too"""
-        # todo: enemy impact physics
+        # todo: enemy impact physics?
 
         # determine if mario is airborne: there's at least one pixel downward we can move
         # important note: if mario's velocity actually opposes gravity right now (i.e., negative)
@@ -269,7 +269,13 @@ class Mario(Entity):
             # try and move downward if we can
             # todo: invoke callbacks? or leave that for ColliderManager? collisions ignored for now
             self.collider.position = self.position
-            collisions = self.collider.iterative_move(self.position + make_vector(0., self._velocity.y) * dt)
+            target_point = self.position + make_vector(0., self._velocity.y) * dt
+            collisions = self.collider.try_move(target_point)
+
+            if collisions:
+                dist_moved = self.collider.iterative_move(target_point)
+                ColliderManager.dispatch_events(self.collider, collisions)
+
             self.position = self.collider.position
         else:
             self.jumped = self.jumped and self.input_state.jump
@@ -280,7 +286,8 @@ class Mario(Entity):
 
         # attempt to move to new position, if we can
         self.collider.position = self.position
-        collisions = self.collider.iterative_move(self.position + new_position)
+        #collisions = self.collider.iterative_move(self.position + new_position)
+        collisions = self.collider.approach(self.position + new_position)
         self.position = self.collider.position
 
         # todo: handle collision callbacks?

@@ -23,12 +23,12 @@ class Level(EventHandler):
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
-        # self.mario = Mario(self.player_input, assets.character_atlas, self.collider_manager)
-        # self.entity_manager.register(self.mario)
-        # self.mario.position = make_vector(config.screen_rect.centerx, 33)
+        self.mario = Mario(self.player_input, assets.character_atlas, self.collider_manager)
+        self.entity_manager.register(self.mario)
+        self.mario.position = make_vector(config.screen_rect.centerx, 33)
 
         self.goomba = Goomba(assets, self.collider_manager)
-        self.goomba.position = make_vector(200, 10 * 32 - 32 - 32)
+        self.goomba.position = make_vector(config.screen_rect.centerx + 60, 33)
         self.entity_manager.register(self.goomba)
 
         self._scroll_position = make_vector(0, 0)

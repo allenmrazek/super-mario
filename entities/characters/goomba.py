@@ -1,12 +1,11 @@
-import math
 from entities import Entity, Layer
 from entities import Collider, ColliderManager
 from .parameters import EnemyParameters
-from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa
+from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa, mario_str_to_pixel_value_velocity as mstvpv
 import config
 
 # Goomba
-goomba_parameters = EnemyParameters.create(100, 100, 100, 100, mstvpa('00600'))
+goomba_parameters = EnemyParameters.create(100, mstvpv('04800'), 100, 100, mstvpa('00600'))
 
 
 class Goomba(Entity):
@@ -56,16 +55,23 @@ class Goomba(Entity):
         else:
             self.velocity.y += (self.parameters.gravity * dt)
 
+            # limit downward velocity
+            if self.velocity.y > self.parameters.max_vertical_velocity:
+                self.velocity.y = self.parameters.max_vertical_velocity
+
         vel = make_vector(0, self.velocity.y)
         target_pos = self.position + vel * dt
         self.movement_collider.position = self.position
-        collisions = self.movement_collider.try_move(target_pos, False)  # type: list
 
-        if collisions:  # couldn't get that close: try and move as close as we can
-            # note: we don't set airborne here because it's possible it wasn't a block that prevented movement
+        self.movement_collider.approach(target_pos, True)
 
-            self.movement_collider.iterative_move(target_pos)
-            ColliderManager.dispatch_events(self.movement_collider, collisions)
+        # collisions = self.movement_collider.try_move(target_pos, False)  # type: list
+        #
+        # if collisions:  # couldn't get that close: try and move as close as we can
+        #     # note: we don't set airborne here because it's possible it wasn't a block that prevented movement
+        #
+        #     self.movement_collider.iterative_move(target_pos)
+        #     ColliderManager.dispatch_events(self.movement_collider, collisions)
 
         self.position = self.movement_collider.position
 
