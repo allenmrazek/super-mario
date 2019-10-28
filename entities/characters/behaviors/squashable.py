@@ -41,7 +41,6 @@ class Squashable(DamageMario):
         assert isinstance(enemy_collider.entity, Enemy)
 
         mario = mario_collider.entity  # type: Mario
-        enemy = enemy_collider.entity  # type: Enemy
 
         if mario.vertical_speed > 0.:
             self._squashed = True

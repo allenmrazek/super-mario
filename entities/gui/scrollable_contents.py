@@ -10,8 +10,6 @@ class ScrollableContents(Element):
     def __init__(self, relative_pos, visible_size, content):
         super().__init__(relative_pos, initial_rect=Rect(0, 0, *visible_size))
 
-        assert isinstance(content, Surface)
-
         self.content_rect = Rect(0, 0, *content.get_rect().size)
         self.scroll_pos = make_vector(0, 0)
         self.content = content
@@ -21,8 +19,7 @@ class ScrollableContents(Element):
         hscroll = max(0, self.content_rect.width - self.width)
         vscroll = max(0, self.content_rect.height - self.height)
 
-        self.scroll_pos = min(hscroll, pos[0]),\
-                          min(vscroll, pos[1])
+        self.scroll_pos = min(hscroll, pos[0]), min(vscroll, pos[1])
 
         # compute visible area of content given this scroll position
         self.content_rect.x, self.content_rect.y = self.scroll_pos

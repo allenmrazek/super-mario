@@ -136,6 +136,9 @@ class Mario(LevelEntity):
     def deserialize(self, values):
         super().deserialize(values)
 
+    def create_preview(self):
+        return self.animator.image.copy()
+
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether
         Mario skids to a stop or tries to accelerate to his max walk or run speed"""

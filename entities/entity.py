@@ -75,3 +75,6 @@ class Entity(ABC):
     @height.setter
     def height(self, h):
         self._rect.height = h
+
+    def get_rect(self):
+        return self._rect.copy()

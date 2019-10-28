@@ -27,6 +27,11 @@ class LevelEntity(Entity):
         entities in the editor can be destroyed frequently"""
         pass
 
+    @abstractmethod
+    def create_preview(self):
+        """Called by editor to create a preview image for this entity, which appears in the entity picker dialog"""
+        pass
+    
     def serialize(self):
         return {'name': self.__class__.__name__, 'position': self.position}
 

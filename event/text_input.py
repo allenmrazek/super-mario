@@ -20,18 +20,23 @@ class TextInputHandler(EventHandler):
             if alpha:
                 upper = pygame.key.get_mods() & KMOD_SHIFT
                 key = key & ~0x20 if alpha and upper else key
+
                 self.string += chr(key)
+
                 EventHandler.consume(evt)
+
             elif digit:
                 self.string += chr(key)
                 EventHandler.consume(evt)
-            elif key in [K_SPACE, K_BACKSPACE, K_RETURN, K_KP_ENTER]:
+
+            elif key in [K_SPACE, K_BACKSPACE]:
                 if key == K_BACKSPACE:
                     self.string = self.string[0:-1]
                 else:
                     self.string += chr(key)
 
                 EventHandler.consume(evt)
+
             else:  # could be things like ,/" etc
-                # todo
+                # todo?
                 pass

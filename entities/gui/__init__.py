@@ -10,7 +10,8 @@ from .drawing import smart_draw
 from .option import Option, OptionGroup
 from .scrollable_contents import ScrollableContents
 from .scrollbar import Scrollbar, ScrollbarType
+from .container import Container
 
 __all__ = ['Element', 'Anchor', 'Text', 'Window', 'SlicedImage', 'Button',
            'Texture', 'Dialog', 'Frame', 'smart_draw', 'Option', 'OptionGroup',
-           'ScrollableContents', 'Scrollbar', 'ScrollbarType']
+           'ScrollableContents', 'Scrollbar', 'ScrollbarType', 'Container']

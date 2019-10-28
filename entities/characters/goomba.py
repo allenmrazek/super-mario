@@ -54,6 +54,8 @@ class Goomba(Enemy):
         self.movement.destroy()
         self.hurts.destroy()
 
+    def create_preview(self):
+        return self.animation.image.copy()
 
 def make_goomba(level, values):
     goomba = Goomba(level, make_vector(0, 0))
