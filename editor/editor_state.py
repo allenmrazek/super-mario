@@ -52,14 +52,6 @@ class EditorState(GameState, EventHandler):
         self.entity_manager.register(self.frame)
 
         # scrollbars to move map
-        # self.scroll_map_horizontal = Scrollbar(pygame.Vector2(*config.screen_rect.bottomleft) + make_vector(10, -20),
-        #                                        ScrollbarType.HORIZONTAL, config.screen_rect.width - 20,
-        #                                        self.assets.gui_atlas.load_sliced("option_button"),
-        #                                        self.assets.gui_atlas.load_sliced("sb_thumb_h"),
-        #                                        self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
-        #                                        sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_h_dk"),
-        #                                        on_value_changed_callback=bind_callback_parameters(self.on_horizontal_scroll))
-
         self.scroll_map_horizontal = create_slider(self.assets.gui_atlas, pygame.Vector2(*config.screen_rect.bottomleft) + make_vector(10, -20),
                                                config.screen_rect.width - 20, 0, self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
                                                    on_value_changed=bind_callback_parameters(self.on_horizontal_scroll),
@@ -67,13 +59,6 @@ class EditorState(GameState, EventHandler):
                                                    thumb_mo=self.assets.gui_atlas.load_static("sb_thumb_light"),
                                                    sb_type=ScrollbarType.HORIZONTAL)
 
-        # self.scroll_map_vertical = Scrollbar(pygame.Vector2(*config.screen_rect.topright) + make_vector(-20, 10),
-        #                                      ScrollbarType.VERTICAL, config.screen_rect.height - 40,
-        #                                        self.assets.gui_atlas.load_sliced("option_button"),
-        #                                        self.assets.gui_atlas.load_sliced("sb_thumb_v"),
-        #                                        self.level.tile_map.height * self.level.tile_map.tileset.tile_height,
-        #                                        sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_v_dk"),
-        #                                        on_value_changed_callback=bind_callback_parameters(self.on_vertical_scroll))
         self.scroll_map_vertical = create_slider(self.assets.gui_atlas, pygame.Vector2(*config.screen_rect.topright) + make_vector(-20, 10),
                                                config.screen_rect.height - 40, 0, self.level.tile_map.height * self.level.tile_map.tileset.tile_height,
                                                    on_value_changed=bind_callback_parameters(self.on_vertical_scroll),
