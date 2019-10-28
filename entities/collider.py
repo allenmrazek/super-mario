@@ -104,6 +104,9 @@ class ColliderManager:
     def unregister(self, collider: Collider):
         self._colliders.remove(collider)
 
+    def contains(self, collider):
+        return collider in self._colliders
+
     def move(self, collider, new_pixel_position, tf_dispatch_events=False):
         """Teleports the collider to new position, and returns any resulting collisions"""
         collider.position = copy_vector(new_pixel_position)

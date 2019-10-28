@@ -34,7 +34,7 @@ class PickupSpawner(LevelEntity):
         return self.image
 
     def destroy(self):
-        pass
+        self.level.entity_manager.unregister(self)
 
     @staticmethod
     def factory(level, values):

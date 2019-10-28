@@ -28,32 +28,18 @@ class Mario(LevelEntity):
         super().__init__(self.animator.image.get_rect())
         self.movement = entities.characters.behaviors.MarioMovement(self, self.input_state, self.cmanager)
 
-        self.hitbox = Collider.from_entity(self, self.cmanager, 0)
-        self.hitbox.rect.width, self.hitbox.rect.height = rescale_vector(make_vector(10, 14))
-        self._hitbox_offset = rescale_vector(make_vector(3, 2))
-        self.hitbox.position = self.position + self._hitbox_offset
         self._enabled = False
-        self._active_effects = 0
+        self._active_effects = MarioEffects.Super
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
         self.animator.update(self, dt)
 
-        self.hitbox.position = self.position + self._hitbox_offset
-
     def draw(self, screen, view_rect):
-        self.movement.draw(screen, view_rect)
+
         true_pos = world_to_screen(self.rect.topleft, view_rect)
         screen.blit(self.animator.image, true_pos)
-
-        if config.debug_hitboxes:
-
-            r = self.hitbox.rect.copy()
-            # todo: factor hitbox out of mario
-
-            r.topleft = world_to_screen(self.hitbox.position, view_rect)
-            r = screen.get_rect().clip(r)
-            screen.fill((0, 255, 0), r)
+        self.movement.draw(screen, view_rect)
 
     @property
     def layer(self):
@@ -66,10 +52,10 @@ class Mario(LevelEntity):
     @enabled.setter
     def enabled(self, tf):
         if not tf and self._enabled:
-            self.cmanager.unregister(self.hitbox)
+            self.movement.enabled = False
             self._enabled = False
         elif tf and not self._enabled:
-            self.cmanager.register(self.hitbox)
+            self.movement.enabled = True
             self._enabled = True
 
     def destroy(self):
@@ -93,7 +79,6 @@ class Mario(LevelEntity):
 
     def reset(self):
         self.movement.reset()
-        self.hitbox.position = self.position
 
     @staticmethod
     def factory(level, values):
@@ -115,6 +100,10 @@ class Mario(LevelEntity):
     @property
     def effects(self):
         return self._active_effects
+
+    @effects.setter
+    def effects(self, effects):
+        self._active_effects = effects
 
     @property
     def is_super(self):
@@ -241,24 +230,18 @@ class _MarioAnimation:
 
         # airborne?
         if mario_movement.is_airborne:
-            #self.current = self.jump[direction]
-
             self.current = _MarioAnimation._variation_to_set(mario, self.jump)[direction]
         else:
             if math.fabs(mario_movement.horizontal_speed) < min_walk_velocity:
-                #self.current = self.stand[direction]
                 self.current = _MarioAnimation._variation_to_set(mario, self.stand)[direction]
             elif mario_movement.is_skidding:
-                #self.current = self.skid[direction]
                 self.current = _MarioAnimation._variation_to_set(mario, self.skid)[direction]
             elif mario_movement.is_running:
-                #self.current = self.run[direction]
                 self.current = _MarioAnimation._variation_to_set(mario, self.run)[direction]
             elif mario_movement.is_crouching:
                 assert mario.effects & MarioEffects.Super
                 self.current = _MarioAnimation._variation_to_set(mario, self.crouch)[direction]
             else:
-                #self.current = self.walk[direction]
                 self.current = _MarioAnimation._variation_to_set(mario, self.walk)[direction]
 
         self.current.update(dt)

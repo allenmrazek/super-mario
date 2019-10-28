@@ -2,6 +2,7 @@ from entities.entity import Entity, Layer
 from entities.characters.behaviors import Interactive, SimpleMovement
 from entities.characters.level_entity import MovementParameters
 from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva
+from ..effects import MarioTransform
 
 mushroom_movement = MovementParameters(50, 50, 0., 0., mstpva('04000'))
 
@@ -35,3 +36,5 @@ class Mushroom(Entity):
         self.level.entity_manager.unregister(self)
 
         print("mushroom collected!")
+
+        MarioTransform.apply_transform(self.level, self.level.mario)

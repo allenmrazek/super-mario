@@ -1,5 +1,7 @@
 import os
 import pygame
+import warnings
+from pygame.mixer import Sound
 from . import SpriteAtlas
 from animation import Animation
 from entities.gui.drawing import generated_selected_version_circle, generated_selected_version_darken
@@ -28,7 +30,8 @@ def _load_all_as_static(atlas_name, rescale=True):
 def load_character_atlas():
     atlas = SpriteAtlas(get_atlas_path("characters"))
 
-    frame_width, frame_height = [16 * config.rescale_factor] * 2
+    small_frame_width, small_frame_height = [16 * config.rescale_factor] * 2
+    large_frame_width, large_frame_height = small_frame_width, 2 * small_frame_height
 
     # stationary mario
     atlas.initialize_static("mario_stand_right", config.transparent_color)
@@ -51,8 +54,8 @@ def load_character_atlas():
 
     # running mario (left and right)
     atlas.initialize_animation("mario_run_right",
-                               frame_width,
-                               frame_height,
+                               small_frame_width,
+                               small_frame_height,
                                0.2, config.transparent_color)
 
     mario_run_right = atlas.load_animation("mario_run_right")  # type: Animation
@@ -60,8 +63,8 @@ def load_character_atlas():
     atlas.initialize_animation_from_frames("mario_run_left", mario_left_run_frames, mario_run_right.duration)
 
     atlas.initialize_animation("mario_fire_run_right",
-                               frame_width,
-                               frame_height,
+                               small_frame_width,
+                               small_frame_height,
                                0.2, config.transparent_color)
 
     mario_fire_run_right = atlas.load_animation("mario_fire_run_right")  # type: Animation
@@ -69,8 +72,8 @@ def load_character_atlas():
     atlas.initialize_animation_from_frames("mario_fire_run_left", mario_fire_left_run_frames, mario_fire_run_right.duration)
 
     atlas.initialize_animation("super_mario_run_right",
-                               frame_width,
-                               frame_height,
+                               large_frame_width,
+                               large_frame_height,
                                0.2, config.transparent_color)
 
     super_mario_run_right = atlas.load_animation("super_mario_run_right")  # type: Animation
@@ -78,8 +81,8 @@ def load_character_atlas():
     atlas.initialize_animation_from_frames("super_mario_run_left", super_mario_left_run_frames, super_mario_run_right.duration)
 
     atlas.initialize_animation("super_mario_fire_run_right",
-                               frame_width,
-                               frame_height,
+                               large_frame_width,
+                               large_frame_height,
                                0.2, config.transparent_color)
 
     super_mario_fire_run_right = atlas.load_animation("super_mario_fire_run_right")  # type: Animation
@@ -157,7 +160,7 @@ def load_character_atlas():
         "super_mario_fire_transform_left", pygame.transform.flip(atlas.load_static("super_mario_fire_transform_right").frames[0], True, False))
 
     # goomba enemy
-    atlas.initialize_animation("goomba", frame_width, frame_height, .25, config.transparent_color)
+    atlas.initialize_animation("goomba", small_frame_width, small_frame_height, .25, config.transparent_color)
     atlas.initialize_static("goomba_squashed", config.transparent_color)
 
     return atlas
@@ -251,3 +254,26 @@ def load_pickup_atlas():
     atlas.initialize_static("mushroom_red", **kwargs)
 
     return atlas
+
+
+def load_sound_fx():
+    sounds = {}
+
+    def load_sound(name):
+        path = os.path.join('sounds', 'sfx', name)
+
+        if not os.path.exists(path):
+            warnings.warn(f'could not load {path} -- does not exist')
+        else:
+            try:
+                return Sound(path)
+            except pygame.error:
+                warnings.warn(f'Unable to load {Sound}')
+
+    sounds['powerup'] = load_sound('smb_powerup.wav')
+    sounds['stomp'] = load_sound('smb_stomp.wav')
+    sounds['smb_life'] = load_sound('smb_1-up.wav')
+    sounds['kick'] = load_sound('smb_kick.wav')
+    sounds['pause'] = load_sound('smb_pause.wav')
+
+    return sounds

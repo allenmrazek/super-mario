@@ -6,6 +6,7 @@ from entities.collider import Collider, ColliderManager
 from util import make_vector, copy_vector
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 import config
+from util import rescale_vector, world_to_screen
 
 
 class MarioMovement:
@@ -33,11 +34,25 @@ class MarioMovement:
         self._airborne = False
         self._crouch = False
         self._enabled = False
-        self._position = Vector2()
 
         # create colliders for mario
-        # todo: more accurate collider
-        self.collider = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block | Layer.Active)
+
+        # mario has two different hitboxes:
+        #  one is for small mario and crouched super mario
+        #  the other is for super mario
+        #
+        # remember that positions of these colliders != mario's position: they can have offsets and different
+        # sizing
+        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)  # todo: should active been included in these hitboxes?
+        self._small_hitbox.rect.width, self._small_hitbox.rect.height = rescale_vector(make_vector(10, 14))
+        self._small_hitbox_offset = rescale_vector(make_vector(3, 2))
+        self._small_hitbox.position = self.mario_entity.position + self._small_hitbox_offset
+
+        self._large_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)
+        self._large_hitbox.rect.width, self._large_hitbox.rect.height = rescale_vector(make_vector(13, 25))
+        self._large_hitbox_offset = rescale_vector(make_vector(2, 7))
+        self._large_hitbox.position = self.mario_entity.position + self._large_hitbox_offset
+
         self.airborne_collider = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)
 
     @property
@@ -93,6 +108,41 @@ class MarioMovement:
         if self.debug_trajectory:
             self.debug_trajectory.draw(screen, view_rect)
 
+        if config.debug_hitboxes:
+            hitbox = self._get_active_hitbox()
+            r = hitbox.rect.copy()
+            r.topleft = world_to_screen(hitbox.position + self._get_hitbox_offset(), view_rect)
+            r = screen.get_rect().clip(r)
+
+            screen.fill((0, 255, 0), r)
+
+    def _get_active_hitbox(self):
+        return self._large_hitbox if self.mario_entity.is_super else self._small_hitbox
+
+    @property
+    def enabled(self):
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, tf):
+        if not tf and self._enabled:
+            self.collider_manager.unregister(self._get_active_hitbox())
+            self._enabled = False
+        elif tf and not self._enabled:
+            self.collider_manager.register(self._get_active_hitbox())
+            self._enabled = True
+
+        # should never see both hitboxes registered at the same time
+        assert not self._enabled or (self._enabled and
+                                     (self.collider_manager.contains(self._small_hitbox) ^
+                                      self.collider_manager.contains(self._large_hitbox)))
+
+    def _get_hitbox_offset(self):
+        if self.mario_entity.is_super:
+            return self._large_hitbox_offset
+        else:
+            return self._small_hitbox_offset
+
     def reset(self):
         # reset parameters besides position
         self._velocity = Vector2()
@@ -104,10 +154,15 @@ class MarioMovement:
         self.jumped = False
         self._facing_right = True
         self._airborne = False
-        self.collider.position = self.position
-        self.airborne_collider.position = self.position
+        self._small_hitbox.position = self.position + self._small_hitbox_offset
+        self._large_hitbox.position = self.position + self._large_hitbox_offset
 
     def update(self, dt, view_rect):
+        if self._get_active_hitbox() is self._small_hitbox:
+            print("small hitbox")
+        else:
+            print("large hitbox")
+
         if self.is_running and not self.input_state.dash:
             self._run_frame_counter = min(self._run_frame_counter + 1, num_frames_hold_speed + 1)
         else:
@@ -260,7 +315,12 @@ class MarioMovement:
             self._airborne = True
         else:
             # airborne collider is essentially a teleport without movement, no need to update its position
-            collisions = self.airborne_collider.test(self.get_position() + make_vector(0, 1))
+            current_hitbox = self._get_active_hitbox()
+
+            self.airborne_collider.rect.width = current_hitbox.rect.width
+            self.airborne_collider.rect.height = current_hitbox.rect.height
+
+            collisions = self.airborne_collider.test(self.mario_entity.position + self._get_hitbox_offset() + make_vector(0, 1))
 
             if collisions:
                 # todo: invoke callbacks for collisions? maybe this should be done in ColliderManager?
@@ -302,31 +362,19 @@ class MarioMovement:
 
             self._velocity.y += gravity * dt
 
-
-
-            #print("gravity = ", gravity)
-
-
-
             # limit vertical DOWNWARD velocity
             # for some reason it wraps around a strange value, kept for sake of authenticity
             self._velocity.y = air_velocity_when_max_exceeded \
                 if self._velocity.y > air_max_vertical_velocity else self._velocity.y
 
             # try and move downward if we can
-            # todo: invoke callbacks? or leave that for ColliderManager? collisions ignored for now
-            # self.collider.position = self.position
-            # target_point = self.position + make_vector(0., self._velocity.y) * dt
-            # collisions = self.collider.try_move(target_point)
-            #
-            # # todo: use approach instead of iterative move
-            # if collisions:
-            #     dist_moved = self.collider.iterative_move(target_point)
-            #     ColliderManager.dispatch_events(self.collider, collisions)
-            self.collider.position = self.position
-            target_point = self.position + make_vector(0., self._velocity.y) * dt
-            self.collider.approach(target_point, True)
-            self.position = self.collider.position
+            collider = self._get_active_hitbox()
+            collider.position = self.mario_entity.position + self._get_hitbox_offset()
+            target_point = collider.position + make_vector(0., self._velocity.y) * dt
+
+            collider.approach(target_point, True)
+            self.mario_entity.position = collider.position - self._get_hitbox_offset()
+
         else:
             self.jumped = self.jumped and self.input_state.jump
 
@@ -335,11 +383,12 @@ class MarioMovement:
         new_position = make_vector(self._velocity.x * dt, 0.)
 
         # attempt to move to new position, if we can
-        self.collider.position = self.mario_entity.position
-        collisions = self.collider.approach(self.mario_entity.position + new_position)
-        self.mario_entity.position = self.collider.position
+        hitbox = self._get_active_hitbox()
+        offset = self._get_hitbox_offset()
 
-        # todo: handle collision callbacks?
+        hitbox.position = self.position + offset
+        collisions = hitbox.approach(self.mario_entity.position + new_position + offset)
+        self.position = hitbox.position - offset
 
         if collisions:  # immediately stop horizontal movement on horizontal collision
             self._velocity.x = 0.

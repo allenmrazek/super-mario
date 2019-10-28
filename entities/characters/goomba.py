@@ -43,6 +43,7 @@ class Goomba(Enemy):
 
         corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
                         1., self.position)
+        self.level.asset_manager.sounds['stomp'].play()
 
         corpse.position = get_corpse_position(self.rect, corpse.rect)
 

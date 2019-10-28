@@ -12,3 +12,4 @@ class AssetManager:
         self.gui_atlas = load_gui_atlas()
         self.misc_atlas = load_misc_atlas()
 
+        self.sounds = load_sound_fx()
