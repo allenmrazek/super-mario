@@ -31,6 +31,7 @@ class MarioMovement:
         self.jumped = False
         self._facing_right = True  # this value is "sticky": if no input, then is dir of last input
         self._airborne = False
+        self._crouch = False
         self._enabled = False
         self._position = Vector2()
 
@@ -73,6 +74,10 @@ class MarioMovement:
     @property
     def position(self):
         return copy_vector(self.mario_entity.position)
+
+    @property
+    def is_crouching(self):
+        return self._crouch
 
     @position.setter
     def position(self, new_pos):
