@@ -3,6 +3,7 @@ import pygame
 from util import distance_squared
 from util import copy_vector
 from util import make_vector
+from util import world_to_screen
 
 
 class _JumpTrajectory:
@@ -44,12 +45,10 @@ class _JumpTrajectory:
 
     def draw(self, screen, view_rect):
         if len(self.points) > 1:
-            offset = make_vector(view_rect.x, view_rect.y)
-
-            corrected_points = [x - offset for x in self.points]
+            corrected_points = [world_to_screen(x, view_rect) for x in self.points]
 
             pygame.draw.lines(screen, self.DRAW_COLOR, False, corrected_points)
-            screen.blit(self.debug_image, make_vector(*self.rect.topleft) - make_vector(*view_rect.topleft))
+            screen.blit(self.debug_image, world_to_screen(self.rect.topleft, view_rect))
 
 
 class JumpTrajectoryVisualizer:
@@ -62,7 +61,7 @@ class JumpTrajectoryVisualizer:
 
     def update(self, mario, view_rect):
         if self.last_known_position is None:
-            self.last_known_position = self.get_mario_feet_position(mario) + make_vector(*view_rect.topleft)
+            self.last_known_position = self.get_mario_feet_position(mario)
 
         if self.current_trajectory is None and mario.is_airborne:
             self.current_trajectory = _JumpTrajectory(mario)
@@ -73,15 +72,15 @@ class JumpTrajectoryVisualizer:
 
         elif not mario.is_airborne:
             if self.current_trajectory is not None:
-                self.current_trajectory.add(self.get_mario_feet_position(mario) + make_vector(*view_rect.topleft))
+                self.current_trajectory.add(self.get_mario_feet_position(mario))
 
             self.current_trajectory = None
 
         if self.current_trajectory is not None:
-            self.current_trajectory.add(self.get_mario_feet_position(mario) + make_vector(*view_rect.topleft))
+            self.current_trajectory.add(self.get_mario_feet_position(mario))
             self.current_trajectory.update(mario.get_velocity(), view_rect)
 
-        self.last_known_position = self.get_mario_feet_position(mario) + make_vector(*view_rect.topleft)
+        self.last_known_position = self.get_mario_feet_position(mario)
 
     @staticmethod
     def get_mario_feet_position(mario):

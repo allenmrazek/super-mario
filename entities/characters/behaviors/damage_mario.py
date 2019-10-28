@@ -35,7 +35,7 @@ class DamageMario(Behavior):
     def on_mario_collision(self, collision):
         # todo: logic which downgrades mario?
 
-        self.level.kill_mario()
+        self.level.despawn_mario()
         self.level.entity_manager.register(MarioDeath(self.level, self.level.mario.position))
 
     def destroy(self):

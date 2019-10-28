@@ -108,11 +108,9 @@ class Mario(LevelEntity):
         if not tf and self._enabled:
             self.cmanager.unregister(self.hitbox)
             self._enabled = False
-            print("mario is disabled")
         elif tf and not self._enabled:
             self.cmanager.register(self.hitbox)
             self._enabled = True
-            print("mario is enabled")
 
     def reset(self):
         # reset parameters besides position
@@ -443,8 +441,9 @@ class MarioSpawnPoint(LevelEntity):
     def draw(self, screen, view_rect):
         screen.blit(self.image, world_to_screen(self.position, view_rect))
 
+    @property
     def layer(self):
-        return Layer.Active
+        return Layer.Spawner
 
     def create_preview(self):
         return self.image

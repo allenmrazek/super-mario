@@ -1,6 +1,7 @@
 import warnings
 import pygame
 from entities.gui import Dialog, ScrollbarType, Scrollbar, Button, Container
+from entities.entity_manager import EntityManager
 from util import make_vector
 from entities.characters.level_entity import LevelEntity
 from util import bind_callback_parameters
@@ -15,7 +16,7 @@ class PickedEntity:
         factory = LevelEntity.Factories[entity_name]
 
         # create a fake level, since we don't want any factory to affect the real level
-        fake_level = Level(level.asset_manager)
+        fake_level = Level(level.asset_manager, EntityManager.create_default())
 
         # create preview image
         preview_entity = factory(fake_level, None)

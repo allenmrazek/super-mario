@@ -36,10 +36,10 @@ class EditorState(GameState, EventHandler):
         super().__init__(game_events)
 
         self.assets = assets  # type: AssetManager
-        self.entity_manager = EntityManager([Layer.Interface])
+        self.entity_manager = EntityManager([Layer.Interface])  # own manager for interface
 
         # create a level to edit
-        self.level = Level(assets)
+        self.level = Level(assets, EntityManager.create_editor())
 
         # shim to create a callback before UI draws
         self.entity_manager.register(_ModeDrawHelper(self.on_pre_ui_draw))
@@ -175,7 +175,7 @@ class EditorState(GameState, EventHandler):
 
                 # easiest way to handle this is to serialize our level, then load it rather than some
                 # complicated deepcopy incomplementation
-                test_level = Level(self.assets)
+                test_level = Level(self.assets, EntityManager.create_default())
                 test_level.deserialize(self.level.serialize())
                 test_level.position = self.level.position
 

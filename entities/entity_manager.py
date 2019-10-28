@@ -14,10 +14,27 @@ class EntityManager:
         self.ordering = layer_ordering
         self.layers = dict(zip(layer_ordering, [list() for _ in range(len(layer_ordering))]))
 
+        # include any missing layers
+        have = set(layer_ordering)
+        exist = set([x for x in Layer])
+
+        for missing_layer in exist.difference(have):
+            self.layers[missing_layer] = list()
+
     @staticmethod
     def create_default():
-        # create a default entity manager. This should be sufficient in most cases
-        ordering = [Layer.Background, Layer.Block, Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
+        # create a default entity manager. This is standard gameplay
+        ordering = [Layer.Background, Layer.Block,
+                    Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
+
+        return EntityManager(ordering)
+
+    @staticmethod
+    def create_editor():
+        # create entity manager for editor. This has its own manager because the editor has layers that
+        # won't typically be drawn during play, but are relevant while editing (spawners, triggers)
+        ordering = [Layer.Background, Layer.Block, Layer.Spawner, Layer.Trigger,
+                    Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
 
         return EntityManager(ordering)
 
