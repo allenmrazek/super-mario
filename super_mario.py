@@ -10,6 +10,7 @@ import config
 from timer import game_timer
 from assets import AssetManager
 from entities.gui.modal import ModalTextInput
+from entities.entity_manager import EntityManager
 
 
 class _QuitListener(EventHandler):
@@ -37,9 +38,12 @@ def run():
 
     #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     #state_stack.push()
-    PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
+    #PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
     #state_stack.push(TestLevel(game_events, assets, Level(assets)))
-    #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets, Level(assets)))
+    lvl = Level(assets, EntityManager.create_default())
+    lvl.load_from_path('levels/test.level')
+
+    PerformanceMeasurement.measure(state_stack, TestLevel(None, assets, lvl))
 
     game_timer.reset()
 

@@ -1,3 +1,4 @@
+import json
 from pygame import Rect
 from entities.collider import ColliderManager
 from assets.tile_map import TileMap
@@ -97,6 +98,10 @@ class Level(EventHandler):
 
         if spawn_point:
             self.spawn_mario(spawn_point)
+
+    def load_from_path(self, filename):
+        with open(filename, 'r') as f:
+            self.deserialize(json.loads(f.read()))
 
     def _find_spawn_point(self):
         spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)

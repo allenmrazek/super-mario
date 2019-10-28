@@ -135,6 +135,12 @@ class LevelConfigDialog(Dialog):
 
             print(f"Successfully read '{path}'")
 
+            clr = pygame.Color(*self.level.background_color)
+
+            self.bkg_color_r_slider.value = clr[0]
+            self.bkg_color_g_slider.value = clr[1]
+            self.bkg_color_b_slider.value = clr[2]
+
         def _cancel():
             pass
 
