@@ -43,7 +43,7 @@ class LevelConfigDialog(Dialog):
                                             atlas.load_sliced("sb_thumb_h"),
                                             255,
                                             0,
-                                            atlas.load_sliced("sb_thumb_h_hl"),
+                                            atlas.load_sliced("sb_thumb_h_dk"),
                                             self._on_slider_changed)
 
         # slider for g
@@ -58,7 +58,7 @@ class LevelConfigDialog(Dialog):
                                             atlas.load_sliced("sb_thumb_h"),
                                             255,
                                             0,
-                                            atlas.load_sliced("sb_thumb_h_hl"),
+                                            atlas.load_sliced("sb_thumb_h_dk"),
                                             self._on_slider_changed)
 
         # slider for b
@@ -73,7 +73,7 @@ class LevelConfigDialog(Dialog):
                                             atlas.load_sliced("sb_thumb_h"),
                                             255,
                                             0,
-                                            atlas.load_sliced("sb_thumb_h_hl"),
+                                            atlas.load_sliced("sb_thumb_h_dk"),
                                             self._on_slider_changed)
 
         self.add_child(self.bkg_color_r_slider)
@@ -85,4 +85,4 @@ class LevelConfigDialog(Dialog):
         g = clamp(int(self.bkg_color_g_slider.value), 0, 255)
         b = clamp(int(self.bkg_color_b_slider.value), 0, 255)
 
-        self.level.background_color = pygame.Color(r, g, b)
+        self.level.background_color = pygame.Color((r, g, b))

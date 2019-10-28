@@ -56,7 +56,7 @@ class EntityPickerDialog(Dialog):
                                          self.assets.gui_atlas.load_sliced("control_small_block2"),
                                          self.assets.gui_atlas.load_sliced("sb_thumb_v"),
                                          max(0, self.scrolling_container.height),
-                                         sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_v_hl"),
+                                         sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_v_dk"),
                                          on_value_changed_callback=self._on_scroll_changed)
 
         self.add_child(self.scrolling_container)

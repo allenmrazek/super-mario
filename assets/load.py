@@ -76,26 +76,33 @@ def load_gui_atlas():
     atlas = SpriteAtlas(get_atlas_path("gui"), tf_use_rescale_factor=False, convert=False)
     kwargs = {"color_key": config.transparent_color}
 
-    def load_slice(name, hl_name, dims, **kw):
+    def load_slice(name, darken_name, dims, **kw):
         atlas.initialize_slice(name, dims, **kw)
         sliced = atlas.load_sliced(name)
 
-        hl = generated_selected_version_darken(sliced.base_surface, 0.5)
+        if darken_name is not None:
+            darkened = generated_selected_version_darken(sliced.base_surface, 0.5)
 
-        if sliced.base_surface.get_colorkey() is not None:
-            hl = hl.convert()
-            hl.set_colorkey(sliced.base_surface.get_colorkey())
+            if sliced.base_surface.get_colorkey() is not None:
+                darkened = darkened.convert()
+                darkened.set_colorkey(sliced.base_surface.get_colorkey())
 
-        atlas.initialize_slice_from_surface(hl_name, hl, dims)
+            atlas.initialize_slice_from_surface(darken_name, darkened, dims)
 
-    load_slice("bkg_square", "bkg_square_hl", (16, 16), **kwargs)
-    load_slice("bkg_rounded", "bkg_rounded_hl", (32, 32), **kwargs)
-    load_slice("bkg_very_rounded", "bkg_very_rounded_hl", (32, 32), **kwargs)
-    load_slice("control_small", "control_small_hl", (7, 7), **kwargs)
-    load_slice("control_small_block", "control_small_block_hl", (7, 7), **kwargs)
-    load_slice("control_small_block2", "control_small_block2_hl", (7, 7), **kwargs)
-    load_slice("sb_thumb_h", "sb_thumb_h_hl", (4, 4), **kwargs)
-    load_slice("sb_thumb_v", "sb_thumb_v_hl", (4, 4), **kwargs)
+    load_slice("bkg_square", "bkg_square_dk", (16, 16), **kwargs)
+    load_slice("bkg_rounded", "bkg_rounded_dk", (32, 32), **kwargs)
+    load_slice("bkg_very_rounded", "bkg_very_rounded_dk", (32, 32), **kwargs)
+    load_slice("button_bkg_dark", None, (7, 7), **kwargs)
+    load_slice("button_bkg_light", None, (7, 7), **kwargs)
+    load_slice("button_bkg_white", "button_bkg_white_dk", (7, 7), **kwargs)
+    load_slice("window_bkg_large", None, (34, 34), **kwargs)
+    load_slice("frame1", "frame1_dk", (43, 43), **kwargs)
+    load_slice("tb_frame", "tb_frame_dk", (5, 5), **kwargs)
+    load_slice("control_small", "control_small_dk", (7, 7), **kwargs)
+    load_slice("control_small_block", "control_small_block_dk", (7, 7), **kwargs)
+    load_slice("control_small_block2", "control_small_block2_dk", (7, 7), **kwargs)
+    load_slice("sb_thumb_h", "sb_thumb_h_dk", (4, 4), **kwargs)
+    load_slice("sb_thumb_v", "sb_thumb_v_dk", (4, 4), **kwargs)
 
     load_slice("option_button", "option_button_hl", (4, 4))
 

@@ -38,7 +38,7 @@ class LayerDialog(Dialog):
                             unselected_image=atlas.load_static("option_button"),
                             text_color=pygame.Color('black'),
                             background=atlas.load_sliced("control_small_block2"),
-                            mouseover_image=atlas.load_sliced("control_small_block2_hl"),
+                            mouseover_image=atlas.load_sliced("control_small_block2_dk"),
                             font=font)
             option.selected = False
 

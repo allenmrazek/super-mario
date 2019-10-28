@@ -34,7 +34,7 @@ class TilePickerDialog(Dialog):
                                          assets.gui_atlas.load_sliced("control_small_block2"),
                                          assets.gui_atlas.load_sliced("sb_thumb_v"),
                                          max(0, self.tileset.surface.get_height() - self.scrollable.height),
-                                         sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_v_hl"),
+                                         sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_v_dk"),
                                          on_value_changed_callback=self._on_scroll_changed)
 
         self.horizontal_scroll = Scrollbar(make_vector(self.scrollable.rect.left + 5, self.scrollable.rect.bottom),
@@ -42,7 +42,7 @@ class TilePickerDialog(Dialog):
                                            assets.gui_atlas.load_sliced("control_small_block2"),
                                            assets.gui_atlas.load_sliced("sb_thumb_h"),
                                            max(0, self.tileset.surface.get_width() - self.scrollable.width),
-                                           sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_h_hl"),
+                                           sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_h_dk"),
                                            on_value_changed_callback=self._on_scroll_changed)
 
         self.add_child(self.scrollable)

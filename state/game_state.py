@@ -1,11 +1,13 @@
 from abc import abstractmethod
 from abc import ABC
+from event import GameEvents
 
 
 class GameState(ABC):
-    def __init__(self, game_events):
+    def __init__(self, game_events=None):
         super().__init__()
-        self.game_events = game_events
+
+        self.game_events = game_events or GameEvents()
 
     @abstractmethod
     def update(self, dt):
@@ -26,6 +28,9 @@ class GameState(ABC):
 
     def deactivated(self):
         pass
+
+    def do_events(self):
+        self.game_events.do_events()
 
 
 class NoStatesError(RuntimeError):

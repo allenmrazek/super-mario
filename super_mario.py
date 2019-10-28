@@ -9,6 +9,7 @@ from assets.level import Level
 import config
 from timer import game_timer
 from assets import AssetManager
+from entities.gui.modal import ModalTextInput
 
 
 class _QuitListener(EventHandler):
@@ -30,27 +31,28 @@ def run():
     assets = AssetManager()
 
     # initialize states
-    game_events = GameEvents()
-    game_events.register(_QuitListener())
+    #default_game_events = GameEvents()
+    #default_game_events.register(_QuitListener())
 
 
     #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     #state_stack.push()
-    PerformanceMeasurement.measure(state_stack, EditorState(game_events, assets))
+    PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
     #state_stack.push(TestLevel(game_events, assets, Level(assets)))
     #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets, Level(assets)))
+
     game_timer.reset()
 
     # timer initialize
     accumulator = 0.0
 
     while state_stack.top is not None:
-        game_events.do_events()
+        state_stack.top.do_events()
         game_timer.update()
 
         # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
-        updated = False
+        updated = False  # no interpolation, so don't waste time drawing screen if it didn't change anyways
 
         while accumulator > config.PHYSICS_DT:
             updated = True

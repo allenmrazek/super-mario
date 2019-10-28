@@ -33,7 +33,6 @@ class TestLevel(GameState, EventHandler):
         self.game_events.unregister(self)
 
     def handle_event(self, evt, game_events):
-        if not self.is_consumed(evt) and evt.type == pygame.KEYDOWN and evt.key == pygame.K_q:
+        if not self.is_consumed(evt) and evt.type == pygame.KEYDOWN and evt.key in [pygame.K_q, pygame.K_ESCAPE]:
             self._finished = True
             self.consume(evt)
-            

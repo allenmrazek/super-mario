@@ -19,6 +19,7 @@ from .passable_mode import PassableMode
 from .config_mode import ConfigMode
 from .entity_mode import EntityMode
 from state.performance_measurement import PerformanceMeasurement
+from entities.gui.modal import ModalTextInput
 
 
 class _ModeDrawHelper(Element):
@@ -55,7 +56,7 @@ class EditorState(GameState, EventHandler):
                                                self.assets.gui_atlas.load_sliced("option_button"),
                                                self.assets.gui_atlas.load_sliced("sb_thumb_h"),
                                                self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
-                                               sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_h_hl"),
+                                               sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_h_dk"),
                                                on_value_changed_callback=bind_callback_parameters(self.on_horizontal_scroll))
 
         self.scroll_map_vertical = Scrollbar(pygame.Vector2(*config.screen_rect.topright) + make_vector(-20, 10),
@@ -63,7 +64,7 @@ class EditorState(GameState, EventHandler):
                                                self.assets.gui_atlas.load_sliced("option_button"),
                                                self.assets.gui_atlas.load_sliced("sb_thumb_v"),
                                                self.level.tile_map.height * self.level.tile_map.tileset.tile_height,
-                                               sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_v_hl"),
+                                               sb_button_mouseover=self.assets.gui_atlas.load_sliced("sb_thumb_v_dk"),
                                                on_value_changed_callback=bind_callback_parameters(self.on_vertical_scroll))
 
         self.frame.add_child(self.scroll_map_horizontal)
@@ -103,6 +104,8 @@ class EditorState(GameState, EventHandler):
                                       on_entity_mode_callback=bind_callback_parameters(self.set_mode, self.entity_mode))
 
         self.frame.add_child(self.mode_dialog)
+
+        self._finished = False
 
     def draw(self, screen):
         screen.fill(self.level.background_color)
@@ -145,7 +148,7 @@ class EditorState(GameState, EventHandler):
 
     @property
     def finished(self):
-        return False
+        return self._finished
 
     def on_pre_ui_draw(self, screen):
         self.current_mode.draw(screen)
@@ -157,6 +160,11 @@ class EditorState(GameState, EventHandler):
         self.game_events.unregister(self)
 
     def handle_event(self, evt, game_events):
+        if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
+            self.consume(evt)
+            self._finished = True
+            return
+
         self.frame.handle_event(evt, game_events)
 
         # if absolutely nothing handled the event, the user has tried to do some kind of interaction
