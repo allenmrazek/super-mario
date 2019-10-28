@@ -1,8 +1,3 @@
-import pygame
-from entities.gui import Text, Texture, Window, Dialog, Option, OptionGroup, Button
-from entities.entity import Layer
-from entities.gui import Anchor
-import config
 from util import make_vector, bind_callback_parameters
 from assets.gui_helper import *
 
@@ -25,8 +20,6 @@ class ModeDialog(Dialog):
                          tb_bkg=gui_atlas.load_sliced("tb_frame"))
 
         # create an entry for each mode
-        y_pos = font.get_height()
-
         frame_width = 25
         delta_y = 6
 
@@ -44,15 +37,6 @@ class ModeDialog(Dialog):
         self.add_child(tile_mode_button)
 
         # passable mode
-        # passable_mode_button = Button(make_vector(10, tile_mode_button.relative_position.y + tile_mode_button.height),
-        #                               size=button_size,
-        #                               background=gui_atlas.load_sliced("option_button"),
-        #                               font=font,
-        #                               text="Edit Passability",
-        #                               on_click_callback=bind_callback_parameters(on_passable_mode_callback),
-        #                               text_color=button_text_color,
-        #                               mouseover_image=gui_atlas.load_sliced("option_button_hl"))
-
         passable_mode_button = create_button(gui_atlas, make_vector(frame_width, tile_mode_button.relative_position.y + tile_mode_button.height + delta_y), button_size,
                                             "Passability", bind_callback_parameters(on_passable_mode_callback), font,
                                             text_color=button_text_color)
@@ -60,14 +44,6 @@ class ModeDialog(Dialog):
         self.add_child(passable_mode_button)
 
         # entity mode
-        # entity_mode_button = Button(make_vector(10, config_mode_button.relative_position.y + config_mode_button.height),
-        #                               size=button_size,
-        #                               background=bkg(),
-        #                               font=font,
-        #                               text="Entities",
-        #                               on_click_callback=bind_callback_parameters(on_entity_mode_callback),
-        #                               text_color=button_text_color,
-        #                               mouseover_image=opt_mouseover())
         entity_mode_button = create_button(gui_atlas, make_vector(frame_width, passable_mode_button.relative_position.y + passable_mode_button.height + delta_y), button_size,
                                             "Entities", bind_callback_parameters(on_entity_mode_callback), font,
                                             text_color=button_text_color)
@@ -75,16 +51,8 @@ class ModeDialog(Dialog):
         self.add_child(entity_mode_button)
 
         # config mode
-        # config_mode_button = Button(make_vector(10, passable_mode_button.relative_position.y + passable_mode_button.height),
-        #                               size=button_size,
-        #                               background=gui_atlas.load_sliced("option_button"),
-        #                               font=font,
-        #                               text="Edit Settings",
-        #                               on_click_callback=bind_callback_parameters(on_config_mode_callback),
-        #                               text_color=button_text_color,
-        #                               mouseover_image=gui_atlas.load_sliced("option_button_hl"))
         config_mode_button = create_button(gui_atlas, make_vector(frame_width, entity_mode_button.relative_position.y + entity_mode_button.height + delta_y), button_size,
-                                            "Entities", bind_callback_parameters(on_config_mode_callback), font,
+                                            "Configuration", bind_callback_parameters(on_config_mode_callback), font,
                                             text_color=button_text_color)
 
         self.add_child(config_mode_button)

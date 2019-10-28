@@ -5,6 +5,7 @@ from util import make_vector
 from util import tile_coords_to_pixel_coords
 from util import pixel_coords_to_tile_coords
 from util import tile_index_to_coords
+from assets.gui_helper import *
 
 
 class TilePickerDialog(Dialog):
@@ -14,7 +15,9 @@ class TilePickerDialog(Dialog):
         font = pygame.font.SysFont(None, 24)
 
         super().__init__(config.screen_rect.center,
-                         TilePickerDialog.SIZE, assets.gui_atlas.load_sliced("bkg_rounded"),
+                         TilePickerDialog.SIZE, assets.gui_atlas.load_sliced("tb_frame"),
+                         tb_bkg=assets.gui_atlas.load_sliced("tb_frame"),
+                         additional_height=8, text_start_offset=(12, 5),
                          font=font, title="Tiles")
 
         self.tileset = assets.tileset
@@ -22,28 +25,38 @@ class TilePickerDialog(Dialog):
         # contents window
         self.scrollable = ScrollableContents(
             make_vector(6, self.get_title_bar_bottom()),
-            (TilePickerDialog.SIZE[0] - 25, TilePickerDialog.SIZE[1] - self.get_title_bar_bottom() - 22),
+            (TilePickerDialog.SIZE[0] - 30, TilePickerDialog.SIZE[1] - self.get_title_bar_bottom() - 26),
             self._create_tileset_surface()
         )
 
         self.layout()  # ensure scrollable is positioned
 
         # create scrollbars
-        self.vertical_scroll = Scrollbar(make_vector(self.scrollable.rect.right, self.scrollable.rect.top + 5),
-                                         ScrollbarType.VERTICAL, self.scrollable.rect.height,
-                                         assets.gui_atlas.load_sliced("control_small_block2"),
-                                         assets.gui_atlas.load_sliced("sb_thumb_v"),
-                                         max(0, self.tileset.surface.get_height() - self.scrollable.height),
-                                         sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_v_dk"),
-                                         on_value_changed_callback=self._on_scroll_changed)
+        # self.vertical_scroll = Scrollbar(make_vector(self.scrollable.rect.right, self.scrollable.rect.top + 5),
+        #                                  ScrollbarType.VERTICAL, self.scrollable.rect.height,
+        #                                  assets.gui_atlas.load_sliced("control_small_block2"),
+        #                                  assets.gui_atlas.load_sliced("sb_thumb_v"),
+        #                                  max(0, self.tileset.surface.get_height() - self.scrollable.height),
+        #                                  sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_v_dk"),
+        #                                  on_value_changed_callback=self._on_scroll_changed)
+        self.vertical_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.right + 4, self.scrollable.rect.top + 10),
+                                             self.scrollable.rect.height - 15, 0,  max(0, self.tileset.surface.get_height() - self.scrollable.height),
+                                             self._on_scroll_changed, thumb=assets.gui_atlas.load_static("sb_thumb"),
+                                             thumb_mo=assets.gui_atlas.load_static("sb_thumb_light"),
+                                             sb_type=ScrollbarType.VERTICAL)
 
-        self.horizontal_scroll = Scrollbar(make_vector(self.scrollable.rect.left + 5, self.scrollable.rect.bottom),
-                                           ScrollbarType.HORIZONTAL, self.scrollable.rect.width - 5,
-                                           assets.gui_atlas.load_sliced("control_small_block2"),
-                                           assets.gui_atlas.load_sliced("sb_thumb_h"),
-                                           max(0, self.tileset.surface.get_width() - self.scrollable.width),
-                                           sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_h_dk"),
-                                           on_value_changed_callback=self._on_scroll_changed)
+        # self.horizontal_scroll = Scrollbar(make_vector(self.scrollable.rect.left + 5, self.scrollable.rect.bottom),
+        #                                    ScrollbarType.HORIZONTAL, self.scrollable.rect.width - 5,
+        #                                    assets.gui_atlas.load_sliced("control_small_block2"),
+        #                                    assets.gui_atlas.load_sliced("sb_thumb_h"),
+        #                                    max(0, self.tileset.surface.get_width() - self.scrollable.width),
+        #                                    sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_h_dk"),
+        #                                    on_value_changed_callback=self._on_scroll_changed)
+        self.horizontal_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.left + 5, self.scrollable.rect.bottom + 5),
+                                             self.scrollable.rect.width, 0,  max(0, self.tileset.surface.get_width() - self.scrollable.width),
+                                             self._on_scroll_changed, thumb=assets.gui_atlas.load_static("sb_thumb"),
+                                             thumb_mo=assets.gui_atlas.load_static("sb_thumb_light"),
+                                             sb_type=ScrollbarType.HORIZONTAL)
 
         self.add_child(self.scrollable)
         self.add_child(self.vertical_scroll)
@@ -52,6 +65,7 @@ class TilePickerDialog(Dialog):
         self.layout()
 
         self.selected_tile_idx = 0
+        self.bring_to_front(self.title_bar)
 
     def _on_scroll_changed(self, new_val):
         self.scrollable.set_scroll(make_vector(self.horizontal_scroll.value, self.vertical_scroll.value))
@@ -88,7 +102,13 @@ class TilePickerDialog(Dialog):
         r.inflate_ip(2, 2)
 
         existing_clip = screen.get_clip()
-        screen.set_clip(self.rect)
+
+        cr = self.rect.copy()
+        cr.top += self.get_title_bar_bottom()
+        cr.height -= self.get_title_bar_bottom()
+        cr.height -= 20  # account for thick frame
+
+        screen.set_clip(cr)
 
         pygame.draw.rect(screen, (255, 0, 0), r, 3)
 
