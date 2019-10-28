@@ -29,4 +29,18 @@ def create_dialog(gui_atlas, position, size, title, font=None, text_color=config
     font = font or get_default_font()
     tb_bkg = tb_bkg or gui_atlas.load_sliced("tb_frame")
 
-    return Dialog(position, size, bkg_window, font, text_color, tb_bkg, title, additional_height=8, text_start_offset=(12,5))
+    return Dialog(position, size, bkg_window, font, text_color, tb_bkg, title, additional_height=8, text_start_offset=(12, 5))
+
+
+def create_slider(gui_atlas, position, width_or_height, min_value, max_value, on_value_changed, background=None,
+                  thumb=None, thumb_mo=None, sb_type=ScrollbarType.HORIZONTAL):
+    if sb_type == ScrollbarType.HORIZONTAL:
+        bkg = background or gui_atlas.load_sliced("slider_bkg_h")
+        thumb = thumb or gui_atlas.load_static("slider_thumb_h")
+        thumb_mo = thumb_mo or gui_atlas.load_static("slider_thumb_h_light")
+    else:
+        bkg = background or gui_atlas.load_sliced("slider_bkg_v")
+        thumb = thumb or gui_atlas.load_static("slider_thumb_v")
+        thumb_mo = thumb_mo or gui_atlas.load_static("slider_thumb_v_light")
+
+    return Scrollbar(position, sb_type, width_or_height, bkg, thumb, max_value, min_value, thumb_mo, on_value_changed)

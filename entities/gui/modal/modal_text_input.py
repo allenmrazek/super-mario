@@ -61,9 +61,7 @@ class ModalTextInput(GameState, EventHandler):
                                       gui_atlas.load_sliced("button_bkg_white"), draggable=False)
         self.dialog.add_child(self.text_background)
 
-        text_pos = make_vector(self.text_background.width // 2, 0)
-
-        self.text = Text(make_vector(8, 8), "Ipso blah whatever", font, text_color, Anchor.TOP_LEFT, True)
+        self.text = Text(make_vector(8, 8), "", font, text_color, Anchor.TOP_LEFT, True)
         self.text_background.add_child(self.text)
 
         self.dialog.layout()

@@ -103,12 +103,22 @@ def load_gui_atlas():
     load_slice("control_small_block2", "control_small_block2_dk", (7, 7), **kwargs)
     load_slice("sb_thumb_h", "sb_thumb_h_dk", (4, 4), **kwargs)
     load_slice("sb_thumb_v", "sb_thumb_v_dk", (4, 4), **kwargs)
-
+    load_slice("slider_bkg_h", None, (7, 7), **kwargs)
+    load_slice("slider_bkg_v", None, (7, 7), **kwargs)
+    load_slice("sb_thumb_light", None, (7, 7), **kwargs)
     load_slice("option_button", "option_button_hl", (4, 4))
 
     atlas.initialize_static("option_button", **kwargs)
     atlas.initialize_static("option_button_checked_heavy", **kwargs)
     atlas.initialize_static("option_button_checked_light", **kwargs)
+    atlas.initialize_static("slider_thumb_h", **kwargs)
+    atlas.initialize_static("slider_thumb_h_light", **kwargs)
+    atlas.initialize_static("slider_thumb_v", **kwargs)
+    atlas.initialize_static("slider_thumb_v_light", **kwargs)
+    atlas.initialize_static("slider_bkg_h", **kwargs)
+    atlas.initialize_static("slider_bkg_v", **kwargs)
+    atlas.initialize_static("sb_thumb", **kwargs)
+    atlas.initialize_static("sb_thumb_light", **kwargs)
 
     # tools (no colorkey => use per-pixel alpha)
 

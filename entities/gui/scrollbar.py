@@ -41,8 +41,8 @@ class _SliderButton(Button):
 
 
 class Scrollbar(Element):
-    VERTICAL_WIDTH = 16
-    HORIZONTAL_HEIGHT = 16
+    VERTICAL_WIDTH = 14
+    HORIZONTAL_HEIGHT = 14
 
     def __init__(self, relative_position, sb_type, width_or_height, sb_background,
                  sb_button_background, sb_max_value, sb_min_value=0, sb_button_mouseover=None,
