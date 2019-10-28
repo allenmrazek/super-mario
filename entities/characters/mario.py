@@ -1,6 +1,7 @@
 import math
 from pygame import Vector2
 from .. import Entity, Layer
+from entities.characters.level_entity import LevelEntity
 from entities.collider import ColliderManager
 from entities.collider import Collider
 from animation import Animation
@@ -11,11 +12,11 @@ import config
 from .mario_constants import *
 
 
-class Mario(Entity):
-    def __init__(self, input_state, atlas, cmanager: ColliderManager):
+class Mario(LevelEntity):
+    def __init__(self, input_state, level):
         self.input_state = input_state
-        self.cmanager = cmanager
-        self.animator = _MarioAnimation(atlas)
+        self.cmanager = level.collider_manager
+        self.animator = _MarioAnimation(level.asset_manager.character_atlas)
 
         super().__init__(self.animator.image.get_rect())
 
@@ -36,14 +37,14 @@ class Mario(Entity):
 
         # temp: set initial position of mario
         self.position = make_vector(config.screen_rect.centerx, config.screen_rect.height / 2.)
-        self.rect = atlas.load_static("mario_stand_right").image.get_rect()
+        self.rect = level.asset_manager.character_atlas.load_static("mario_stand_right").image.get_rect()
         self.run_timer = 0.
 
         # create colliders for mario
-        self.collider = Collider.from_entity(self, cmanager, Layer.Block | Layer.Active)
-        self.airborne_collider = Collider.from_entity(self, cmanager, Layer.Block)
+        self.collider = Collider.from_entity(self, self.cmanager, Layer.Block | Layer.Active)
+        self.airborne_collider = Collider.from_entity(self, self.cmanager, Layer.Block)
 
-        self.hitbox = Collider.from_entity(self, cmanager, 0)
+        self.hitbox = Collider.from_entity(self, self.cmanager, 0)
         self.hitbox.rect.width, self.hitbox.rect.height = 10 * config.rescale_factor, 14 * config.rescale_factor
         self.hitbox.position = self.position + make_vector(3 * config.rescale_factor, 2 * config.rescale_factor)
 
@@ -122,6 +123,18 @@ class Mario(Entity):
         self.jumped = False
         self._facing_right = True
         self._airborne = False
+
+    def destroy(self):
+        self.enabled = False
+
+    def serialize(self):
+        values = super().serialize()
+
+        # note to self: don't serialize mario state; that can change between levels
+        return values
+
+    def deserialize(self, values):
+        super().deserialize(values)
 
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether
@@ -305,6 +318,7 @@ class Mario(Entity):
             target_point = self.position + make_vector(0., self._velocity.y) * dt
             collisions = self.collider.try_move(target_point)
 
+            # todo: use approach instead of iterative move
             if collisions:
                 dist_moved = self.collider.iterative_move(target_point)
                 ColliderManager.dispatch_events(self.collider, collisions)
@@ -319,7 +333,6 @@ class Mario(Entity):
 
         # attempt to move to new position, if we can
         self.collider.position = self.position
-        #collisions = self.collider.iterative_move(self.position + new_position)
         collisions = self.collider.approach(self.position + new_position)
         self.position = self.collider.position
 
@@ -402,3 +415,14 @@ class _MarioAnimation:
     @property
     def image(self):
         return self.current.image
+
+
+def mario_factory(level, values):
+    mario = Mario(level.player_input, level)
+
+    mario.deserialize(values)
+
+    return mario
+
+
+LevelEntity.register_factory(Mario, mario_factory)

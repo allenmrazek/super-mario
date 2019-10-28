@@ -7,7 +7,7 @@ from state.game_state import GameState, state_stack
 from state.test_level import TestLevel
 from entities.gui import Frame, Element, Anchor, Scrollbar, ScrollbarType
 from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog, ModeDialog, LevelConfigDialog
-from entities.entity import EntityManager, Layer
+from entities import EntityManager, Layer
 from assets.asset_manager import AssetManager
 import config
 from util import make_vector, bind_callback_parameters
@@ -163,6 +163,7 @@ class EditorState(GameState, EventHandler):
                 # complicated deepcopy incomplementation
                 test_level = Level(self.assets)
                 test_level.deserialize(self.level.serialize())
+                test_level.position = self.level.position
 
                 state_stack.push(TestLevel(self.game_events, self.assets, test_level))
 

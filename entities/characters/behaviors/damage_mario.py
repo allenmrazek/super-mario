@@ -7,7 +7,7 @@ import config
 
 
 class DamageMario(Behavior):
-    """A hitbox which will damage mario, if he is no invincible"""
+    """A hitbox which will damage mario, if he is not invincible"""
     def __init__(self, level, entity, hitbox_offset, hitbox_size):
         super().__init__()
 
@@ -27,7 +27,8 @@ class DamageMario(Behavior):
     def draw(self, screen, view_rect):
         if config.debug_hitboxes:
             r = self.hitbox.rect.copy()
-            r.topleft = world_to_screen(self.hitbox.position, view_rect) + self.hitbox_offset
+            self.hitbox.position = self.entity.position + self.hitbox_offset
+            r.topleft = world_to_screen(self.hitbox.position, view_rect)
             r = screen.get_rect().clip(r)
             screen.fill((0, 255, 0), r)
 
@@ -37,3 +38,5 @@ class DamageMario(Behavior):
         self.level.kill_mario()
         self.level.entity_manager.register(MarioDeath(self.level, self.level.mario.position))
 
+    def destroy(self):
+        pass

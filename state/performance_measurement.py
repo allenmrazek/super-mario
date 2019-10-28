@@ -4,7 +4,8 @@ from .game_state import GameState
 from .game_state import GameStateStack
 from entities.gui.element import Anchor
 from entities.gui.text import Text
-from entities.entity import EntityManager, Layer
+from entities.entity import Layer
+from entities.entity_manager import EntityManager
 from util import make_vector
 import config
 

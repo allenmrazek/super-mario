@@ -18,7 +18,7 @@ class Corpse(Entity):
         self.duration -= dt
 
         if self.duration < 0.:
-            self.level.entity_manager.unregister(self)
+            self.destroy()
 
     @property
     def layer(self):
@@ -26,3 +26,6 @@ class Corpse(Entity):
 
     def draw(self, screen, view_rect):
         screen.blit(self.animation.image, world_to_screen(self.position, view_rect))
+
+    def destroy(self):
+        self.level.entity_manager.unregister(self)

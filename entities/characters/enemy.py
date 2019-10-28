@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from entities import Entity, Layer
+from typing import NamedTuple
+from .level_entity import LevelEntity
 
 
-class Enemy(Entity, ABC):
+class Enemy(LevelEntity, ABC):
     def __init__(self, level, position, rect):
         super().__init__(rect)
 
@@ -13,7 +14,8 @@ class Enemy(Entity, ABC):
 
     @property
     def layer(self):
-        return Layer.Enemy
+        import entities.entity
+        return entities.entity.Layer.Enemy
 
     @abstractmethod
     def update(self, dt, view_rect):
@@ -26,3 +28,23 @@ class Enemy(Entity, ABC):
     @abstractmethod
     def die(self):
         pass
+
+    @abstractmethod
+    def destroy(self):
+        pass
+
+
+class EnemyParameters(NamedTuple):
+    max_horizontal_velocity: float
+    max_vertical_velocity: float
+    jump_velocity: float
+    squash_bounce_velocity: float  # velocity applied to mario when he squashes this enemy (if he can)
+    gravity: float
+
+    @staticmethod
+    def create(hmax, vmax, jump, squash, gravity):
+        return EnemyParameters(max_horizontal_velocity=hmax,
+                               max_vertical_velocity=vmax,
+                               jump_velocity=jump,
+                               squash_bounce_velocity=squash,
+                               gravity=gravity)

@@ -1,4 +1,4 @@
-from ..entity import Entity, EntityManager
+from entities.entity_manager import Entity
 from util import make_vector, mario_str_to_pixel_value_velocity as mstpvv
 from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import world_to_screen

@@ -1,6 +1,7 @@
 from . import Enemy
 from entities.characters.corpse import Corpse
-from .parameters import EnemyParameters
+from .level_entity import LevelEntity
+from .enemy import EnemyParameters
 from .behaviors import SimpleMovement, Squashable
 from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa
 from util import mario_str_to_pixel_value_velocity as mstvpv
@@ -39,10 +40,7 @@ class Goomba(Enemy):
         self.hurts.draw(screen, view_rect)
 
     def die(self):
-        print("goomba died")
-
-        self.level.entity_manager.unregister(self)
-        self.movement.finish()
+        self.destroy()
 
         corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
                         1., self.position)
@@ -50,3 +48,18 @@ class Goomba(Enemy):
         corpse.position = get_corpse_position(self.rect, corpse.rect)
 
         self.level.entity_manager.register(corpse)
+
+    def destroy(self):
+        self.level.entity_manager.unregister(self)
+        self.movement.destroy()
+        self.hurts.destroy()
+
+
+def make_goomba(level, values):
+    goomba = Goomba(level, make_vector(0, 0))
+    goomba.deserialize(values)
+
+    return goomba
+
+
+LevelEntity.register_factory(Goomba, make_goomba)

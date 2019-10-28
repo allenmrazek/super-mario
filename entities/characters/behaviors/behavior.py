@@ -12,3 +12,7 @@ class Behavior(ABC):
     @abstractmethod
     def draw(self, screen, view_rect):
         pass
+
+    @abstractmethod
+    def destroy(self):
+        pass

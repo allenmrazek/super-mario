@@ -14,12 +14,14 @@ class Layer(IntFlag):
     Interface = 1 << 5      # interface stuff here
     Overlay = 1 << 6        # a final layer that absolutely will overlay everything. Use sparingly
 
-    @staticmethod
-    def count():
-        return len(Layer)
+    # @staticmethod
+    # def count():
+    #     return len(Layer)
 
 
 class Entity(ABC):
+    """Important note: while you can make things exist on the map by making them entities, they
+    WILL NOT BE SERIALIZED. Use LevelEntity for persistent things (anything that can be placed)"""
     def __init__(self, rect: Rect):
         super().__init__()
 
@@ -73,69 +75,3 @@ class Entity(ABC):
     @height.setter
     def height(self, h):
         self._rect.height = h
-
-
-class EntityManager:
-    def __init__(self, layer_ordering: list):
-        assert layer_ordering is not None and len(layer_ordering) > 0
-
-        self.ordering = layer_ordering
-        self.layers = dict(zip(layer_ordering, [list() for _ in range(len(layer_ordering))]))
-
-    @staticmethod
-    def create_default():
-        # create a default entity manager. This should be sufficient in most cases
-        ordering = [Layer.Background, Layer.Block, Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
-
-        return EntityManager(ordering)
-
-    def register(self, *args):
-        try:
-            iterator = iter(*args)
-
-            for item in iterator:
-                self._register_internal(item)
-
-        except TypeError:
-            for item in args:
-                if isinstance(item, Entity):
-                    self._register_internal(*args)
-                else:
-                    self.register(item)
-
-    def _register_internal(self, entity):
-        assert entity.layer in self.layers.keys()
-        self.layers[entity.layer].append(entity)
-
-    def unregister(self, entity):
-        assert isinstance(entity, Entity)
-        assert entity.layer in self.layers.keys()
-        assert entity in self.layers[entity.layer]
-
-        self.layers[entity.layer].remove(entity)
-
-    def update(self, dt, view_rect):
-        # todo: update only screen and a quarter
-        def update_entity(entity, vr):
-            entity.update(dt, vr)
-
-        self._do_on_each_layer(update_entity, view_rect)
-
-    def draw(self, screen, view_rect):
-        # todo: draw only screen and a quarter
-        def draw_entity(entity, vr):
-            entity.draw(screen, vr)
-
-        self._do_on_each_layer(draw_entity, view_rect)
-
-    def _do_on_each_layer(self, fn, view_rect):
-        for layer in self.ordering:
-            entities = list(self.layers[layer])
-
-            for entity in entities:
-                if hasattr(entity, "enabled"):
-                    if entity.enabled:
-                        fn(entity, view_rect)
-
-                else:
-                    fn(entity, view_rect)

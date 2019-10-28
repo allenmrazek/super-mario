@@ -1,6 +1,6 @@
 from .behavior import Behavior
 from util import make_vector
-from entities.characters.parameters import EnemyParameters
+from entities.characters.enemy import EnemyParameters
 from entities.collider import Collider
 from entities import Layer
 
@@ -44,6 +44,9 @@ class SimpleMovement(Behavior):
 
     def finish(self):
         self.collider_manager.unregister(self.movement_collider)
+
+    def destroy(self):
+        self.finish()
 
     @property
     def is_airborne(self):

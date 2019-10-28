@@ -50,3 +50,6 @@ class Squashable(DamageMario):
             mario.bounce(make_vector(mario.get_velocity().x, -self.bounce_velocity))
         else:
             super().on_mario_collision(collision)
+
+    def destroy(self):
+        pass
