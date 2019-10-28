@@ -40,8 +40,10 @@ class LevelEntity(Entity):
         self.position = make_vector(*tuple(values['position']))
 
     @staticmethod
-    def build(level, entity_values):
-        entity_kind = entity_values['name']
+    def build(level, entity_values, kind=None):
+        assert entity_values is not None or kind is not None
+
+        entity_kind = entity_values['name'] if kind is None else kind
 
         if entity_kind not in LevelEntity.Factories:
             warnings.warn(f"No factory found for {entity_kind}! Will be ignored and lost")

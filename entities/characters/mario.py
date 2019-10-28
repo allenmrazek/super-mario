@@ -108,9 +108,11 @@ class Mario(LevelEntity):
         if not tf and self._enabled:
             self.cmanager.unregister(self.hitbox)
             self._enabled = False
+            print("mario is disabled")
         elif tf and not self._enabled:
             self.cmanager.register(self.hitbox)
             self._enabled = True
+            print("mario is enabled")
 
     def reset(self):
         # reset parameters besides position
@@ -380,6 +382,15 @@ class Mario(LevelEntity):
     def bounce(self, new_velocity):
         self._velocity = copy_vector(new_velocity)
 
+    @staticmethod
+    def factory(level, values):
+        mario = Mario(level.player_input, level)
+
+        if values is not None:
+            mario.deserialize(values)
+
+        return mario
+
 
 class _DirectionSet(NamedTuple):
     left: Animation
@@ -420,13 +431,36 @@ class _MarioAnimation:
         return self.current.image
 
 
-def mario_factory(level, values):
-    mario = Mario(level.player_input, level)
+class MarioSpawnPoint(LevelEntity):
+    def __init__(self, character_atlas):
+        self.image = character_atlas.load_static("mario_stand_right").image
 
-    if values is not None:
-        mario.deserialize(values)
+        super().__init__(self.image.get_rect())
 
-    return mario
+    def update(self, dt, view_rect):
+        pass
+
+    def draw(self, screen, view_rect):
+        screen.blit(self.image, world_to_screen(self.position, view_rect))
+
+    def layer(self):
+        return Layer.Active
+
+    def create_preview(self):
+        return self.image
+
+    def destroy(self):
+        pass
+
+    @staticmethod
+    def factory(level, values):
+        spawn = MarioSpawnPoint(level.asset_manager.character_atlas)
+
+        if values is not None:
+            spawn.deserialize(values)
+
+        return spawn
 
 
-LevelEntity.register_factory(Mario, mario_factory)
+LevelEntity.register_factory(Mario, Mario.factory)
+LevelEntity.register_factory(MarioSpawnPoint, MarioSpawnPoint.factory)

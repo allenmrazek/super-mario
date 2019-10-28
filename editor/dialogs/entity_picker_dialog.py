@@ -17,31 +17,10 @@ class PickedEntity:
         # create a fake level, since we don't want any factory to affect the real level
         fake_level = Level(level.asset_manager)
 
-        # to catch mistakes in factories early, make sure that simply
-        # creating a preview doesn't affect entity or collider managers
-        # entities = PickedEntity._get_current_entities(level.entity_manager)
-        # colliders = level.collider_manager.colliders()
-
         # create preview image
         preview_entity = factory(fake_level, None)
 
         self.preview_surface = preview_entity.create_preview()
-
-        # entities_after = PickedEntity._get_current_entities(level.entity_manager)
-        #
-        # for key, val_set in entities.items():
-        #     if key not in entities_after.keys():
-        #         warnings.warn("a factory modified entity manager layers")
-        #         break
-        #
-        #     other_val_set = entities_after[key]  # type: set
-        #
-        #     if other_val_set.difference(val_set):
-        #         warnings.warn("a factory has added or removed entities from entity manager")
-        #         break
-        #
-        # if level.collider_manager.colliders().difference(colliders):
-        #     warnings.warn("a factory has added or removed colliders from collider manager")
 
     @staticmethod
     def _get_current_entities(entity_manager):

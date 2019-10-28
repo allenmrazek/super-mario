@@ -112,3 +112,13 @@ class EntityManager:
 
                 if entity is not None:
                     self.register(entity)
+
+    def search_by_type(self, cls):
+        found = []
+
+        for layer in self.layers:
+            for entity in self.layers[layer]:
+                if isinstance(entity, cls):
+                    found.append(entity)
+
+        return found

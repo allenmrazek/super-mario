@@ -4,7 +4,7 @@ from entities.collider import ColliderManager
 from assets.tile_map import TileMap
 import config
 from util import make_vector, copy_vector
-from entities.characters import Mario
+from entities.characters import Mario, MarioSpawnPoint
 from event import PlayerInputHandler
 from event.game_events import EventHandler
 from entities.characters import Goomba
@@ -24,13 +24,9 @@ class Level(EventHandler):
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
         self.mario = Mario(self.player_input, self)
-        self.goomba = Goomba(self, make_vector(300, 60))
-        self.entity_manager.register(self.goomba)
 
         self._scroll_position = make_vector(0, 0)
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)
-
-        self.spawn_mario()
 
     def add_entity(self, entity):
         self.entity_manager.register(entity)
@@ -47,20 +43,24 @@ class Level(EventHandler):
     def handle_event(self, evt, game_events):
         self.player_input.handle_event(evt, game_events)
 
-    def spawn_mario(self):
+    def spawn_mario(self, spawn_point):
+        assert spawn_point is not None and isinstance(spawn_point, MarioSpawnPoint)
+
         # todo: avoid double spawn?
         self.entity_manager.register(self.mario)
         self.mario.enabled = True
+        assert self.mario.enabled
+
         self.mario.reset()
         self.mario.position = make_vector(config.screen_rect.centerx, 33)
 
-    def kill_mario(self):
-        print("killing mario")
+    def despawn_mario(self):
+        print("despawning mario")
 
         assert self.mario.enabled
 
+        # mario handles his own registration
         self.mario.enabled = False
-        self.entity_manager.unregister(self.mario)
 
     def serialize(self):
         return {"name": "unknown",
@@ -70,10 +70,25 @@ class Level(EventHandler):
                 "entities": self.entity_manager.serialize()}
 
     def deserialize(self, values):
+        if self.mario.enabled:
+            self.despawn_mario()
+
         self.filename = values["filename"]
         self.background_color = tuple(values["background_color"])
         self.tile_map.deserialize(values["tile_map"])
         self.entity_manager.deserialize(self, values["entities"])
+
+        # search for mario spawn point(s)
+        spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)
+
+        # order spawn points by x location
+        spawn_points.sort(key=lambda left, right: left[0] < right[0])
+
+        # todo: checkpoints?
+
+        if spawn_points:
+            self.spawn_mario(spawn_points[0])
+
 
     @property
     def view_rect(self):

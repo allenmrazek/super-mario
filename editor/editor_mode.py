@@ -17,3 +17,5 @@ class EditorMode(ABC):
     def draw(self, screen):
         # note: draws right after entity manager, so anything here will be under UI elements
         pass
+
+    # todo: put grid drawing functions here
