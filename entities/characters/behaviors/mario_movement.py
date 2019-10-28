@@ -338,3 +338,6 @@ class MarioMovement:
 
         if collisions:  # immediately stop horizontal movement on horizontal collision
             self._velocity.x = 0.
+
+    def bounce(self, new_y_velocity):
+        self._velocity.y = new_y_velocity

@@ -10,9 +10,9 @@ from .interactive import Interactive
 class DamageMario(Interactive):
     """A hitbox which will damage mario, if he is not invincible"""
     def __init__(self, level, entity, hitbox_offset, hitbox_size):
-        super().__init__(level, entity, hitbox_size, hitbox_offset, self._on_hit)
+        super().__init__(level, entity, hitbox_offset, hitbox_size, self.on_mario_collision)
 
-    def _on_hit(self, collision):
+    def on_mario_collision(self, collision):
         # todo: logic which downgrades mario?
 
         self.level.despawn_mario()

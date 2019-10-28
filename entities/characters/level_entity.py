@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import NamedTuple
 import warnings
 from entities.entity import Entity
 from util import make_vector
@@ -64,3 +65,19 @@ class LevelEntity(Entity):
             warnings.warn(f"'name' already had a registered factory. It will be replaced")
 
         LevelEntity.Factories[name] = factory
+
+
+class MovementParameters(NamedTuple):
+    max_horizontal_velocity: float
+    max_vertical_velocity: float
+    jump_velocity: float
+    squash_bounce_velocity: float  # velocity applied to mario when he squashes this thing (if he can)
+    gravity: float
+
+    @staticmethod
+    def create(hmax, vmax, jump, squash, gravity):
+        return MovementParameters(max_horizontal_velocity=hmax,
+                               max_vertical_velocity=vmax,
+                               jump_velocity=jump,
+                               squash_bounce_velocity=squash,
+                               gravity=gravity)

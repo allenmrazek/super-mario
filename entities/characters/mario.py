@@ -76,8 +76,8 @@ class Mario(LevelEntity):
     def create_preview(self):
         return self.animator.image.copy()
 
-    def bounce(self, new_velocity):
-        self.movement.velocity = new_velocity
+    def bounce(self, new_y_velocity):
+        self.movement.bounce(new_y_velocity)
 
     def reset(self):
         self.movement.reset()
@@ -95,6 +95,10 @@ class Mario(LevelEntity):
     @property
     def vertical_speed(self):
         return self.movement.vertical_speed
+
+    @property
+    def velocity(self):
+        return self.movement.get_velocity()
 
 
 class _DirectionSet(NamedTuple):

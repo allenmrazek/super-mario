@@ -151,3 +151,12 @@ def load_misc_atlas():
     atlas.initialize_static("green_square")
 
     return atlas
+
+
+def load_pickup_atlas():
+    atlas = SpriteAtlas(get_atlas_path("pickups"), tf_use_rescale_factor=True)
+    kwargs = {"color_key": config.transparent_color}
+
+    atlas.initialize_static("mushroom_red", **kwargs)
+
+    return atlas

@@ -7,7 +7,7 @@ import config
 
 class Interactive(Behavior):
     """Invokes a callback when Mario intersects this entity's collider"""
-    def __init__(self, level, entity, hitbox_size, hitbox_offset, on_hit):
+    def __init__(self, level, entity, hitbox_offset, hitbox_size, on_hit):
         super().__init__()
 
         assert level is not None
