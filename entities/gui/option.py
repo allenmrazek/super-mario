@@ -7,7 +7,8 @@ from util import make_vector, copy_vector
 class Option(Button):
     def __init__(self, position, size, background, font, text,
                  selected_image, unselected_image, is_selected=True, anchor=Anchor.TOP_LEFT,
-                 text_color=config.default_text_color, mouseover_image=None):
+                 text_color=config.default_text_color, mouseover_image=None, on_selected_callback=None,
+                 on_deselected_callback=None):
         if background is not None:
             size = size or background.get_rect().size
 
@@ -19,6 +20,9 @@ class Option(Button):
                          mouseover_image=mouseover_image)
 
         assert selected_image and unselected_image
+
+        self.on_selected = on_selected_callback
+        self.on_deselected = on_deselected_callback
 
         # create textures
         # position them on left side, in center
@@ -57,7 +61,11 @@ class Option(Button):
         self._texture_off.enabled = not val
         self._texture_on.enabled = val
         self._selected = val
-        # todo: invoke callback?
+
+        if self._selected and self.on_selected:
+            self.on_selected()
+        elif not self._selected and self.on_deselected:
+            self.on_deselected()
 
     def clicked(self):
         self.selected = not self.selected

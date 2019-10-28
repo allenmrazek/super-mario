@@ -6,7 +6,7 @@ import pygame
 from state.game_state import GameState, state_stack
 from state.test_level import TestLevel
 from entities.gui import Frame, Element, Anchor, Scrollbar, ScrollbarType
-from editor.dialogs import ToolDialog, LayerDialog, TilePickerDialog, ModeDialog, LevelConfigDialog, EntityPickerDialog
+from editor.dialogs import ToolDialog, TilePickerDialog, ModeDialog, LevelConfigDialog, EntityPickerDialog, EntityToolDialog
 from entities import EntityManager, Layer
 from assets.asset_manager import AssetManager
 import config
@@ -70,11 +70,8 @@ class EditorState(GameState, EventHandler):
         self.frame.add_child(self.scroll_map_vertical)
 
         # ... the various dialogs used by editor
-        self.tool_dialog = ToolDialog(self.assets.gui_atlas)
-        self.frame.add_child(self.tool_dialog)
-
-        self.layer_dialog = LayerDialog(self.assets.gui_atlas)
-        self.frame.add_child(self.layer_dialog)
+        self.entity_tool_dialog = EntityToolDialog(self.assets.gui_atlas)
+        self.frame.add_child(self.entity_tool_dialog)
 
         self.tile_dialog = TilePickerDialog(self.assets)
         self.frame.add_child(self.tile_dialog)
@@ -85,13 +82,14 @@ class EditorState(GameState, EventHandler):
         self.entity_dialog = EntityPickerDialog(self.level)
         self.frame.add_child(self.entity_dialog)
 
+        self.entity_tools = EntityToolDialog
         # editor states to handle relevant actions
         self.current_mode = None
 
         self.place_mode = PlaceMode(self.tile_dialog, self.level)
         self.passable_mode = PassableMode(self.level)
         self.config_mode = ConfigMode()
-        self.entity_mode = EntityMode(self.entity_dialog, self.level)
+        self.entity_mode = EntityMode(self.entity_dialog, self.entity_tool_dialog, self.level)
 
         self.set_mode(self.place_mode)
 
@@ -115,26 +113,22 @@ class EditorState(GameState, EventHandler):
         if new_mode is self.place_mode:
             # turn on/off relevant dialogs
             self.tile_dialog.enabled = True
-            self.tool_dialog.enabled = True
-            self.layer_dialog.enabled = True
+            self.entity_tool_dialog.enabled = False
             self.config_dialog.enabled = False
             self.entity_dialog.enabled = False
         elif new_mode is self.passable_mode:
             self.tile_dialog.enabled = False
-            self.tool_dialog.enabled = False
-            self.layer_dialog.enabled = False
+            self.entity_tool_dialog.enabled = False
             self.config_dialog.enabled = False
             self.entity_dialog.enabled = False
         elif new_mode is self.config_mode:
             self.tile_dialog.enabled = False
-            self.tool_dialog.enabled = False
-            self.layer_dialog.enabled = False
+            self.entity_tool_dialog.enabled = False
             self.config_dialog.enabled = True
             self.entity_dialog.enabled = False
         elif new_mode is self.entity_mode:
             self.tile_dialog.enabled = False
-            self.tool_dialog.enabled = True
-            self.layer_dialog.enabled = False
+            self.entity_tool_dialog.enabled = True
             self.config_dialog.enabled = False
             self.entity_dialog.enabled = True
         else:

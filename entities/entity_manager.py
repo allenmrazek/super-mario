@@ -139,3 +139,14 @@ class EntityManager:
                     found.append(entity)
 
         return found
+
+    def get_entities_inside_region(self, rect: Rect):
+        # return any entity, regardless of layer, that is intersecting with the given rect
+        found = set()
+
+        for layer in self.layers:
+            for entity in self.layers[layer]:
+                if rect.collidepoint(*entity.position) or rect.colliderect(entity.rect):
+                    found.add(entity)
+
+        return list(found)

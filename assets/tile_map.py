@@ -133,8 +133,8 @@ class TileMap:
         self.tile_map[tile_position[0]][tile_position[1]].idx = idx
 
     def set_passable(self, tile_position, passable):
-        assert 0 <= tile_position[0] <= self.width
-        assert 0 <= tile_position[1] <= self.height
+        assert 0 <= tile_position[0] < self.width
+        assert 0 <= tile_position[1] < self.height
 
         self.tile_map[tile_position[0]][tile_position[1]].passable = passable
 

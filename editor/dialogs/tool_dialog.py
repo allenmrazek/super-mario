@@ -1,48 +1,57 @@
-import pygame
-from entities.gui import Text, Texture, Window, Dialog, Button, Option, OptionGroup
-import config
 from util import make_vector
+from assets.gui_helper import *
 
 
 class ToolDialog(Dialog):
-    SIZE = (256, 128)
+    SIZE = (165, 96)
 
-    def __init__(self, atlas):
-        font = pygame.font.SysFont("", 24)
+    def __init__(self, gui_atlas, title):
+        self.font = pygame.font.SysFont(None, 24)
 
         r = config.screen_rect.copy()
+
         super().__init__(make_vector(r.right - ToolDialog.SIZE[0], r.top),
-                         ToolDialog.SIZE, atlas.load_sliced("bkg_rounded"),
-                         font=font, title="Tools")
+                         ToolDialog.SIZE, gui_atlas.load_sliced("tb_frame"),
+                         tb_bkg=gui_atlas.load_sliced("tb_frame"),
+                         additional_height=8, text_start_offset=(12, 5),
+                         font=self.font, title=title)
+        self.gui_atlas = gui_atlas
 
-        # todo: tool types
-
-        self.pencil_tool = self.create_tool(atlas, "pencil_hl", "pencil", font)
-        self.dropper_tool = self.create_tool(atlas, "dropper_hl", "dropper", font)
-        self.paint_tool = self.create_tool(atlas, "paint_hl", "paint", font)
-        self.tools = [self.pencil_tool, self.dropper_tool, self.paint_tool]
-
-        for idx, tool in enumerate(self.tools):
-            tool.relative_position = make_vector(10 + idx * max(map(lambda t: t.width, self.tools)),
-                                                 self.get_title_bar_bottom())
-        self.pencil_tool.selected = True
-
-        self._tool_option_group = OptionGroup(True, self.tools)
-
+        self._tools = []
+        self._tool_options = OptionGroup()
         self.layout()
 
-    def create_tool(self, atlas, selected_image_name, unselected_image_name, font):
-        tool_static = atlas.load_static(unselected_image_name)
-        tool_hl_static = atlas.load_static(selected_image_name)
+    def create_tool(self, tools, selected_image_name, unselected_image_name, font, selected_cb, deselected_cb,
+                    y_offset=0):
+        tool_static = self.gui_atlas.load_static(unselected_image_name)
+        tool_hl_static = self.gui_atlas.load_static(selected_image_name)
 
-        tool = Option(make_vector(0, self.get_title_bar_bottom()), tool_hl_static.get_rect().size,
-                      background=atlas.load_sliced("control_small_block"),
+        offset_x = tools[len(tools) - 1].relative_position.x + tool_static.get_rect().width\
+            if len(tools) > 0 else 10
+
+        tool = Option(make_vector(offset_x, self.get_title_bar_bottom() + y_offset + 5), tool_hl_static.get_rect().size,
+                      background=self.gui_atlas.load_sliced("control_small_block"),
                       font=font,
                       selected_image=tool_hl_static,
                       unselected_image=tool_static,
-                      text="")
+                      text="",
+                      on_selected_callback=selected_cb,
+                      on_deselected_callback=deselected_cb,
+                      is_selected=False)
 
         self.add_child(tool)
+        tools.append(tool)
 
-        tool.selected = False
         return tool
+
+    def add_tool(self, gui_name, hl_gui_name, on_select_callback=None, on_deselect_callback=None):
+        tool = self.create_tool(self._tools, hl_gui_name, gui_name, self.font, on_select_callback, on_deselect_callback)
+
+        if len(self._tools) == 1:
+            tool.selected = True
+        else:
+            tool.selected = False
+
+        self._tool_options.add(tool)
+
+        self.layout()

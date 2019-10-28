@@ -131,6 +131,10 @@ def load_gui_atlas():
     load_tool_static("paint", "paint_hl")
     load_tool_static("grid", "grid_hl")
     load_tool_static("dropper", "dropper_hl")
+    load_tool_static("select", "select_hl")
+    load_tool_static("delete", "delete_hl")
+    load_tool_static("left", "left_hl")
+    load_tool_static("bottom", "bottom_hl")
 
     return atlas
 

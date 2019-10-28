@@ -32,26 +32,12 @@ class TilePickerDialog(Dialog):
         self.layout()  # ensure scrollable is positioned
 
         # create scrollbars
-        # self.vertical_scroll = Scrollbar(make_vector(self.scrollable.rect.right, self.scrollable.rect.top + 5),
-        #                                  ScrollbarType.VERTICAL, self.scrollable.rect.height,
-        #                                  assets.gui_atlas.load_sliced("control_small_block2"),
-        #                                  assets.gui_atlas.load_sliced("sb_thumb_v"),
-        #                                  max(0, self.tileset.surface.get_height() - self.scrollable.height),
-        #                                  sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_v_dk"),
-        #                                  on_value_changed_callback=self._on_scroll_changed)
         self.vertical_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.right + 4, self.scrollable.rect.top + 10),
                                              self.scrollable.rect.height - 15, 0,  max(0, self.tileset.surface.get_height() - self.scrollable.height),
                                              self._on_scroll_changed, thumb=assets.gui_atlas.load_static("sb_thumb"),
                                              thumb_mo=assets.gui_atlas.load_static("sb_thumb_light"),
                                              sb_type=ScrollbarType.VERTICAL)
 
-        # self.horizontal_scroll = Scrollbar(make_vector(self.scrollable.rect.left + 5, self.scrollable.rect.bottom),
-        #                                    ScrollbarType.HORIZONTAL, self.scrollable.rect.width - 5,
-        #                                    assets.gui_atlas.load_sliced("control_small_block2"),
-        #                                    assets.gui_atlas.load_sliced("sb_thumb_h"),
-        #                                    max(0, self.tileset.surface.get_width() - self.scrollable.width),
-        #                                    sb_button_mouseover=assets.gui_atlas.load_sliced("sb_thumb_h_dk"),
-        #                                    on_value_changed_callback=self._on_scroll_changed)
         self.horizontal_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.left + 5, self.scrollable.rect.bottom + 5),
                                              self.scrollable.rect.width, 0,  max(0, self.tileset.surface.get_width() - self.scrollable.width),
                                              self._on_scroll_changed, thumb=assets.gui_atlas.load_static("sb_thumb"),
