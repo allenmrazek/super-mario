@@ -1,7 +1,7 @@
 from pygame import Rect
 from pygame import Color
 
-debug_jumps = True
+debug_jumps = False
 debug_hitboxes = True
 
 screen_size = 1024, 675

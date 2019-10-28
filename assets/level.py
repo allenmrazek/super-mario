@@ -4,7 +4,8 @@ from entities.collider import ColliderManager
 from assets.tile_map import TileMap
 import config
 from util import make_vector, copy_vector
-from entities.characters import Mario, MarioSpawnPoint
+from entities.characters import Mario
+from entities.characters.spawners import MarioSpawnPoint
 from event import PlayerInputHandler
 from event.game_events import EventHandler
 
@@ -28,6 +29,7 @@ class Level(EventHandler):
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
         self.mario = Mario(self.player_input, self)
+        self.mario.enabled = False
 
         self._scroll_position = make_vector(0, 0)
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)
@@ -59,12 +61,12 @@ class Level(EventHandler):
         assert isinstance(spawn_point, MarioSpawnPoint)
 
         # todo: avoid double spawn?
-        self.entity_manager.register(self.mario)
+
         self.mario.enabled = True
         assert self.mario.enabled
 
-        self.mario.reset()
         self.mario.position = spawn_point.position
+        self.mario.reset()  # reset state
 
         # set level scroll position to be one quarter-screen behind mario, unless that would result in left edge
         # of map being visible
@@ -92,6 +94,13 @@ class Level(EventHandler):
         self.background_color = tuple(values["background_color"])
         self.tile_map.deserialize(values["tile_map"])
         self.entity_manager.deserialize(self, values["entities"])
+
+        # we only want one unique mario, ignore any that might have been serialized
+        for existing in self.entity_manager.search_by_type(Mario):
+            existing.destroy()
+
+        # add our unique mario
+        self.entity_manager.register(self.mario)
 
         # search for mario spawn point(s)
         spawn_point = self._find_spawn_point()

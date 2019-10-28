@@ -83,6 +83,9 @@ class EntityPickerDialog(Dialog):
                        EntityPickerDialog.SIZE[0] - self.get_title_bar_bottom() - 20))
 
         for name, factory in LevelEntity.Factories.items():
+            if name == "Mario":  # want spawner for mario instead
+                continue
+
             entity_button = create_button(self.assets.gui_atlas, make_vector(15, y_offset), EntityPickerDialog.BUTTON_SIZE,
                                           name, bind_callback_parameters(self._make_selection, name), font, text_color=pygame.Color('white'))
             # entity_button = Button(make_vector(10, y_offset),
