@@ -1,11 +1,13 @@
 from abc import abstractmethod
 from abc import ABC
+from event import GameEvents
 
 
 class GameState(ABC):
-    def __init__(self, input_state):
+    def __init__(self, game_events=None):
         super().__init__()
-        self.input_state = input_state
+
+        self.game_events = game_events or GameEvents()
 
     @abstractmethod
     def update(self, dt):
@@ -25,8 +27,10 @@ class GameState(ABC):
         pass
 
     def deactivated(self):
-        """Script is no longer topmost on stack. Not called for popped states"""
         pass
+
+    def do_events(self):
+        self.game_events.do_events()
 
 
 class NoStatesError(RuntimeError):
@@ -34,37 +38,37 @@ class NoStatesError(RuntimeError):
 
 
 class GameStateStack:
-    def __init__(self, initial_state: GameState):
-        assert initial_state is not None
-        self._states = [initial_state]
-        initial_state.activated()
+    def __init__(self, initial_state=None):
+        self._states = [] if initial_state is None else [initial_state]
+
+        if self.top is not None:
+            initial_state.activated()
 
     @property
     def top(self):
-        return self._states[0] if len(self._states) > 0 else None
-
-    @top.setter
-    def top(self, state):
-        assert state is not None
-
-        if state is not self.top:
-            self.top.deactivated()
-
-        self._states.insert(0, state)
-        self.top.activated()
+        return self._states[len(self._states) - 1] if len(self._states) > 0 else None
 
     def push(self, state):
         assert state is not None
-        self.top = state
+
+        if self.top is not None:
+            self.top.deactivated()
+
+        self._states.append(state)
+        self.top.activated()
 
     def pop(self):
         top = self.top
 
         if top is not None:
-            old_top = self._states.pop(0)
+            # deactivate current top
+            top.deactivated()
 
-            # get new top and let it know it just became active
+            old_top = self._states.pop(len(self._states) - 1)
+
+            # get new top (if any) and let it know it just became active
             top = self.top
+
             if top:
                 top.activated()
 
@@ -85,3 +89,20 @@ class GameStateStack:
 
         if top:
             top.draw(screen)
+
+    def event(self, event):
+        top = self.top
+
+        if top:
+            top.event(event)
+
+    def get_next(self, state):
+        # given a state, return the next state that would run once state finishes
+        idx = self._states.index(state)
+
+        if idx > 0:
+            return self._states[idx - 1]
+        return None
+
+
+state_stack = GameStateStack()

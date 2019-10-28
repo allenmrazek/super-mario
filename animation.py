@@ -1,5 +1,7 @@
 from pygame.sprite import Sprite
 
+# todo: Animation no longer a Sprite?
+
 
 class Animation(Sprite):
     duration: float
@@ -58,13 +60,22 @@ class Animation(Sprite):
     def image(self):
         return self.current_frame
 
+    def get_rect(self):
+        return self.rect
+
     def __copy__(self):
         """Want a shallow copy essentially (to avoid creating duplicate surfaces in memory
             yet also not include references to changing things, like Rect"""
         inst = Animation(self.frames, self.duration)
         inst.rect = self.rect.copy()
+        inst.current_frame = self.current_frame
+        inst.current_frame_index = self.current_frame_index
+        inst.frame = self.frame
 
         return inst
+
+    def __deepcopy__(self, memodict=None):
+        return self.__copy__()
 
 
 class StaticAnimation(Animation):
@@ -100,12 +111,12 @@ class OneShotAnimation(Animation):
         if self.finished:
             return
 
-        last_accum = self.accumulator
+        last_accumulator = self.accumulator
         last_frame = self.current_frame_index
 
         super().update(elapsed)
 
-        if self.current_frame_index < last_frame or (self.num_frames == 1 and self.accumulator < last_accum):
+        if self.current_frame_index < last_frame or (self.num_frames == 1 and self.accumulator < last_accumulator):
             # note: we use accumulator above because some "animations" (static, temporary) only have one frame
             if self.on_complete is not None:
                 self.on_complete()

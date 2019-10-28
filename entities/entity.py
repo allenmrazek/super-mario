@@ -1,87 +1,78 @@
 from abc import ABC, abstractmethod
-from pygame import Surface
-from pygame import Color
-from pygame.sprite import Sprite
 from pygame.sprite import Rect
-from enum import IntEnum
-import config
+from enum import IntFlag
+from util import copy_vector
+from util import make_vector
 
 
-class Layer(IntEnum):
-    Background = 1 << 0
-    Block = 1 << 1
-    Mario = 1 << 2
-    Active = 1 << 3
+class Layer(IntFlag):
+    Background = 1 << 0     # behind blocks
+    Block = 1 << 1          # layer blocks are drawn on
+    Spawner = 1 << 2        # spawners go here
+    Trigger = 1 << 3        # take a guess
+    Mario = 1 << 4          # take a guess
+    Enemy = 1 << 5          # take another guess
+    Active = 1 << 6         # "active" things: think fireballs and projectiles; mario death animations
+    Interface = 1 << 7      # interface stuff here
+    Overlay = 1 << 8        # a final layer that absolutely will overlay everything. Use sparingly
 
 
-blank_image = None
-
-
-class Entity(ABC, Sprite):
+class Entity(ABC):
+    """Important note: while you can make things exist on the map by making them entities, they
+    WILL NOT BE SERIALIZED. Use LevelEntity for persistent things (anything that can be placed)"""
     def __init__(self, rect: Rect):
         super().__init__()
-        self.rect = rect.copy()
 
-        global blank_image
-
-        if blank_image is not None:
-            blank_image = Surface((1, 1)).convert()
-            blank_image.fill(config.transparent_color)
-            blank_image.set_colorkey(config.transparent_color)
-
-        self.image = blank_image
+        # reminder to self: we don't just expose this publically because we want them
+        # synchronized; specifically, that position can be tracked in floating points
+        # (since rects are int-only)
+        self._rect = rect.copy()
+        self._position = make_vector(rect.x, rect.y)  # rect only int values
 
     @abstractmethod
-    def update(self, dt):
+    def update(self, dt, view_rect):
         pass
 
     @abstractmethod
-    def draw(self, screen):
+    def draw(self, screen, view_rect):
         pass
 
     @property
     def layer(self):
         return Layer.Background
 
+    @property
+    def rect(self):
+        return self._rect
 
-class EntityManager:
-    def __init__(self):
-        self.layers = {
-            Layer.Background: set(),
-            Layer.Block: set(),
-            Layer.Mario: set(),
-            Layer.Active: set()}
+    @rect.setter
+    def rect(self, val):
+        self._rect = val
 
-        self.ordering = [Layer.Background, Layer.Block, Layer.Mario, Layer.Active]
+    @property
+    def position(self):
+        return copy_vector(self._position)
 
-    def register(self, entity):
-        assert isinstance(entity, Entity)
-        assert entity.layer in self.layers.keys()
+    @position.setter
+    def position(self, pos):
+        self._position = copy_vector(pos)
+        self._rect.x, self._rect.y = pos
 
-        self.layers[entity.layer].add(entity)
+    @property
+    def width(self):
+        return self.rect.width
 
-    def unregister(self, entity):
-        assert isinstance(entity, Entity)
-        assert entity.layer in self.layers.keys()
-        assert entity in self.layers[entity.layer]
+    @width.setter
+    def width(self, w):
+        self._rect.width = w
 
-        self.layers[entity.layer].remove(entity)
+    @property
+    def height(self):
+        return self._rect.height
 
-    def update(self, dt):
-        # todo: update only screen and a quarter
-        def update_entity(entity):
-            entity.update(dt)
+    @height.setter
+    def height(self, h):
+        self._rect.height = h
 
-        self._do_on_each_layer(update_entity)
-
-    def draw(self, screen):
-        # todo: draw only screen and a quarter
-        def draw_entity(entity):
-            entity.draw(screen)
-
-        self._do_on_each_layer(draw_entity)
-
-    def _do_on_each_layer(self, fn):
-        for layer in self.ordering:
-            for entity in self.layers[layer]:
-                fn(entity)
+    def get_rect(self):
+        return self._rect.copy()

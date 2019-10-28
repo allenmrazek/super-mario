@@ -1,0 +1,10 @@
+goomba = 0 32 32 16
+goomba_squashed = 48 48 16 8
+mario_dead = 0 48 16 16
+mario_jump_right = 16 48 16 16
+mario_run_right = 0 16 48 16
+mario_skid_left = 64 16 16 16
+mario_stand_right = 64 32 16 16
+mario_swim_right = 0 0 80 16
+super_mario_stand_right = 32 32 16 32
+super_mario_transform_right = 48 16 16 32

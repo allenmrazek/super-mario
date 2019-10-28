@@ -5,3 +5,5 @@
 /.idea/.gitignore
 /states/__pycache__/*.pyc
 *.pyc
+/profile.dat
+/profile.svg

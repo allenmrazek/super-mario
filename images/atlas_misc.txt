@@ -1,0 +1,2 @@
+green_square = 16 0 8 8
+misc_gray_bricks = 0 0 16 16

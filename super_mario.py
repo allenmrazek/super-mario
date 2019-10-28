@@ -1,13 +1,23 @@
 import os
 import pygame
-from sprite_atlas import load as load_sprites
-from state.game_state import GameStateStack
-from state.input_state import InputState
-from state.test_mario_physics import TestMarioPhysics
+from event.game_events import GameEvents, EventHandler
+from state.game_state import state_stack
+from state import PerformanceMeasurement
+from editor.editor_state import EditorState
+from state import TestLevel
+from assets.level import Level
 import config
 from timer import game_timer
-from state.test_tilemap import TestTileMap
-from state.test_block_physics import TestBlockPhysics
+from assets import AssetManager
+from entities.gui.modal import ModalTextInput
+
+
+class _QuitListener(EventHandler):
+    def handle_event(self, evt, game_events):
+        if evt.type == pygame.QUIT or\
+                (not self.is_consumed(evt) and evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
+            exit(0)
+
 
 def run():
     # initialize PyGame
@@ -18,32 +28,40 @@ def run():
     pygame.init()
     screen = pygame.display.set_mode(config.screen_size)
     pygame.display.set_caption("Super Mario")
-    atlas = load_sprites()
+    assets = AssetManager()
 
     # initialize states
-    input_state = InputState()
-    state_stack = GameStateStack(TestMarioPhysics(input_state, atlas))
-    #state_stack.push(TestTileMap(input_state))
-    state_stack.push(TestBlockPhysics(input_state))
+    #default_game_events = GameEvents()
+    #default_game_events.register(_QuitListener())
+
+
+    #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
+    #state_stack.push()
+    PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
+    #state_stack.push(TestLevel(game_events, assets, Level(assets)))
+    #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets, Level(assets)))
 
     game_timer.reset()
 
     # timer initialize
     accumulator = 0.0
 
-    while state_stack.top is not None and not input_state.quit:
-        input_state.do_events()
+    while state_stack.top is not None:
+        state_stack.top.do_events()
         game_timer.update()
 
-        # todo: fixed timestep, or max timestep?
+        # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
+        updated = False  # no interpolation, so don't waste time drawing screen if it didn't change anyways
 
         while accumulator > config.PHYSICS_DT:
+            updated = True
             state_stack.update(config.PHYSICS_DT)
             accumulator -= config.PHYSICS_DT
 
-        state_stack.draw(screen)
-        pygame.display.flip()
+        if updated:
+            state_stack.draw(screen)
+            pygame.display.flip()
 
     exit(0)
 
