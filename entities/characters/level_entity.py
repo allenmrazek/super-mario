@@ -32,7 +32,7 @@ class LevelEntity(Entity):
         pass
 
     def serialize(self):
-        return {'name': self.__class__.__name__, 'position': self.position}
+        return {'name': self.__class__.__name__, 'position': (self.position.x, self.position.y)}
 
     def deserialize(self, values):
         assert values['name'] == self.name

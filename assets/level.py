@@ -79,7 +79,7 @@ class Level(EventHandler):
     def serialize(self):
         return {"name": "unknown",
                 "filename": self.filename,
-                "background_color": self.background_color,
+                "background_color": (self.background_color[0], self.background_color[1], self.background_color[2]),
                 "tile_map": self.tile_map.serialize(),
                 "entities": self.entity_manager.serialize()}
 

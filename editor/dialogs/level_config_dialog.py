@@ -1,8 +1,5 @@
-import pygame
-from entities.gui import Text, Texture, Window, Dialog, Option, OptionGroup, Scrollbar, ScrollbarType
-from entities.entity import Layer
-from entities.gui import Anchor
-import config
+import os
+import json
 from util import make_vector, clamp
 from assets.gui_helper import *
 from entities.gui.modal import ModalTextInput
@@ -66,13 +63,11 @@ class LevelConfigDialog(Dialog):
         self.bkg_color_b_slider = create_slider(gui_atlas, make_vector(slider_left, g_text.relative_position.y + b_text.height),
                                                 slider_width, 0, 255, self._on_slider_changed)
 
-
         self.add_child(self.bkg_color_r_slider)
         self.add_child(self.bkg_color_g_slider)
         self.add_child(self.bkg_color_b_slider)
 
         # buttons
-
         pos = make_vector(3 * frame_width // 2, self.bkg_color_b_slider.height + self.bkg_color_b_slider.relative_position.y + 6)
         button_y_offset = 4
 
@@ -105,7 +100,15 @@ class LevelConfigDialog(Dialog):
 
     def _on_save_map(self):
         def _save_map(filename):
-            print("map will be saved as ", filename)
+            path = os.path.join("levels", filename + ".level")
+
+            if len(filename) == 0:
+                print("failed to save map -- no filename")
+                return
+
+            with open(path, 'w') as f:
+                f.write(json.dumps(self.level.serialize()))
+                print(f"Saved map '{path}'")
 
         def _cancel():
             pass
@@ -114,7 +117,23 @@ class LevelConfigDialog(Dialog):
 
     def _on_load_map(self):
         def _load_map(filename):
-            print("load map", filename)
+            if len(filename) == 0:
+                print("cannot open map -- no filename provided")
+                return
+
+            path = os.path.join("levels", filename + ".level")
+
+            if not os.path.exists(path):
+                print(f"cannot open '{path}' -- file not found")
+                return
+            elif not os.path.isfile(path):
+                print(f"cannot open '{path}' -- not a file")
+                return
+
+            with open(path, 'r') as f:
+                self.level.deserialize(json.loads(f.read()))
+
+            print(f"Successfully read '{path}'")
 
         def _cancel():
             pass
