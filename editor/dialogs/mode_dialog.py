@@ -7,9 +7,9 @@ from util import make_vector, bind_callback_parameters
 
 
 class ModeDialog(Dialog):
-    SIZE = 200, 96
+    SIZE = 200, 200
 
-    def __init__(self, gui_atlas, on_tile_mode_callback, on_passable_mode_callback, on_config_mode_callback):
+    def __init__(self, gui_atlas, on_tile_mode_callback, on_passable_mode_callback, on_config_mode_callback, on_entity_mode_callback):
         font = pygame.font.SysFont("", 24)
 
         r = config.screen_rect.copy()
@@ -27,6 +27,9 @@ class ModeDialog(Dialog):
 
         button_size = (width - 20, 20)
         button_text_color = pygame.Color('black')
+
+        opt_mouseover = bind_callback_parameters(gui_atlas.load_sliced, "option_button_hl")
+        bkg = bind_callback_parameters(gui_atlas.load_sliced, "option_button")
 
         # create tile mode
         tile_mode_button = Button(make_vector(10, self.get_title_bar_bottom() + 3),
@@ -61,5 +64,16 @@ class ModeDialog(Dialog):
                                       on_click_callback=bind_callback_parameters(on_config_mode_callback),
                                       text_color=button_text_color,
                                       mouseover_image=gui_atlas.load_sliced("option_button_hl"))
-
         self.add_child(config_mode_button)
+
+        # entity mode
+        entity_mode_button = Button(make_vector(10, config_mode_button.relative_position.y + config_mode_button.height),
+                                      size=button_size,
+                                      background=bkg(),
+                                      font=font,
+                                      text="Entities",
+                                      on_click_callback=bind_callback_parameters(on_entity_mode_callback),
+                                      text_color=button_text_color,
+                                      mouseover_image=opt_mouseover())
+
+        self.add_child(entity_mode_button)

@@ -81,7 +81,7 @@ class EditorState(GameState, EventHandler):
         self.config_dialog = LevelConfigDialog(self.level, self.assets.gui_atlas)
         self.frame.add_child(self.config_dialog)
 
-        self.entity_dialog = EntityPickerDialog(self.assets)
+        self.entity_dialog = EntityPickerDialog(self.level)
         self.frame.add_child(self.entity_dialog)
 
         # editor states to handle relevant actions
@@ -98,7 +98,8 @@ class EditorState(GameState, EventHandler):
                                       on_tile_mode_callback=bind_callback_parameters(self.set_mode, self.place_mode),
                                       on_passable_mode_callback=
                                       bind_callback_parameters(self.set_mode, self.passable_mode),
-                                      on_config_mode_callback=bind_callback_parameters(self.set_mode, self.config_mode))
+                                      on_config_mode_callback=bind_callback_parameters(self.set_mode, self.config_mode),
+                                      on_entity_mode_callback=bind_callback_parameters(self.set_mode, self.entity_mode))
 
         self.frame.add_child(self.mode_dialog)
 
@@ -114,22 +115,25 @@ class EditorState(GameState, EventHandler):
             self.tool_dialog.enabled = True
             self.layer_dialog.enabled = True
             self.config_dialog.enabled = False
-
+            self.entity_dialog.enabled = False
         elif new_mode is self.passable_mode:
             self.tile_dialog.enabled = False
             self.tool_dialog.enabled = False
             self.layer_dialog.enabled = False
             self.config_dialog.enabled = False
+            self.entity_dialog.enabled = False
         elif new_mode is self.config_mode:
             self.tile_dialog.enabled = False
             self.tool_dialog.enabled = False
             self.layer_dialog.enabled = False
             self.config_dialog.enabled = True
+            self.entity_dialog.enabled = False
         elif new_mode is self.entity_mode:
             self.tile_dialog.enabled = False
             self.tool_dialog.enabled = True
             self.layer_dialog.enabled = False
             self.config_dialog.enabled = False
+            self.entity_dialog.enabled = True
         else:
             raise NotImplementedError  # unknown mode
 

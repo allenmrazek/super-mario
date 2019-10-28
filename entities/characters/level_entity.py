@@ -29,9 +29,8 @@ class LevelEntity(Entity):
 
     @abstractmethod
     def create_preview(self):
-        """Called by editor to create a preview image for this entity, which appears in the entity picker dialog"""
         pass
-    
+
     def serialize(self):
         return {'name': self.__class__.__name__, 'position': self.position}
 
@@ -54,6 +53,9 @@ class LevelEntity(Entity):
 
     @staticmethod
     def register_factory(cls, factory):
+        assert cls is not None
+        assert factory is not None
+
         name = cls.__name__
 
         if name in LevelEntity.Factories.keys():

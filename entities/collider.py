@@ -1,5 +1,6 @@
 import math
 import sys
+import copy
 from pygame import Rect
 from util import can_collide
 from util import distance_squared
@@ -207,6 +208,9 @@ class ColliderManager:
                         collisions.append(Collision(moved_collider=collider, hit_thing=(x, y), block_rect=r.copy()))
 
         return collisions
+
+    def colliders(self):
+        return copy.copy(self._colliders)
 
     @staticmethod
     def dispatch_events(collider, collisions):

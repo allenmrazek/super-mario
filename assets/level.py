@@ -1,6 +1,5 @@
-import copy
 from pygame import Rect
-from entities.entity_manager import Layer, EntityManager
+from entities.entity_manager import EntityManager
 from entities.collider import ColliderManager
 from assets.tile_map import TileMap
 import config
@@ -9,11 +8,6 @@ from entities.characters import Mario
 from event import PlayerInputHandler
 from event.game_events import EventHandler
 from entities.characters import Goomba
-import json
-
-
-
-
 
 
 class Level(EventHandler):
@@ -61,6 +55,8 @@ class Level(EventHandler):
         self.mario.position = make_vector(config.screen_rect.centerx, 33)
 
     def kill_mario(self):
+        print("killing mario")
+
         assert self.mario.enabled
 
         self.mario.enabled = False

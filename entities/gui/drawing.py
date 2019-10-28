@@ -1,8 +1,7 @@
 import pygame
 from .sliced_image import SlicedImage
 from animation import Animation
-from .container import Container
-from util import make_vector
+
 
 # distinguishes between a color, a Surface, and a SlicedImage
 def smart_draw(target, source, dest_rect=None, src_rect=None):
@@ -23,24 +22,6 @@ def smart_draw(target, source, dest_rect=None, src_rect=None):
         assert dest_rect is not None
 
         target.blit(source.image, dest_rect)
-    # elif isinstance(source, Container):
-    #     assert src_rect is not None  # is content rect
-    #
-    #     source.offset = make_vector(*src_rect.topleft)
-    #     source.draw(target, dest_rect)
-
-        # store current offset
-        # current_offset = source.offset
-        #
-        # if isinstance(dest_rect, pygame.Vector2) or isinstance(dest_rect, tuple):
-        #     source.offset = make_vector(*dest_rect)
-        # elif isinstance(dest_rect, pygame.Rect):
-        #     source.offset = make_vector(*dest_rect.topleft)
-        # else:
-        #     raise NotImplementedError
-        #
-        # source.draw(target, None)
-        # source.offset = current_offset
     else:
         raise NotImplementedError
 

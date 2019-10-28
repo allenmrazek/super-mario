@@ -423,7 +423,8 @@ class _MarioAnimation:
 def mario_factory(level, values):
     mario = Mario(level.player_input, level)
 
-    mario.deserialize(values)
+    if values is not None:
+        mario.deserialize(values)
 
     return mario
 
