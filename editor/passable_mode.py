@@ -9,6 +9,7 @@ class PassableMode(EditorMode):
 
         self.level = level
         self.tile_map = level.tile_map
+        self._motion_set = False  # tiles will be set to this passability on mouse drags
 
     def draw(self, screen):
         tile_size = self.tile_map.tileset.tile_size
@@ -44,14 +45,23 @@ class PassableMode(EditorMode):
 
         draw_selection_square(screen, self.tile_map, config.editor_grid_overlay_color, self.level.view_rect)
 
-    def on_map_click(self, evt, screen_mouse_pos):
+    def on_map_mousedown(self, evt, screen_mouse_pos):
         coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position,
                                              self.tile_map.tileset)
 
         if self.tile_map.is_in_bounds(coords):
             # as a super rough test thing, let's try and change a tile with this
-            self.tile_map.set_passable(coords, not self.tile_map.get_passable(coords))
+            toggle = not self.tile_map.get_passable(coords)
+            self._set_tile_passability(coords, toggle)
 
-    def on_map_mousedown(self, evt, screen_mouse_pos):
+    def on_map_motion(self, evt, screen_mouse_pos):
+        coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position,
+                                             self.tile_map.tileset)
+        self._set_tile_passability(coords, self._motion_set)
+
+    def on_map_mouseup(self, evt, screen_mouse_pos):
         pass
 
+    def _set_tile_passability(self, coords, tf):
+        self.tile_map.set_passable(coords, tf)
+        self._motion_set = tf

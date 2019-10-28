@@ -8,9 +8,11 @@ class ConfigMode(EditorMode):
     def draw(self, screen):
         pass
 
-    def on_map_click(self, evt, screen_mouse_pos):
-        pass
-
     def on_map_mousedown(self, evt, screen_mouse_pos):
         pass
 
+    def on_map_motion(self, evt, screen_mouse_pos):
+        pass
+
+    def on_map_mouseup(self, evt, screen_mouse_pos):
+        pass

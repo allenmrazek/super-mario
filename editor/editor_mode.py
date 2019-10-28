@@ -6,11 +6,15 @@ class EditorMode(ABC):
         super().__init__()
 
     @abstractmethod
-    def on_map_click(self, evt, screen_mouse_pos):
+    def on_map_mousedown(self, evt, screen_mouse_pos):
         pass
 
     @abstractmethod
-    def on_map_mousedown(self, evt, screen_mouse_pos):
+    def on_map_motion(self, evt, screen_mouse_pos):
+        pass
+
+    @abstractmethod
+    def on_map_mouseup(self, evt, screen_mouse_pos):
         pass
 
     @abstractmethod
@@ -18,4 +22,4 @@ class EditorMode(ABC):
         # note: draws right after entity manager, so anything here will be under UI elements
         pass
 
-    # todo: put grid drawing functions here
+    # todo: put grid drawing functions here?

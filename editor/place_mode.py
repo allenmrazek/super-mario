@@ -16,14 +16,17 @@ class PlaceMode(EditorMode):
         self.level = level
         self.level_map = level.tile_map
 
-    def on_map_click(self, evt, screen_mouse_pos):
-        self.on_map_mousedown(evt, screen_mouse_pos)
-
     def on_map_mousedown(self, evt, screen_mouse_pos):
+        self.on_map_motion(evt, screen_mouse_pos)
+
+    def on_map_motion(self, evt, screen_mouse_pos):
         tile_coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position, self.level_map.tileset)
 
         if self.level_map.is_in_bounds(tile_coords):
             self.level_map.set_tile(tile_coords, self.picker_dialog.selected_tile_idx)
+
+    def on_map_mouseup(self, evt, screen_mouse_pos):
+        pass
 
     def draw(self, screen):
         # todo: check for option

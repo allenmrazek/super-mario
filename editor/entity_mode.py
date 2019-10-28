@@ -17,7 +17,7 @@ class EntityMode(EditorMode):
         self.level = level
         self.level_map = level.tile_map
 
-    def on_map_click(self, evt, screen_mouse_pos):
+    def on_map_mousedown(self, evt, screen_mouse_pos):
         if self.entity_dialog.selected_entity is not None:
             location = self._get_preview_world_pos(screen_mouse_pos)
 
@@ -26,8 +26,11 @@ class EntityMode(EditorMode):
 
             self.level.entity_manager.register(entity)
 
-    def on_map_mousedown(self, evt, screen_mouse_pos):
+    def on_map_motion(self, evt, screen_mouse_pos):
         pass  # single click per entity
+
+    def on_map_mouseup(self, evt, screen_mouse_pos):
+        pass
 
     def draw(self, screen):
         # todo: check for option

@@ -18,6 +18,7 @@ from .place_mode import PlaceMode
 from .passable_mode import PassableMode
 from .config_mode import ConfigMode
 from .entity_mode import EntityMode
+from state.performance_measurement import PerformanceMeasurement
 
 
 class _ModeDrawHelper(Element):
@@ -163,11 +164,10 @@ class EditorState(GameState, EventHandler):
         if not self.is_consumed(evt):
             if evt.type == pygame.MOUSEBUTTONDOWN:
                 self.consume(evt)
-                self.current_mode.on_map_click(evt, pygame.mouse.get_pos())
-
+                self.current_mode.on_map_mousedown(evt, pygame.mouse.get_pos())
             elif evt.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0]:
                 self.consume(evt)
-                self.current_mode.on_map_mousedown(evt, pygame.mouse.get_pos())
+                self.current_mode.on_map_motion(evt, pygame.mouse.get_pos())
 
             elif evt.type == pygame.KEYDOWN and evt.key == pygame.K_t:
                 # copy level state -> we don't want the actual movement and deaths of entities to be reflected
@@ -179,7 +179,12 @@ class EditorState(GameState, EventHandler):
                 test_level.deserialize(self.level.serialize())
                 test_level.position = self.level.position
 
-                state_stack.push(TestLevel(self.game_events, self.assets, test_level))
+                state_stack.push(PerformanceMeasurement(state_stack, self.game_events,
+                                                        TestLevel(self.game_events, self.assets, test_level)))
+
+        if evt.type == pygame.MOUSEBUTTONUP:
+            self.current_mode.on_map_mouseup(evt, pygame.mouse.get_pos())
+            # don't consume this event
 
     def on_horizontal_scroll(self, new_val):
         existing = self.level.position
