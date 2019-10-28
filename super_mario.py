@@ -10,6 +10,7 @@ import config
 from timer import game_timer
 from assets import AssetManager
 from entities.gui.modal import ModalTextInput
+from scoring import labels
 
 
 class _QuitListener(EventHandler):
@@ -46,7 +47,14 @@ def run():
     # timer initialize
     accumulator = 0.0
 
+    # Labels for overhead information
+    labels_ = labels.Labels(screen)
+    labels_.prep_labels()
+    labels_.prep_points()
+
+
     while state_stack.top is not None:
+    #while True:
         state_stack.top.do_events()
         game_timer.update()
 
@@ -61,6 +69,7 @@ def run():
 
         if updated:
             state_stack.draw(screen)
+            labels_.show_labels()
             pygame.display.flip()
 
     exit(0)
