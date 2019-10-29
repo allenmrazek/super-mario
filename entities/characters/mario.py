@@ -26,20 +26,30 @@ class Mario(LevelEntity):
         self.level = level
 
         super().__init__(self.animator.image.get_rect())
-        self.movement = entities.characters.behaviors.MarioMovement(self, self.input_state, self.cmanager)
+        self.movement = entities.characters.behaviors.MarioMovement(self, self.input_state, self.cmanager,
+                                                                    level.asset_manager.sounds['jump_small'],
+                                                                    level.asset_manager.sounds['jump_super'])
 
         self._enabled = False
-        self._active_effects = MarioEffects.Small  #MarioEffects.Super
+        #self._active_effects = MarioEffects.Super
+        self._active_effects = MarioEffects.Small
+        self._invincibility_period = 0.
+
+        #self.make_invincible(3000)
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
         self.animator.update(self, dt)
 
-    def draw(self, screen, view_rect):
+        self._invincibility_period = max(0., self._invincibility_period - dt)
 
+    def draw(self, screen, view_rect):
         true_pos = world_to_screen(self.rect.topleft, view_rect)
         screen.blit(self.animator.image, true_pos)
         self.movement.draw(screen, view_rect)
+
+    def make_invincible(self, period):
+        self._invincibility_period = period
 
     @property
     def layer(self):
@@ -94,6 +104,11 @@ class Mario(LevelEntity):
         return self.movement.vertical_speed
 
     @property
+    def head_position(self):
+        # return coordinates of mario's head in world space
+        return self.movement.get_head_position()
+
+    @property
     def velocity(self):
         return self.movement.get_velocity()
 
@@ -108,6 +123,14 @@ class Mario(LevelEntity):
     @property
     def is_super(self):
         return self._active_effects & MarioEffects.Super
+
+    @property
+    def is_invincible(self):
+        return self._invincibility_period > 0.
+
+    @property
+    def invincibility_timer(self):
+        return self._invincibility_period
 
 
 class _DirectionSet(NamedTuple):
@@ -232,15 +255,14 @@ class _MarioAnimation:
         if mario_movement.is_airborne:
             self.current = _MarioAnimation._variation_to_set(mario, self.jump)[direction]
         else:
-            if math.fabs(mario_movement.horizontal_speed) < min_walk_velocity:
+            if mario_movement.crouching:
+                self.current = _MarioAnimation._variation_to_set(mario, self.crouch)[direction]
+            elif math.fabs(mario_movement.horizontal_speed) < min_walk_velocity:
                 self.current = _MarioAnimation._variation_to_set(mario, self.stand)[direction]
             elif mario_movement.is_skidding:
                 self.current = _MarioAnimation._variation_to_set(mario, self.skid)[direction]
             elif mario_movement.is_running:
                 self.current = _MarioAnimation._variation_to_set(mario, self.run)[direction]
-            elif mario_movement.is_crouching:
-                assert mario.effects & MarioEffects.Super
-                self.current = _MarioAnimation._variation_to_set(mario, self.crouch)[direction]
             else:
                 self.current = _MarioAnimation._variation_to_set(mario, self.walk)[direction]
 

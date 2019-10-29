@@ -26,7 +26,7 @@ large
 """
 
 
-class MarioTransform(GameState):
+class MarioTransformSuper(GameState):
     def __init__(self, level, mario):
         super().__init__(None)
 
@@ -52,8 +52,6 @@ class MarioTransform(GameState):
         fixed_little.fill(config.transparent_color)
         fixed_little.blit(little_mario.image, (0, little_mario.image.get_height()))
         fixed_little = fixed_little.convert()
-
-
 
         powerup = level.asset_manager.sounds['powerup']
 
@@ -115,6 +113,6 @@ class MarioTransform(GameState):
     def apply_transform(level, mario):
         # transform little mario into super mario
 
-        transform = MarioTransform(level, mario)
+        transform = MarioTransformSuper(level, mario)
 
         state_stack.push(transform)

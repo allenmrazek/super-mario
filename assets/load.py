@@ -251,7 +251,24 @@ def load_pickup_atlas():
     atlas = SpriteAtlas(get_atlas_path("pickups"), tf_use_rescale_factor=True)
     kwargs = {"color_key": config.transparent_color}
 
+    fw, fh = 16 * config.rescale_factor, 16 * config.rescale_factor
+
     atlas.initialize_static("mushroom_red", **kwargs)
+    atlas.initialize_animation("coin_world", fw, fh, 2., config.transparent_color)
+    atlas.initialize_animation("coin_spin", fw, fh, 2., config.transparent_color)
+
+    return atlas
+
+
+def load_interactive_atlas():
+    atlas = SpriteAtlas(get_atlas_path("interactive"), tf_use_rescale_factor=True)
+    kwargs = {"color_key": config.transparent_color}
+
+    atlas.initialize_static("brick", **kwargs)
+    atlas.initialize_static("brick_debris", **kwargs)
+
+    atlas.initialize_animation("coin_block_ow", 16 * config.rescale_factor, 16 * config.rescale_factor, 1, config.transparent_color)
+    atlas.initialize_static("coin_block_empty_ow", **kwargs)
 
     return atlas
 
@@ -275,5 +292,12 @@ def load_sound_fx():
     sounds['smb_life'] = load_sound('smb_1-up.wav')
     sounds['kick'] = load_sound('smb_kick.wav')
     sounds['pause'] = load_sound('smb_pause.wav')
+    sounds['jump_small'] = load_sound('smb_jump-small.wav')
+    sounds['jump_super'] = load_sound('smb_jump-super.wav')
+    sounds['pipe'] = load_sound('smb_pipe.wav')
+    sounds['downgrade'] = sounds['pipe']
+    sounds['breakblock'] = load_sound('smb_breakblock.wav')
+    sounds['bump'] = load_sound('smb_bump.wav')
+    sounds['coin'] = load_sound('smb_coin.wav')
 
     return sounds

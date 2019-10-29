@@ -9,7 +9,6 @@ from util import make_vector
 class Squashable(DamageMario):
     """Essentially a source for a callback when mario lands on top of a hitbox. If he moves into
     the hitbox in another way, Mario is damaged instead"""
-
     def __init__(self, level, entity, hitbox_offset, hitbox_size, bounce_velocity, squash_callback):
         super().__init__(level, entity, hitbox_offset, hitbox_size)
 

@@ -10,14 +10,18 @@ from util import rescale_vector, world_to_screen
 
 
 class MarioMovement:
-    def __init__(self, mario_entity, input_state, collider_manager):
+    def __init__(self, mario_entity, input_state, collider_manager, jump_small_sound, jump_super_sound):
         assert mario_entity is not None
         assert input_state is not None
         assert collider_manager is not None
+        assert jump_small_sound is not None
+        assert jump_super_sound is not None
 
         self.mario_entity = mario_entity
         self.collider_manager = collider_manager
         self.input_state = input_state
+        self.jump_small_sound = jump_small_sound
+        self.jump_super_sound = jump_super_sound
 
         self.debug_trajectory = JumpTrajectoryVisualizer() if config.debug_jumps else None
 
@@ -43,7 +47,7 @@ class MarioMovement:
         #
         # remember that positions of these colliders != mario's position: they can have offsets and different
         # sizing
-        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)  # todo: should active been included in these hitboxes?
+        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)  # todo: should active be included in these hitboxes?
         self._small_hitbox.rect.width, self._small_hitbox.rect.height = rescale_vector(make_vector(10, 14))
         self._small_hitbox_offset = rescale_vector(make_vector(3, 2))
         self._small_hitbox.position = self.mario_entity.position + self._small_hitbox_offset
@@ -91,8 +95,12 @@ class MarioMovement:
         return copy_vector(self.mario_entity.position)
 
     @property
-    def is_crouching(self):
+    def crouching(self):
         return self._crouch
+
+    @crouching.setter
+    def crouching(self, val):
+        self._crouch = val
 
     @position.setter
     def position(self, new_pos):
@@ -181,9 +189,26 @@ class MarioMovement:
         if self.debug_trajectory:
             self.debug_trajectory.update(self, view_rect)
 
+        self._handle_crouching()
+
+    def _handle_crouching(self):
+        # are we crouched, and player wants to uncrouch?
+        if self.is_airborne or not self.mario_entity.is_super or (self.crouching and not self.input_state.down):
+            # todo: what if there isn't room to uncrouch?
+
+            self.crouching = False
+        else:
+            # no crouching if:
+            #   airborne
+            #   trying to jump
+            #   a direction key is pressed
+            self.crouching = self.input_state.down and not self.input_state.jump and not (self.input_state.left ^ self.input_state.right)
+
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether
         Mario skids to a stop or tries to accelerate to his max walk or run speed"""
+
+        # don't allow acceleration if crouching (momentum will cause us to skid to a stop eventually)
 
         # ** important note ** this is specifically for ground acceleration. Physics for air
         # momentum are different and use different rules
@@ -191,10 +216,15 @@ class MarioMovement:
         decelerating = True if ((acceleration_direction > 0. and self._velocity.x < 0.) or
                                 (acceleration_direction < 0. and self._velocity.x > 0.)) else False
 
-        if self.input_state.right:
-            self._facing_right = True
-        else:
-            self._facing_right = False
+        if self.crouching:
+            decelerating = True
+            acceleration_direction = 1. if self._velocity.x < 0. else -1.
+
+        if not self.crouching:  # don't let user change facing directions as mario slides to a stop
+            if self.input_state.right:
+                self._facing_right = True
+            else:
+                self._facing_right = False
 
         # note to self: decel and skidding case is to preserve skidding state even as mario's speed
         # drops below running; it'll be reset on either:
@@ -240,6 +270,7 @@ class MarioMovement:
 
     def _handle_horizontal_momentum(self, dt):
         """Handle mid-air momentum"""
+
         momentum_direction = 1. if self.input_state.right else -1.
         gaining_momentum = True if (self._velocity.x >= 0. and momentum_direction > 0.) \
             or (self._velocity.x < 0. and momentum_direction < 0) else False
@@ -301,7 +332,6 @@ class MarioMovement:
     def _handle_vertical_movement(self, dt):
         """The main tricky bit with this is to remember that it's not just jumping that gets mario into the air:
         falling off ledges, off disappearing blocks, and enemy impact counts too"""
-        # todo: enemy impact physics?
 
         # determine if mario is airborne: there's at least one pixel downward we can move
         # important note: if mario's velocity actually opposes gravity right now (i.e., negative)
@@ -341,6 +371,9 @@ class MarioMovement:
             # note: the initial horizontal speed when jump began is of interest in mid-air momentum calculations,
             # so copy jump stats and insert current horizontal velocity into it
             self._jump_stats = JumpParameters(math.fabs(self._velocity.x), *jump_stats[1:])
+
+            sound = self.jump_super_sound if self.mario_entity.is_super else self.jump_small_sound
+            sound.play()
 
             return
 
@@ -382,11 +415,24 @@ class MarioMovement:
         offset = self._get_hitbox_offset()
 
         hitbox.position = self.position + offset
-        collisions = hitbox.approach(self.mario_entity.position + new_position + offset)
+        collisions = hitbox.approach(self.mario_entity.position + new_position + offset, tf_dispatch_events=True)
         self.position = hitbox.position - offset
+
+        # don't allow off left of screen
+        if self.position.x < self.mario_entity.level.position.x:
+            self._velocity.x = 0
+            self.position = make_vector(self.mario_entity.level.position.x, self.position.y)
+
+        # don't allow off right side of world
+        if self.position.x + self.rect.width > self.mario_entity.level.tile_map.width_pixels:
+            self._velocity.x = 0
+            self.position = make_vector(self.mario_entity.level.tile_map.width_pixels - self.rect.width, self.position.y)
 
         if collisions:  # immediately stop horizontal movement on horizontal collision
             self._velocity.x = 0.
 
     def bounce(self, new_y_velocity):
         self._velocity.y = new_y_velocity
+
+    def get_head_position(self):
+        return make_vector(*self._get_active_hitbox().rect.topmiddle)

@@ -23,12 +23,12 @@ def rect_overlap(A, B):
 
 
 class Collision:
-    __slots__ = ['moved_collider', 'hit_collider', 'hit_block', 'hit_block_rect']
+    __slots__ = ['moved_collider', 'hit_collider', 'hit_block', 'moved_collider_position']
 
-    def __init__(self, moved_collider, hit_thing, block_rect=None):
+    def __init__(self, moved_collider, hit_thing, moved_collider_position):
         self.hit_collider = hit_thing if isinstance(hit_thing, Collider) else None
         self.hit_block = hit_thing if isinstance(hit_thing, tuple) else None
-        self.hit_block_rect = block_rect
+        self.moved_collider_position = moved_collider_position
         self.moved_collider = moved_collider
 
 
@@ -122,7 +122,7 @@ class ColliderManager:
                 continue
 
             if collider.rect.colliderect(other_collider.rect) and other_collider not in collisions:
-                collisions.append(Collision(collider, other_collider))
+                collisions.append(Collision(collider, other_collider, copy_vector(collider.position)))
 
         if tf_dispatch_events:
             ColliderManager.dispatch_events(collider, collisions)
@@ -208,7 +208,7 @@ class ColliderManager:
                     r.y = y * self.tile_map.tile_height
 
                     if collider.rect.colliderect(r):
-                        collisions.append(Collision(moved_collider=collider, hit_thing=(x, y), block_rect=r.copy()))
+                        collisions.append(Collision(moved_collider=collider, hit_thing=(x, y), moved_collider_position=copy_vector(collider.position)))
 
         return collisions
 
@@ -218,5 +218,9 @@ class ColliderManager:
     @staticmethod
     def dispatch_events(collider, collisions):
         for c in collisions:
-            if collider.on_collision is not None and c.hit_collider is not collider:
-                collider.on_collision(c)
+            #if collider.on_collision is not None and c.hit_collider is not collider:
+            #collider.on_collision(c)
+
+            if c.hit_collider is not None and c.hit_collider.on_collision is not None:
+                c.hit_collider.on_collision(c)
+

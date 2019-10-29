@@ -38,13 +38,8 @@ class EntityMode(EditorMode):
             r = pygame.Rect(tile_coords[0] * self.level_map.tileset.tile_width, tile_coords[1] * self.level_map.tileset.tile_height,
                             self.level_map.tileset.tile_width, self.level_map.tileset.tile_height)
 
-            found = self.level.entity_manager.get_entities_inside_region(r)
-
             for e in self.level.entity_manager.get_entities_inside_region(r):
                 e.destroy()
-
-            else:
-                print("this tool not implemented yet")
 
     def on_map_motion(self, evt, screen_mouse_pos):
         pass  # single click per entity

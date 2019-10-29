@@ -33,7 +33,7 @@ def run():
     PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
 
     lvl = Level(assets, EntityManager.create_default())
-    lvl.load_from_path('levels/test.level')
+    lvl.load_from_path('levels/level11.level')
 
     PerformanceMeasurement.measure(state_stack, TestLevel(None, assets, lvl))
 
