@@ -109,15 +109,14 @@ class LevelConfigDialog(Dialog):
             path = os.path.join("levels", filename)
 
             sp = os.path.splitext(path)
-            if len(sp) == 1 or sp[1] != '.lvl':
-                path += '.lvl'
+            if len(sp) == 1 or sp[1] != '.level':
+                path += '.level'
 
             if len(filename) == 0:
                 print("failed to save map -- no filename")
                 return
 
-            #self.level.filename = os.path.basename(path)
-            print("is file base name = ", os.path.basename(path), '?')
+            self.level.filename = os.path.basename(path)
 
             with open(path, 'w') as f:
                 f.write(json.dumps(self.level.serialize()))

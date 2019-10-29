@@ -91,8 +91,12 @@ class MarioMovement:
         return copy_vector(self.mario_entity.position)
 
     @property
-    def is_crouching(self):
+    def crouching(self):
         return self._crouch
+
+    @crouching.setter
+    def crouching(self, val):
+        self._crouch = val
 
     @position.setter
     def position(self, new_pos):
@@ -181,9 +185,26 @@ class MarioMovement:
         if self.debug_trajectory:
             self.debug_trajectory.update(self, view_rect)
 
+        self._handle_crouching()
+
+    def _handle_crouching(self):
+        # are we crouched, and player wants to uncrouch?
+        if self.is_airborne or not self.mario_entity.is_super or (self.crouching and not self.input_state.down):
+            # todo: what if there isn't room to uncrouch?
+
+            self.crouching = False
+        else:
+            # no crouching if:
+            #   airborne
+            #   trying to jump
+            #   a direction key is pressed
+            self.crouching = self.input_state.down and not self.input_state.jump and not (self.input_state.left ^ self.input_state.right)
+
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether
         Mario skids to a stop or tries to accelerate to his max walk or run speed"""
+
+        # don't allow acceleration if crouching (momentum will cause us to skid to a stop eventually)
 
         # ** important note ** this is specifically for ground acceleration. Physics for air
         # momentum are different and use different rules
@@ -191,10 +212,15 @@ class MarioMovement:
         decelerating = True if ((acceleration_direction > 0. and self._velocity.x < 0.) or
                                 (acceleration_direction < 0. and self._velocity.x > 0.)) else False
 
-        if self.input_state.right:
-            self._facing_right = True
-        else:
-            self._facing_right = False
+        if self.crouching:
+            decelerating = True
+            acceleration_direction = 1. if self._velocity.x < 0. else -1.
+
+        if not self.crouching:  # don't let user change facing directions as mario slides to a stop
+            if self.input_state.right:
+                self._facing_right = True
+            else:
+                self._facing_right = False
 
         # note to self: decel and skidding case is to preserve skidding state even as mario's speed
         # drops below running; it'll be reset on either:
@@ -240,6 +266,7 @@ class MarioMovement:
 
     def _handle_horizontal_momentum(self, dt):
         """Handle mid-air momentum"""
+
         momentum_direction = 1. if self.input_state.right else -1.
         gaining_momentum = True if (self._velocity.x >= 0. and momentum_direction > 0.) \
             or (self._velocity.x < 0. and momentum_direction < 0) else False

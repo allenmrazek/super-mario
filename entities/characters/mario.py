@@ -29,7 +29,8 @@ class Mario(LevelEntity):
         self.movement = entities.characters.behaviors.MarioMovement(self, self.input_state, self.cmanager)
 
         self._enabled = False
-        self._active_effects = MarioEffects.Small  #MarioEffects.Super
+        self._active_effects = MarioEffects.Super
+        #self._active_effects = MarioEffects.Small
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
@@ -232,15 +233,14 @@ class _MarioAnimation:
         if mario_movement.is_airborne:
             self.current = _MarioAnimation._variation_to_set(mario, self.jump)[direction]
         else:
-            if math.fabs(mario_movement.horizontal_speed) < min_walk_velocity:
+            if mario_movement.crouching:
+                self.current = _MarioAnimation._variation_to_set(mario, self.crouch)[direction]
+            elif math.fabs(mario_movement.horizontal_speed) < min_walk_velocity:
                 self.current = _MarioAnimation._variation_to_set(mario, self.stand)[direction]
             elif mario_movement.is_skidding:
                 self.current = _MarioAnimation._variation_to_set(mario, self.skid)[direction]
             elif mario_movement.is_running:
                 self.current = _MarioAnimation._variation_to_set(mario, self.run)[direction]
-            elif mario_movement.is_crouching:
-                assert mario.effects & MarioEffects.Super
-                self.current = _MarioAnimation._variation_to_set(mario, self.crouch)[direction]
             else:
                 self.current = _MarioAnimation._variation_to_set(mario, self.walk)[direction]
 
