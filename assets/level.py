@@ -1,9 +1,10 @@
 import json
 from pygame import Rect
-from entities.collider import ColliderManager
+from entities.collider import ColliderManager, Collider
 from assets.tile_map import TileMap
 import config
 from util import make_vector, copy_vector
+from entities.entity import Layer
 from entities.characters import Mario
 from entities.characters.spawners import MarioSpawnPoint
 from event import PlayerInputHandler
@@ -61,17 +62,31 @@ class Level(EventHandler):
 
         assert isinstance(spawn_point, MarioSpawnPoint)
 
-        # todo: avoid double spawn?
-
         self.mario.enabled = True
         assert self.mario.enabled
 
         self.mario.position = spawn_point.position
         self.mario.reset()  # reset state
 
+        # prevent mario from phasing into the ground (should he be super mario and the spawn point is on the ground)
+        ground_collider = Collider.from_entity(self.mario, self.collider_manager, Layer.Block)
+        ground_collider.rect.width = 16 * config.rescale_factor
+        ground_collider.rect.height = 16 * config.rescale_factor if not self.mario.is_super else 32 * config.rescale_factor
+        ground_collider.position = self.mario.position
+
+        tries = 0
+        while ground_collider.test(ground_collider.position, False):
+            ground_collider.position += make_vector(0, -1)
+
+            tries += 1
+            if tries > 1000:
+                raise RuntimeError
+
+        self.mario.position = ground_collider.position
+        
         # set level scroll position to be one quarter-screen behind mario, unless that would result in left edge
         # of map being visible
-        scroll_pos = make_vector( max(0, self.mario.position.x - self.view_rect.width // 4), self.position.y)
+        scroll_pos = make_vector(max(0, self.mario.position.x - self.view_rect.width // 4), self.position.y)
         self.position = scroll_pos
 
     def despawn_mario(self):
