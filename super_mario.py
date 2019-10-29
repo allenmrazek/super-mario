@@ -32,7 +32,7 @@ def run():
     assets = AssetManager()
 
     # PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
-    # PerformanceMeasurement.measure(state_stack, RunLevel.run(assets, 'levels/level11.level'))
+    #PerformanceMeasurement.measure(state_stack, RunLevel.run(assets, 'levels/level11.level'))
 
     state_stack.push(MainMenu(assets))
 

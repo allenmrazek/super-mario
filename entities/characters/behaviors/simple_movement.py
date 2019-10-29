@@ -25,15 +25,6 @@ class SimpleMovement(Behavior):
 
         self.airborne_collider = Collider.from_entity(entity, collider_manager, Layer.Block)
 
-        existing = self.movement_collider.on_collision
-
-        def _wrap(collision):
-            if existing is not None:
-                existing(collision)
-            self._on_hit(collision)
-
-        self.movement_collider.on_collision = _wrap
-
         # allow other things to collider with our movement collider. Note they
         # must have a mask that hits Layer.Enemy to do this
         collider_manager.register(self.movement_collider)
@@ -93,8 +84,13 @@ class SimpleMovement(Behavior):
 
         target = self.entity.position + vel * dt
 
-        self.movement_collider.approach(target, True)
-        self.entity.position = self.movement_collider.position
+        collisions = self.movement_collider.try_move(target, True)
+
+        if collisions:
+            for c in collisions:
+                self._on_hit(c)
+        else:
+            self.entity.position = self.movement_collider.position
 
     def _on_hit(self, collision):
         if collision.hit_block:
