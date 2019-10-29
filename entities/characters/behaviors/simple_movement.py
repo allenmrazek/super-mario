@@ -1,6 +1,6 @@
 from .behavior import Behavior
 from util import make_vector
-from entities.characters.enemy import EnemyParameters
+from entities.characters.level_entity import MovementParameters
 from entities.collider import Collider
 from entities import Layer
 
@@ -20,7 +20,7 @@ class SimpleMovement(Behavior):
 
         self.movement_collider = movement_collider or Collider.from_entity(entity,
                                                                            collider_manager, Layer.Block | Layer.Enemy)
-        self.parameters = parameters  # type: EnemyParameters
+        self.parameters = parameters  # type: MovementParameters
         self.velocity = make_vector(-self.parameters.max_horizontal_velocity, 0.)
 
         self.airborne_collider = Collider.from_entity(entity, collider_manager, Layer.Block)

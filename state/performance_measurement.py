@@ -26,7 +26,7 @@ class PerformanceMeasurement(GameState):
         self.target_state = target_state
         self.state_stack = state_stack
 
-        self.entities = EntityManager([Layer.Interface])
+        self.entities = EntityManager([Layer.Interface], [Layer.Interface])
 
         text_position = make_vector(config.screen_rect.right, config.screen_rect.top)
 

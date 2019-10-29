@@ -121,3 +121,7 @@ def get_corpse_position(entity_rect: pygame.Rect, corpse_rect: pygame.Rect):
     corpse_rect.midbottom = entity_rect.midbottom
 
     return make_vector(*corpse_rect.topleft)
+
+
+def rescale_vector(v):
+    return make_vector(v[0] * config.rescale_factor, v[1] * config.rescale_factor)
