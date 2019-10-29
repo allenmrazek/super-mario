@@ -53,6 +53,8 @@ class MarioTransform(GameState):
         fixed_little.blit(little_mario.image, (0, little_mario.image.get_height()))
         fixed_little = fixed_little.convert()
 
+
+
         powerup = level.asset_manager.sounds['powerup']
 
         self.animation = self.build_animation(powerup.get_length(), fixed_little, middle.image, super_mario.image)
@@ -63,9 +65,8 @@ class MarioTransform(GameState):
         # since we're positioning by top-left corner and super mario is larger than small mario,
         # we need a corrective offset
         self._offset = make_vector(0, -little_mario.image.get_height())
-        self.mario.position = self.mario.position + self._offset
 
-        self._channel = powerup.play()
+        powerup.play()
 
     def update(self, dt):
         # don't update running game
@@ -77,6 +78,9 @@ class MarioTransform(GameState):
 
     def deactivated(self):
         self.mario.effects |= MarioEffects.Super
+
+        # the top-left coordinate of mario needs to be moved to account for a larger sprite
+        self.mario.position = self.mario.position + self._offset
         self.mario.enabled = True
 
     def build_animation(self, duration, small, middle, large):

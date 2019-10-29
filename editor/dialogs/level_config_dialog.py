@@ -91,6 +91,12 @@ class LevelConfigDialog(Dialog):
         self.height_button = create_button(gui_atlas, pos, button_size, "Set Height", font=font, on_click_callback=self._on_change_height)
         self.add_child(self.height_button)
 
+        pos.y += self.save_button.height + button_y_offset
+
+        # level dimensions
+        self.level_dimensions = Text(pos, f"Dimensions: {self.level.tile_map.width}x{self.level.tile_map.height}", font, config.default_text_color)
+        self.add_child(self.level_dimensions)
+
     def _on_slider_changed(self, new_value):
         r = clamp(int(self.bkg_color_r_slider.value), 0, 255)
         g = clamp(int(self.bkg_color_g_slider.value), 0, 255)
@@ -141,6 +147,8 @@ class LevelConfigDialog(Dialog):
             self.bkg_color_g_slider.value = clr[1]
             self.bkg_color_b_slider.value = clr[2]
 
+            self._update_level_dimensions_text()
+
         def _cancel():
             pass
 
@@ -148,7 +156,12 @@ class LevelConfigDialog(Dialog):
 
     def _on_change_width(self):
         def _set_width(width_str):
-            print("change map width here")
+            try:
+                new_width = int(width_str)
+                self.level.tile_map.resize(new_width, self.level.tile_map.height)
+                self._update_level_dimensions_text()
+            except ValueError:
+                print("invalid width, map size unchanged")
 
         def _cancel():
             pass
@@ -157,9 +170,17 @@ class LevelConfigDialog(Dialog):
 
     def _on_change_height(self):
         def _set_height(height_str):
-            print("change map height here")
+            try:
+                new_height = int(height_str)
+                self.level.tile_map.resize(self.level.tile_map.width, new_height)
+                self._update_level_dimensions_text()
+            except ValueError:
+                print("invalid height, map size unchanged")
 
         def _cancel():
             pass
 
         ModalTextInput.spawn(self.gui_atlas, "Map Height:", _set_height, _cancel)
+
+    def _update_level_dimensions_text(self):
+        self.level_dimensions.text = f"Level dimensions: {self.level.tile_map.width}x{self.level.tile_map.height}"

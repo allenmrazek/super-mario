@@ -6,29 +6,6 @@ import config
 from util import tile_index_to_coords
 
 
-# class TileMapSerializer(json.JSONEncoder):
-#     def default(self, o):
-#         if isinstance(o, TileMap):
-#             values = {"width": o.width, "height": o.height}
-#
-#             square_encoder = MapSquareSerializer()
-#
-#             values["tiles"] = [square_encoder.encode(o.tile_map[x][y]) for x in range(o.width) for y in range(o.height)]
-#
-#             return values
-#         else:
-#             super().default(o)
-#
-#     def decode(self, values):
-#         tmd = MapSquareSerializer()
-#
-#         tm = tmd.decode(values)
-#
-#         tiles = tmd.decode(values["tiles"])
-#
-#         return tm
-
-
 class TileMap:
     class MapSquare:
         __slots__ = ['passable', 'idx']
@@ -92,8 +69,27 @@ class TileMap:
             self.set_passable((self.width - 1, y), False)
 
     def _create_map(self):
+        self.tile_map = []
+
         for _ in range(self.width):
             self.tile_map.append([TileMap.MapSquare() for _ in range(self.height)])
+
+    def resize(self, new_width, new_height):
+        assert 1 <= new_width < 2000
+        assert 1 <= new_height < 2000
+
+        old_map = self.tile_map
+        old_width, old_height = self.width, self.height
+
+        self.width, self.height = new_width, new_height
+
+        self._create_map()
+
+        # copy old map to new map
+        for y in range(min(old_height, new_height)):
+            for x in range(min(old_width, new_width)):
+                self.set_passable((x, y), old_map[x][y].passable)
+                self.set_tile((x, y), old_map[x][y].idx)
 
     def view_region_to_tile_region(self, view_region):
         # converts a viewing rectangle into visible tile coordinates

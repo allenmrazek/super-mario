@@ -15,7 +15,11 @@ class TextInputHandler(EventHandler):
             key = evt.key
 
             alpha = K_a <= key <= K_z
-            digit = not alpha and K_0 <= key <= K_9
+            digit = not alpha and (K_0 <= key <= K_9)
+
+            if K_KP0 <= key <= K_KP9:
+                digit = True
+                key -= 0xD0
 
             if alpha:
                 upper = pygame.key.get_mods() & KMOD_SHIFT

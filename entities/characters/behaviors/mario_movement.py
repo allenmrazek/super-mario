@@ -111,7 +111,7 @@ class MarioMovement:
         if config.debug_hitboxes:
             hitbox = self._get_active_hitbox()
             r = hitbox.rect.copy()
-            r.topleft = world_to_screen(hitbox.position + self._get_hitbox_offset(), view_rect)
+            r.topleft = world_to_screen(self.position + self._get_hitbox_offset(), view_rect)
             r = screen.get_rect().clip(r)
 
             screen.fill((0, 255, 0), r)
@@ -158,11 +158,6 @@ class MarioMovement:
         self._large_hitbox.position = self.position + self._large_hitbox_offset
 
     def update(self, dt, view_rect):
-        if self._get_active_hitbox() is self._small_hitbox:
-            print("small hitbox")
-        else:
-            print("large hitbox")
-
         if self.is_running and not self.input_state.dash:
             self._run_frame_counter = min(self._run_frame_counter + 1, num_frames_hold_speed + 1)
         else:

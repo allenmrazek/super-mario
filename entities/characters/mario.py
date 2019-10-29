@@ -29,7 +29,7 @@ class Mario(LevelEntity):
         self.movement = entities.characters.behaviors.MarioMovement(self, self.input_state, self.cmanager)
 
         self._enabled = False
-        self._active_effects = MarioEffects.Super
+        self._active_effects = MarioEffects.Small  #MarioEffects.Super
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)

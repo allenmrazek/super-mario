@@ -2,7 +2,7 @@ from pygame import Rect
 from pygame import Color
 
 debug_jumps = False
-debug_hitboxes = False
+debug_hitboxes = True
 
 screen_size = 1024, 675
 screen_rect = Rect(0, 0, *screen_size)
@@ -12,7 +12,8 @@ rescale_factor = 2  # all loaded sprites and images will be rescaled by this val
 
 transparent_color = Color('magenta')
 
-PHYSICS_DT = 1. / 60
+#PHYSICS_DT = 1. / 60
+PHYSICS_DT = 1. / 60 / 4
 
 default_background_color = Color('black')
 default_text_color = Color('white')
