@@ -275,5 +275,9 @@ def load_sound_fx():
     sounds['smb_life'] = load_sound('smb_1-up.wav')
     sounds['kick'] = load_sound('smb_kick.wav')
     sounds['pause'] = load_sound('smb_pause.wav')
+    sounds['jump_small'] = load_sound('smb_jump-small.wav')
+    sounds['jump_super'] = load_sound('smb_jump-super.wav')
+    sounds['pipe'] = load_sound('smb_pipe.wav')
+    sounds['downgrade'] = sounds['pipe']
 
     return sounds

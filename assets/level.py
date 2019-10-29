@@ -25,6 +25,7 @@ class Level(EventHandler):
         self.collider_manager = ColliderManager(self.tile_map)
         self.background_color = (0, 0, 0)
         self.filename = "test_level.lvl"
+        self.normal_physics = True
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
@@ -70,8 +71,8 @@ class Level(EventHandler):
 
         # set level scroll position to be one quarter-screen behind mario, unless that would result in left edge
         # of map being visible
-        self.position.x = max(0, self.mario.position.x - self.view_rect.width // 4)
-        self.position.y = 0  # todo: any case where this isn't y?
+        scroll_pos = make_vector( max(0, self.mario.position.x - self.view_rect.width // 4), self.position.y)
+        self.position = scroll_pos
 
     def despawn_mario(self):
         assert self.mario.enabled
@@ -82,6 +83,7 @@ class Level(EventHandler):
     def serialize(self):
         return {"name": "unknown",
                 "filename": self.filename,
+                "normal_physics": self.normal_physics,
                 "background_color": (self.background_color[0], self.background_color[1], self.background_color[2]),
                 "tile_map": self.tile_map.serialize(),
                 "entities": self.entity_manager.serialize()}
@@ -94,8 +96,9 @@ class Level(EventHandler):
         self.background_color = tuple(values["background_color"])
         self.tile_map.deserialize(values["tile_map"])
         self.entity_manager.deserialize(self, values["entities"])
+        self.normal_physics = values["normal_physics"] if "normal_physics" in values else True
 
-        # we only want one unique mario, ignore any that might have been serialized
+        # we only want one unique mario, ignore any that might have been deserialized
         for existing in self.entity_manager.search_by_type(Mario):
             existing.destroy()
 

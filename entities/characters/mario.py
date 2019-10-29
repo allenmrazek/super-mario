@@ -26,21 +26,31 @@ class Mario(LevelEntity):
         self.level = level
 
         super().__init__(self.animator.image.get_rect())
-        self.movement = entities.characters.behaviors.MarioMovement(self, self.input_state, self.cmanager)
+        self.movement = entities.characters.behaviors.MarioMovement(self, self.input_state, self.cmanager,
+                                                                    level.asset_manager.sounds['jump_small'],
+                                                                    level.asset_manager.sounds['jump_super'])
 
         self._enabled = False
         self._active_effects = MarioEffects.Super
         #self._active_effects = MarioEffects.Small
+        self._invincibility_period = 0.
+
+        #self.make_invincible(3000)
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
         self.animator.update(self, dt)
+
+        self._invincibility_period = max(0., self._invincibility_period - dt)
 
     def draw(self, screen, view_rect):
 
         true_pos = world_to_screen(self.rect.topleft, view_rect)
         screen.blit(self.animator.image, true_pos)
         self.movement.draw(screen, view_rect)
+
+    def make_invincible(self, period):
+        self._invincibility_period = period
 
     @property
     def layer(self):
@@ -109,6 +119,14 @@ class Mario(LevelEntity):
     @property
     def is_super(self):
         return self._active_effects & MarioEffects.Super
+
+    @property
+    def is_invincible(self):
+        return self._invincibility_period > 0.
+
+    @property
+    def invincibility_timer(self):
+        return self._invincibility_period
 
 
 class _DirectionSet(NamedTuple):

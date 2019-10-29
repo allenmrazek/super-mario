@@ -10,14 +10,18 @@ from util import rescale_vector, world_to_screen
 
 
 class MarioMovement:
-    def __init__(self, mario_entity, input_state, collider_manager):
+    def __init__(self, mario_entity, input_state, collider_manager, jump_small_sound, jump_super_sound):
         assert mario_entity is not None
         assert input_state is not None
         assert collider_manager is not None
+        assert jump_small_sound is not None
+        assert jump_super_sound is not None
 
         self.mario_entity = mario_entity
         self.collider_manager = collider_manager
         self.input_state = input_state
+        self.jump_small_sound = jump_small_sound
+        self.jump_super_sound = jump_super_sound
 
         self.debug_trajectory = JumpTrajectoryVisualizer() if config.debug_jumps else None
 
@@ -328,7 +332,6 @@ class MarioMovement:
     def _handle_vertical_movement(self, dt):
         """The main tricky bit with this is to remember that it's not just jumping that gets mario into the air:
         falling off ledges, off disappearing blocks, and enemy impact counts too"""
-        # todo: enemy impact physics?
 
         # determine if mario is airborne: there's at least one pixel downward we can move
         # important note: if mario's velocity actually opposes gravity right now (i.e., negative)
@@ -368,6 +371,9 @@ class MarioMovement:
             # note: the initial horizontal speed when jump began is of interest in mid-air momentum calculations,
             # so copy jump stats and insert current horizontal velocity into it
             self._jump_stats = JumpParameters(math.fabs(self._velocity.x), *jump_stats[1:])
+
+            sound = self.jump_super_sound if self.mario_entity.is_super else self.jump_small_sound
+            sound.play()
 
             return
 
@@ -411,6 +417,10 @@ class MarioMovement:
         hitbox.position = self.position + offset
         collisions = hitbox.approach(self.mario_entity.position + new_position + offset)
         self.position = hitbox.position - offset
+
+        if self.position.x < self.mario_entity.level.position.x:
+            self._velocity.x = 0
+            self.position = make_vector(self.mario_entity.level.position.x, self.position.y)
 
         if collisions:  # immediately stop horizontal movement on horizontal collision
             self._velocity.x = 0.
