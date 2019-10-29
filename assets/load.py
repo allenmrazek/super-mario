@@ -274,6 +274,8 @@ def load_interactive_atlas():
 
     atlas.initialize_animation("coin_block_ow", 16 * config.rescale_factor, 16 * config.rescale_factor, 1, config.transparent_color)
     atlas.initialize_static("coin_block_empty_ow", **kwargs)
+    atlas.initialize_static("flag", **kwargs)
+    atlas.initialize_static("flag_pole", **kwargs)
 
     return atlas
 

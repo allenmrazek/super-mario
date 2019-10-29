@@ -1,16 +1,17 @@
 import pygame
-from state.game_state import GameState, state_stack
-from event import EventHandler
-from assets.level import Level
+from state.game_state import GameState
 from entities.entity_manager import EntityManager
+from assets.level import Level
 from assets.statistics import Statistics
+from event.game_events import EventHandler
+from .game_state import state_stack
 
 
-class RunLevel(GameState, EventHandler):
-    def __init__(self, game_events, assets, level):
+class RunLevel(GameState):
+    def __init__(self, game_events, assets, level, stats):
         super().__init__(game_events)
 
-        self.stats = Statistics()
+        self.stats = stats
         self.assets = assets
         self.level = level
         self._finished = False
@@ -22,32 +23,17 @@ class RunLevel(GameState, EventHandler):
         screen.fill(self.level.background_color)
         self.level.draw(screen)
 
-    def advance_next_level(self, level_filename):
-        new_level = Level(self.assets, EntityManager.create_default())
-        new_level.load_from_path(level_filename)
-
-        self.level = new_level
-        # todo: "overlay" screen for new level
-
     @property
     def finished(self):
-        return self._finished
+        return self._finished or self.level.cleared or self.stats.lives <= 0
 
     def activated(self):
-        self.game_events.register(self)
         self.game_events.register(self.level)
-
-        pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
-        pygame.mixer_music.play()
+        #self.game_events.register(self)
 
     def deactivated(self):
         self.game_events.unregister(self.level)
-        self.game_events.unregister(self)
-
-    def handle_event(self, evt, game_events):
-        if not self.is_consumed(evt) and evt.type == pygame.KEYDOWN and evt.key in [pygame.K_q, pygame.K_ESCAPE]:
-            self._finished = True
-            self.consume(evt)
+        #self.game_events.unregister(self)
 
     @staticmethod
     def run(assets, level_filename):
@@ -55,4 +41,6 @@ class RunLevel(GameState, EventHandler):
 
         level.load_from_path(level_filename)
 
-        return RunLevel(None, assets, level)
+        return RunLevel(None, assets, level, Statistics())
+
+

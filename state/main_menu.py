@@ -3,7 +3,7 @@ from pygame import Color
 from .game_state import GameState
 from event import GameEvents, EventHandler
 from assets.level import Level
-from state.run_level import RunLevel
+from state.run_session import RunSession
 from .game_state import state_stack
 from editor.editor_state import EditorState
 from entities.entity_manager import EntityManager
@@ -81,7 +81,7 @@ class MainMenu(GameState, EventHandler):
             r.y += r.height + 10
 
     def _on_play(self):
-        state_stack.push(RunLevel.run(self.assets, 'levels/level11.level'))
+        state_stack.push(RunSession(GameEvents(), self.assets))
 
     def _on_editor(self):
         state_stack.push(EditorState(GameEvents(), self.assets))

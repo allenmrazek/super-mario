@@ -63,7 +63,7 @@ class MarioTransformSmall(GameState):
         self.mario.effects = MarioEffects.Small  # mario loses all abilities
 
         # period of invincibility
-        self.mario.make_invincible(.75)
+        self.mario.make_invincible(.75)  # todo: put in a config somewhere
 
         # the top-left coordinate of mario needs to be moved to account for a smaller sprite
         self.mario.position = self.mario.position + self._offset
@@ -99,8 +99,5 @@ class MarioTransformSmall(GameState):
 
     @staticmethod
     def apply_transform(level, mario):
-        # transform little mario into super mario
-
         transform = MarioTransformSmall(level, mario)
-
         state_stack.push(transform)

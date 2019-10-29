@@ -1,4 +1,5 @@
 import json
+import pygame
 from pygame import Rect
 from entities.collider import ColliderManager, Collider
 from assets.tile_map import TileMap
@@ -35,6 +36,7 @@ class Level(EventHandler):
 
         self._scroll_position = make_vector(0, 0)
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)
+        self._cleared = False
 
     def add_entity(self, entity):
         self.entity_manager.register(entity)
@@ -89,6 +91,9 @@ class Level(EventHandler):
         scroll_pos = make_vector(max(0, self.mario.position.x - self.view_rect.width // 4), self.position.y)
         self.position = scroll_pos
 
+        pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
+        pygame.mixer_music.play()
+
     def despawn_mario(self):
         assert self.mario.enabled
 
@@ -126,7 +131,16 @@ class Level(EventHandler):
         if spawn_point:
             self.spawn_mario(spawn_point)
 
+    def set_cleared(self):
+        self._cleared = True
+
+    @property
+    def cleared(self):
+        return self._cleared
+
     def load_from_path(self, filename, spawn_idx=0):
+        self._cleared = False
+
         with open(filename, 'r') as f:
             self.deserialize(json.loads(f.read()))
 

@@ -45,29 +45,6 @@ class TileMap:
 
         self._create_map()
 
-        # make bottom row of blocks
-        for x in range(0, self.width):
-            self.set_tile((x, self.height - 1), 0)
-            self.set_passable((x, self.height - 1), False)
-
-        # # temp: set blocks randomly
-        # for x in range(0, self.width):
-        #     for y in range(0, self.height):
-        #         self.set_tile((x, y), random.randint(0, self.tileset.tile_count - 1))
-        #
-        # set bounds of rect to all the same block, to make distinct
-        for x in range(0, self.width):
-            self.set_tile((x, 0), 0)
-            self.set_passable((x, 0), False)
-            self.set_tile((x, self.height - 1), 0)
-            self.set_passable((x, self.height - 1), False)
-
-        for y in range(0, self.height):
-            self.set_tile((0, y), 0)
-            self.set_passable((0, y), False)
-            self.set_tile((self.width - 1, y), 0)
-            self.set_passable((self.width - 1, y), False)
-
     def _create_map(self):
         self.tile_map = []
 
