@@ -7,4 +7,6 @@ from .brick import Brick
 from .coin import Coin
 from .coin_block import CoinBlock
 
+import entities.characters.triggers  # force triggers to be loaded
+
 __all__ = ['Mario', 'Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'MovementParameters', 'Brick', 'Coin', 'CoinBlock']

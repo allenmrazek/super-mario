@@ -218,9 +218,6 @@ class ColliderManager:
     @staticmethod
     def dispatch_events(collider, collisions):
         for c in collisions:
-            #if collider.on_collision is not None and c.hit_collider is not collider:
-            #collider.on_collision(c)
-
             if c.hit_collider is not None and c.hit_collider.on_collision is not None:
                 c.hit_collider.on_collision(c)
 

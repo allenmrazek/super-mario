@@ -6,7 +6,9 @@ from animation import Animation
 # distinguishes between a color, a Surface, and a SlicedImage
 def smart_draw(target, source, dest_rect=None, src_rect=None):
     assert target is not None
-    assert source is not None
+
+    if source is None:
+        return
 
     if isinstance(source, pygame.Surface):
         target.blit(source, dest_rect, src_rect)

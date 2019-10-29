@@ -12,7 +12,7 @@ from event.game_events import EventHandler
 
 
 class Level(EventHandler):
-    UPDATE_RECT_DISTANCE_FACTOR = 1.25  # entities within view_rect +- this factor * its width will be updated, else they'll be frozen
+    #UPDATE_RECT_DISTANCE_FACTOR = 1.25  # entities within view_rect +- this factor * its width will be updated, else they'll be frozen
 
     """A level is the highest-level object containing everything that makes up a level"""
     def __init__(self, assets, entity_manager):

@@ -1,9 +1,11 @@
 import pygame
-from state.game_state import GameState
+from state.game_state import GameState, state_stack
 from event import EventHandler
+from assets.level import Level
+from entities.entity_manager import EntityManager
 
 
-class TestLevel(GameState, EventHandler):
+class RunLevel(GameState, EventHandler):
     def __init__(self, game_events, assets, level):
         super().__init__(game_events)
 
@@ -17,6 +19,13 @@ class TestLevel(GameState, EventHandler):
     def draw(self, screen):
         screen.fill(self.level.background_color)
         self.level.draw(screen)
+
+    def advance_next_level(self, level_filename):
+        new_level = Level(self.assets, EntityManager.create_default())
+        new_level.load_from_path(level_filename)
+
+        self.level = new_level
+        # todo: "overlay" screen for new level
 
     @property
     def finished(self):
@@ -34,3 +43,11 @@ class TestLevel(GameState, EventHandler):
         if not self.is_consumed(evt) and evt.type == pygame.KEYDOWN and evt.key in [pygame.K_q, pygame.K_ESCAPE]:
             self._finished = True
             self.consume(evt)
+
+    @staticmethod
+    def run(assets, level_filename):
+        level = Level(assets, EntityManager.create_default())
+
+        level.load_from_path(level_filename)
+
+        return RunLevel(None, assets, level)

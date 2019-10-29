@@ -3,8 +3,9 @@ import pygame
 from event.game_events import GameEvents, EventHandler
 from state.game_state import state_stack
 from state import PerformanceMeasurement
+from state import MainMenu
 from editor.editor_state import EditorState
-from state import TestLevel
+from state import RunLevel
 from assets.level import Level
 import config
 from timer import game_timer
@@ -30,12 +31,10 @@ def run():
     pygame.display.set_caption("Super Mario")
     assets = AssetManager()
 
-    PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
+    # PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
+    # PerformanceMeasurement.measure(state_stack, RunLevel.run(assets, 'levels/level11.level'))
 
-    lvl = Level(assets, EntityManager.create_default())
-    lvl.load_from_path('levels/level11.level')
-
-    PerformanceMeasurement.measure(state_stack, TestLevel(None, assets, lvl))
+    state_stack.push(MainMenu(assets))
 
     game_timer.reset()
 

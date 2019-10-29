@@ -4,7 +4,7 @@ import copy
 import json
 import pygame
 from state.game_state import GameState, state_stack
-from state.test_level import TestLevel
+from state.run_level import RunLevel
 from entities.gui import Frame, Element, Anchor, Scrollbar, ScrollbarType
 from editor.dialogs import ToolDialog, TilePickerDialog, ModeDialog, LevelConfigDialog, EntityPickerDialog, EntityToolDialog
 from entities import EntityManager, Layer
@@ -183,7 +183,7 @@ class EditorState(GameState, EventHandler):
                 test_level.position = self.level.position
 
                 state_stack.push(PerformanceMeasurement(state_stack, self.game_events,
-                                                        TestLevel(self.game_events, self.assets, test_level)))
+                                                        RunLevel(self.game_events, self.assets, test_level)))
 
         if evt.type == pygame.MOUSEBUTTONUP:
             self.current_mode.on_map_mouseup(evt, pygame.mouse.get_pos())

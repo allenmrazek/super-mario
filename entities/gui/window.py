@@ -4,6 +4,7 @@ from .element import Anchor
 from .sliced_image import SlicedImage
 from util import copy_vector
 from .drawing import smart_draw
+from animation import Animation
 
 
 class Window(Frame):
@@ -15,7 +16,7 @@ class Window(Frame):
 
         assert background is not None
         assert isinstance(background, pygame.Surface) or isinstance(background, pygame.Color) \
-            or isinstance(background, tuple) or isinstance(background, SlicedImage)
+            or isinstance(background, tuple) or isinstance(background, SlicedImage) or isinstance(background, Animation)
 
         self.element_position = copy_vector(window_position)
         self.background = background

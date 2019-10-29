@@ -230,6 +230,11 @@ def load_gui_atlas():
     load_tool_static("left", "left_hl")
     load_tool_static("bottom", "bottom_hl")
 
+    # other things used in editor, here because they shouldn't be scaled like other atlases are
+    atlas.initialize_static("level_warp")
+    atlas.initialize_static("mm_Smb", **kwargs)
+    atlas.initialize_static("menu_mushroom", **kwargs)
+
     return atlas
 
 
