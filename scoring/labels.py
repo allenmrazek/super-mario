@@ -18,6 +18,13 @@ class Labels:
         self.initial_lives = 3
         self.font = pygame.font.Font("scoring/super_mario_font.ttf", 22)
 
+        self.prep_labels()
+        self.prep_lives()
+        self.prep_coins()
+        self.prep_world()
+        self.prep_time()
+        self.prep_points()
+
     def prep_labels(self):
         text1 = "SCORE"
         self.text1_image = self.font.render(text1, True, self.text_color, self.bg_color)
@@ -58,7 +65,7 @@ class Labels:
     def prep_time(self):
         self.time_image = self.font.render(str(self.initial_time), True, self.text_color, self.bg_color)
         self.time_rect = self.time_image.get_rect()
-        self.time_rect.left = self.points_rect.left + 165
+        self.time_rect.left = self.time_rect.left + 260
         self.time_rect.top = 48
 
     def prep_world(self):

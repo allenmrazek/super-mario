@@ -8,26 +8,25 @@ from util import make_vector
 
 
 class EntityManager:
-    def __init__(self, layer_ordering: list):
-        assert layer_ordering is not None and len(layer_ordering) > 0
+    def __init__(self, update_layer_ordering: list, draw_layer_ordering):
+        assert update_layer_ordering is not None
+        assert draw_layer_ordering is not None
 
-        self.ordering = layer_ordering
-        self.layers = dict(zip(layer_ordering, [list() for _ in range(len(layer_ordering))]))
+        self.update_ordering = update_layer_ordering
+        self.draw_ordering = draw_layer_ordering
 
-        # include any missing layers
-        have = set(layer_ordering)
-        exist = set([x for x in Layer])
-
-        for missing_layer in exist.difference(have):
-            self.layers[missing_layer] = list()
+        self.layers = dict(zip([layer_name for layer_name in Layer], [list() for _ in Layer]))
 
     @staticmethod
     def create_default():
         # create a default entity manager. This is standard gameplay
-        ordering = [Layer.Background, Layer.Block,
+        update_order = [Layer.Background, Layer.Block, Layer.Spawner, Layer.Trigger,
                     Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
 
-        return EntityManager(ordering)
+        draw_order = [Layer.Background, Layer.Block,
+                    Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
+
+        return EntityManager(update_order, draw_order)
 
     @staticmethod
     def create_editor():
@@ -36,7 +35,7 @@ class EntityManager:
         ordering = [Layer.Background, Layer.Block, Layer.Spawner, Layer.Trigger,
                     Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
 
-        return EntityManager(ordering)
+        return EntityManager(ordering, ordering)
 
     def register(self, *args):
         try:
@@ -68,17 +67,17 @@ class EntityManager:
         def update_entity(entity, vr):
             entity.update(dt, vr)
 
-        self._do_on_each_layer(update_entity, view_rect)
+        self._do_on_each_layer(update_entity, view_rect, self.update_ordering)
 
     def draw(self, screen, view_rect):
         # todo: draw only screen and a quarter
         def draw_entity(entity, vr):
             entity.draw(screen, vr)
 
-        self._do_on_each_layer(draw_entity, view_rect)
+        self._do_on_each_layer(draw_entity, view_rect, self.draw_ordering)
 
-    def _do_on_each_layer(self, fn, view_rect):
-        for layer in self.ordering:
+    def _do_on_each_layer(self, fn, view_rect, order):
+        for layer in order:
             entities = list(self.layers[layer])
 
             for entity in entities:
@@ -92,7 +91,7 @@ class EntityManager:
     def serialize(self):
         values = {"__class__": self.__class__.__name__}
 
-        for layer in self.ordering:
+        for layer in self.layers:
             values[layer.name] = self._serialize_layer(layer)
 
         return values

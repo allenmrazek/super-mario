@@ -8,6 +8,7 @@ from entities.entity import Layer
 from entities.entity_manager import EntityManager
 from util import make_vector
 import config
+from scoring import labels
 
 
 class _Measurement(NamedTuple):
@@ -26,7 +27,7 @@ class PerformanceMeasurement(GameState):
         self.target_state = target_state
         self.state_stack = state_stack
 
-        self.entities = EntityManager([Layer.Interface])
+        self.entities = EntityManager([Layer.Interface], [Layer.Interface])
 
         text_position = make_vector(config.screen_rect.right, config.screen_rect.top)
 
@@ -106,6 +107,9 @@ class PerformanceMeasurement(GameState):
             max(self.draw_performance.max, elapsed),
             max(self.draw_performance.max_overall, self.draw_performance.max)
         )
+
+        labels_ = labels.Labels(screen)
+        labels_.show_labels()
 
     def activated(self):
         self.target_state.activated()

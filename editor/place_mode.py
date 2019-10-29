@@ -23,7 +23,9 @@ class PlaceMode(EditorMode):
         tile_coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position, self.level_map.tileset)
 
         if self.level_map.is_in_bounds(tile_coords):
-            self.level_map.set_tile(tile_coords, self.picker_dialog.selected_tile_idx)
+            idx = self.picker_dialog.selected_tile_idx if (pygame.key.get_mods() & pygame.KMOD_CTRL) == 0 else None
+
+            self.level_map.set_tile(tile_coords, idx)
 
     def on_map_mouseup(self, evt, screen_mouse_pos):
         pass

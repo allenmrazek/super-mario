@@ -1,15 +1,14 @@
 from . import Enemy
 from entities.characters.corpse import Corpse
-from .level_entity import LevelEntity
-from .enemy import EnemyParameters
-from .behaviors import SimpleMovement, Squashable
+from .level_entity import LevelEntity, MovementParameters
+from .behaviors import SimpleMovement, Squashable, DamageMario
 from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa
 from util import mario_str_to_pixel_value_velocity as mstvpv
-from util import get_corpse_position
+from util import get_corpse_position, world_to_screen
 import config
 
 # Goomba
-goomba_parameters = EnemyParameters.create(100, mstvpv('04800'), mstvpv('04000'), 100, mstvpa('00300'))
+goomba_parameters = MovementParameters.create(100, mstvpv('04800'), mstvpv('04000'), 100, mstvpa('00300'))
 
 
 class Goomba(Enemy):
@@ -20,13 +19,13 @@ class Goomba(Enemy):
 
         self.movement = SimpleMovement(self, level.collider_manager, goomba_parameters)
         self.parameters = goomba_parameters
-        self.hurts = Squashable(level, self, (3, 5), (10, 7), mstvpv('04000'), self.die)
+        self.squishy = Squashable(level, self, (3, 5), (10, 7), mstvpv('04000'), self.die)
 
     def update(self, dt, view_rect):
         super().update(dt, view_rect)
 
         self.movement.update(dt)
-        self.hurts.update(dt)
+        self.squishy.update(dt)
 
         if not self.movement.is_airborne:
             self.animation.update(dt)  # only move legs if on the ground
@@ -34,16 +33,17 @@ class Goomba(Enemy):
     def draw(self, screen, view_rect):
         super().draw(screen, view_rect)
 
-        screen.blit(self.animation.image, make_vector(*self.position) - make_vector(*view_rect.topleft))
+        screen.blit(self.animation.image, world_to_screen(self.position, view_rect))
 
         self.movement.draw(screen, view_rect)
-        self.hurts.draw(screen, view_rect)
+        self.squishy.draw(screen, view_rect)
 
     def die(self):
         self.destroy()
 
         corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
                         1., self.position)
+        self.level.asset_manager.sounds['stomp'].play()
 
         corpse.position = get_corpse_position(self.rect, corpse.rect)
 
@@ -52,7 +52,7 @@ class Goomba(Enemy):
     def destroy(self):
         self.level.entity_manager.unregister(self)
         self.movement.destroy()
-        self.hurts.destroy()
+        self.squishy.destroy()
 
     def create_preview(self):
         return self.animation.image.copy()

@@ -1,8 +1,6 @@
 import pygame
 from state.game_state import GameState
 from event import EventHandler
-from assets import Level
-import config
 
 
 class TestLevel(GameState, EventHandler):

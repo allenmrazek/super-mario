@@ -6,29 +6,6 @@ import config
 from util import tile_index_to_coords
 
 
-# class TileMapSerializer(json.JSONEncoder):
-#     def default(self, o):
-#         if isinstance(o, TileMap):
-#             values = {"width": o.width, "height": o.height}
-#
-#             square_encoder = MapSquareSerializer()
-#
-#             values["tiles"] = [square_encoder.encode(o.tile_map[x][y]) for x in range(o.width) for y in range(o.height)]
-#
-#             return values
-#         else:
-#             super().default(o)
-#
-#     def decode(self, values):
-#         tmd = MapSquareSerializer()
-#
-#         tm = tmd.decode(values)
-#
-#         tiles = tmd.decode(values["tiles"])
-#
-#         return tm
-
-
 class TileMap:
     class MapSquare:
         __slots__ = ['passable', 'idx']
@@ -92,18 +69,37 @@ class TileMap:
             self.set_passable((self.width - 1, y), False)
 
     def _create_map(self):
+        self.tile_map = []
+
         for _ in range(self.width):
             self.tile_map.append([TileMap.MapSquare() for _ in range(self.height)])
+
+    def resize(self, new_width, new_height):
+        assert 1 <= new_width < 2000
+        assert 1 <= new_height < 2000
+
+        old_map = self.tile_map
+        old_width, old_height = self.width, self.height
+
+        self.width, self.height = new_width, new_height
+
+        self._create_map()
+
+        # copy old map to new map
+        for y in range(min(old_height, new_height)):
+            for x in range(min(old_width, new_width)):
+                self.set_passable((x, y), old_map[x][y].passable)
+                self.set_tile((x, y), old_map[x][y].idx)
 
     def view_region_to_tile_region(self, view_region):
         # converts a viewing rectangle into visible tile coordinates
         tw, th = config.base_tile_dimensions[0] * config.rescale_factor, \
                  config.base_tile_dimensions[1] * config.rescale_factor
 
-        x_min = int(view_region.left) // tw
-        x_max = min(int(view_region.right) // tw + 1, self.width)
-        y_min = int(view_region.top) // th
-        y_max = min(int(view_region.bottom) // th + 1, self.height)
+        x_min = min(self.width - 1, max(0, int(view_region.left) // tw))
+        x_max = min(self.width - 1, max(0, min(int(view_region.right) // tw + 1, self.width)))
+        y_min = min(self.height - 1, max(0, int(view_region.top) // th))
+        y_max = min(self.height - 1, max(0, min(int(view_region.bottom) // th + 1, self.height)))
 
         return x_min, y_min, x_max, y_max
 
@@ -170,6 +166,9 @@ class TileMap:
         self.width = int(values['width'])
         self.height = int(values['height'])
 
+        assert self.width >= 0
+        assert self.height >= 0
+
         self._create_map()
 
         tiles = values["tile_map"]  # type: list
@@ -177,3 +176,11 @@ class TileMap:
         for x in range(self.width):
             for y in range(self.height):
                 self.tile_map[x][y].deserialize(tiles.pop(0))
+
+    @property
+    def width_pixels(self):
+        return self.tileset.tile_width * self.width
+
+    @property
+    def height_pixels(self):
+        return self.tileset.tile_height * self.height

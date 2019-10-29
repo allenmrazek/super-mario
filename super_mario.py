@@ -9,9 +9,7 @@ from assets.level import Level
 import config
 from timer import game_timer
 from assets import AssetManager
-from entities.gui.modal import ModalTextInput
-from scoring import labels
-from entities import entity_manager
+from entities.entity_manager import EntityManager
 
 
 class _QuitListener(EventHandler):
@@ -32,50 +30,34 @@ def run():
     pygame.display.set_caption("Super Mario")
     assets = AssetManager()
 
-    # initialize states
-    game_events = GameEvents()
-    #default_game_events.register(_QuitListener())
+    #PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
 
+    lvl = Level(assets, EntityManager.create_default())
+    lvl.load_from_path('levels/level11.level')
 
-    #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
-    #state_stack.push()
-    PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
-    #state_stack.push(TestLevel(game_events, assets, Level(assets, entity_manager)))
-    #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets, Level(assets, entity_manager)))
+    PerformanceMeasurement.measure(state_stack, TestLevel(None, assets, lvl))
 
     game_timer.reset()
 
     # timer initialize
     accumulator = 0.0
 
-    # Labels for overhead information
-    labels_ = labels.Labels(screen)
-    labels_.prep_labels()
-    labels_.prep_points()
-    labels_.prep_time()
-    labels_.prep_world()
-    labels_.prep_coins()
-    labels_.prep_lives()
-
-
     while state_stack.top is not None:
-    #while True:
         state_stack.top.do_events()
         game_timer.update()
 
         # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
-        updated = False  # no interpolation, so don't waste time drawing screen if it didn't change anyways
+        #updated = False  # no interpolation, so don't waste time drawing screen if it didn't change anyways
 
         while accumulator > config.PHYSICS_DT:
-            updated = True
+            #updated = True
             state_stack.update(config.PHYSICS_DT)
             accumulator -= config.PHYSICS_DT
 
-        if updated:
-            state_stack.draw(screen)
-            labels_.show_labels()
-            pygame.display.flip()
+        #if updated:
+        state_stack.draw(screen)
+        pygame.display.flip()
 
     exit(0)
 

@@ -1,9 +1,12 @@
+import json
 from pygame import Rect
-from entities.collider import ColliderManager
+from entities.collider import ColliderManager, Collider
 from assets.tile_map import TileMap
 import config
 from util import make_vector, copy_vector
-from entities.characters import Mario, MarioSpawnPoint
+from entities.entity import Layer
+from entities.characters import Mario
+from entities.characters.spawners import MarioSpawnPoint
 from event import PlayerInputHandler
 from event.game_events import EventHandler
 
@@ -23,10 +26,12 @@ class Level(EventHandler):
         self.collider_manager = ColliderManager(self.tile_map)
         self.background_color = (0, 0, 0)
         self.filename = "test_level.lvl"
+        self.normal_physics = True
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
         self.mario = Mario(self.player_input, self)
+        self.mario.enabled = False
 
         self._scroll_position = make_vector(0, 0)
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)
@@ -57,18 +62,32 @@ class Level(EventHandler):
 
         assert isinstance(spawn_point, MarioSpawnPoint)
 
-        # todo: avoid double spawn?
-        self.entity_manager.register(self.mario)
         self.mario.enabled = True
         assert self.mario.enabled
 
-        self.mario.reset()
         self.mario.position = spawn_point.position
+        self.mario.reset()  # reset state
+
+        # prevent mario from phasing into the ground (should he be super mario and the spawn point is on the ground)
+        ground_collider = Collider.from_entity(self.mario, self.collider_manager, Layer.Block)
+        ground_collider.rect.width = 16 * config.rescale_factor
+        ground_collider.rect.height = 16 * config.rescale_factor if not self.mario.is_super else 32 * config.rescale_factor
+        ground_collider.position = self.mario.position
+
+        tries = 0
+        while ground_collider.test(ground_collider.position, False):
+            ground_collider.position += make_vector(0, -1)
+
+            tries += 1
+            if tries > 1000:
+                raise RuntimeError
+
+        self.mario.position = ground_collider.position
 
         # set level scroll position to be one quarter-screen behind mario, unless that would result in left edge
         # of map being visible
-        self.position.x = max(0, self.mario.position.x - self.view_rect.width // 4)
-        self.position.y = 0  # todo: any case where this isn't y?
+        scroll_pos = make_vector(max(0, self.mario.position.x - self.view_rect.width // 4), self.position.y)
+        self.position = scroll_pos
 
     def despawn_mario(self):
         assert self.mario.enabled
@@ -79,7 +98,8 @@ class Level(EventHandler):
     def serialize(self):
         return {"name": "unknown",
                 "filename": self.filename,
-                "background_color": self.background_color,
+                "normal_physics": self.normal_physics,
+                "background_color": (self.background_color[0], self.background_color[1], self.background_color[2]),
                 "tile_map": self.tile_map.serialize(),
                 "entities": self.entity_manager.serialize()}
 
@@ -91,12 +111,24 @@ class Level(EventHandler):
         self.background_color = tuple(values["background_color"])
         self.tile_map.deserialize(values["tile_map"])
         self.entity_manager.deserialize(self, values["entities"])
+        self.normal_physics = values["normal_physics"] if "normal_physics" in values else True
+
+        # we only want one unique mario, ignore any that might have been deserialized
+        for existing in self.entity_manager.search_by_type(Mario):
+            existing.destroy()
+
+        # add our unique mario
+        self.entity_manager.register(self.mario)
 
         # search for mario spawn point(s)
         spawn_point = self._find_spawn_point()
 
         if spawn_point:
             self.spawn_mario(spawn_point)
+
+    def load_from_path(self, filename):
+        with open(filename, 'r') as f:
+            self.deserialize(json.loads(f.read()))
 
     def _find_spawn_point(self):
         spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)
@@ -129,5 +161,8 @@ class Level(EventHandler):
 
     @position.setter
     def position(self, new_pos):
-        self._scroll_position = make_vector(new_pos[0], new_pos[1])
+        max_w, max_h = self.tile_map.width_pixels - self._view_rect.width, \
+                       self.tile_map.height_pixels - self._view_rect.height
+
+        self._scroll_position = make_vector(min(max_w, new_pos[0]), min(max_h, new_pos[1]))
         self._view_rect.topleft = self._scroll_position

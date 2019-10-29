@@ -38,8 +38,10 @@ class EditorState(GameState, EventHandler):
     def __init__(self, game_events, assets):
         super().__init__(game_events)
 
+        game_events = self.game_events or game_events
+
         self.assets = assets  # type: AssetManager
-        self.entity_manager = EntityManager([Layer.Interface])  # own manager for interface
+        self.entity_manager = EntityManager([Layer.Interface], [Layer.Interface])  # own manager for interface
 
         # create a level to edit
         self.level = Level(assets, EntityManager.create_editor())
@@ -192,7 +194,11 @@ class EditorState(GameState, EventHandler):
         existing.x = new_val
         self.level.position = existing
 
+        self.scroll_map_horizontal.max_value = self.level.tile_map.width * self.level.tile_map.tile_width
+
     def on_vertical_scroll(self, new_val):
         existing = self.level.position
         existing.y = new_val
         self.level.position = existing
+
+        self.scroll_map_vertical.max_value = self.level.tile_map.height * self.level.tile_map.height
