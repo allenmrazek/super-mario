@@ -52,6 +52,10 @@ def run():
     labels_ = labels.Labels(screen)
     labels_.prep_labels()
     labels_.prep_points()
+    labels_.prep_time()
+    labels_.prep_world()
+    labels_.prep_coins()
+    labels_.prep_lives()
 
 
     while state_stack.top is not None:
