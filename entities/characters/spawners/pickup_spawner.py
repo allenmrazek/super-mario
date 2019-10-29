@@ -2,7 +2,7 @@ from ..level_entity import LevelEntity
 from util import world_to_screen
 from entities.entity import Layer
 from entities.characters.mushroom import Mushroom
-from util import world_to_screen
+from util import world_to_screen, make_vector
 import config
 
 
@@ -16,7 +16,7 @@ class PickupSpawner(LevelEntity):
         super().__init__(self.image.get_rect())
 
     def update(self, dt, view_rect):
-        mushroom = Mushroom(self.level, config.screen_rect.center)
+        mushroom = Mushroom(self.level, self.position)
 
         self.level.entity_manager.register(mushroom)
         self.level.entity_manager.unregister(self)

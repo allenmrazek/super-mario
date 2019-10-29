@@ -19,12 +19,18 @@ class Interactive(Behavior):
         self.entity = entity
         self.hitbox = Collider.from_entity(entity, level.collider_manager, Layer.Mario)
         self.hitbox.rect.size = rescale_vector(hitbox_size)
-        self.hitbox.on_collision = on_hit
         self.hitbox_offset = rescale_vector(hitbox_offset)
         self.hitbox.position = entity.position + self.hitbox_offset
+        self.on_hit = on_hit
 
     def update(self, dt):
-        self.hitbox.move(self.entity.position + self.hitbox_offset, True)
+        if self.on_hit is None:
+            return
+
+        collisions = self.hitbox.move(self.entity.position + self.hitbox_offset, True)
+
+        for c in collisions:
+            self.on_hit(c)
 
     def draw(self, screen, view_rect):
         if config.debug_hitboxes:

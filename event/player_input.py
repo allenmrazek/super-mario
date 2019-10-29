@@ -36,6 +36,8 @@ class PlayerInputHandler(EventHandler):
             if key in self._key_actions:
                 self._key_actions[key](state)
                 EventHandler.consume(evt)
+        elif self.is_consumed(evt) and evt.type == KEYDOWN:
+            print("investigate: a keypress was eaten with an active input handler")
 
     def _quit(self, state):
         self.quit = state

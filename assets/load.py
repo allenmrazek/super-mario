@@ -251,7 +251,11 @@ def load_pickup_atlas():
     atlas = SpriteAtlas(get_atlas_path("pickups"), tf_use_rescale_factor=True)
     kwargs = {"color_key": config.transparent_color}
 
+    fw, fh = 16 * config.rescale_factor, 16 * config.rescale_factor
+
     atlas.initialize_static("mushroom_red", **kwargs)
+    atlas.initialize_animation("coin_world", fw, fh, 2., config.transparent_color)
+    atlas.initialize_animation("coin_spin", fw, fh, 2., config.transparent_color)
 
     return atlas
 
@@ -264,6 +268,7 @@ def load_interactive_atlas():
     atlas.initialize_static("brick_debris", **kwargs)
 
     atlas.initialize_animation("coin_block_ow", 16 * config.rescale_factor, 16 * config.rescale_factor, 1, config.transparent_color)
+    atlas.initialize_static("coin_block_empty_ow", **kwargs)
 
     return atlas
 
@@ -293,5 +298,6 @@ def load_sound_fx():
     sounds['downgrade'] = sounds['pipe']
     sounds['breakblock'] = load_sound('smb_breakblock.wav')
     sounds['bump'] = load_sound('smb_bump.wav')
+    sounds['coin'] = load_sound('smb_coin.wav')
 
     return sounds

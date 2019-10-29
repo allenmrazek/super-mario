@@ -3,12 +3,17 @@ from entities.collider import Collider, Collision
 from .behavior import Behavior
 from util import make_vector, rescale_vector, world_to_screen, pixel_coords_to_tile_coords, distance_squared, tile_coords_to_pixel_coords
 from entities.entity import Layer
+from entities.characters.mario import Mario
 import config
 
 
 class Smashable(Behavior):
+    """Smashable means Mario can hit it with his head. Think coin blocks and bricks"""
     def __init__(self, level, entity, on_head_smash):
         super().__init__()
+
+        # todo: accept collider offset and size? might not be needed, can't think of anything
+        # that requires such a feature -- only fixed block-style objects
 
         # create a collider in the world that can receive events
         self.level = level
@@ -50,6 +55,10 @@ class Smashable(Behavior):
         #   mario must be airborne
         #   mario must intersect some portion of our collider directly below us
         #   mario must be in the same grid square (horizontally) as us if mario is hitting more than one block
+
+        if collision.moved_collider is None or not isinstance(collision.moved_collider.entity, Mario):
+            return
+
         mario = collision.moved_collider.entity
 
         if mario.vertical_speed >= 0:

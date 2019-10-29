@@ -47,7 +47,7 @@ class MarioMovement:
         #
         # remember that positions of these colliders != mario's position: they can have offsets and different
         # sizing
-        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)  # todo: should active been included in these hitboxes?
+        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)  # todo: should active be included in these hitboxes?
         self._small_hitbox.rect.width, self._small_hitbox.rect.height = rescale_vector(make_vector(10, 14))
         self._small_hitbox_offset = rescale_vector(make_vector(3, 2))
         self._small_hitbox.position = self.mario_entity.position + self._small_hitbox_offset
