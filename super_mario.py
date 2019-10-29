@@ -11,6 +11,7 @@ from timer import game_timer
 from assets import AssetManager
 from entities.gui.modal import ModalTextInput
 from scoring import labels
+from entities import entity_manager
 
 
 class _QuitListener(EventHandler):
@@ -32,15 +33,15 @@ def run():
     assets = AssetManager()
 
     # initialize states
-    #default_game_events = GameEvents()
+    game_events = GameEvents()
     #default_game_events.register(_QuitListener())
 
 
     #PerformanceMeasurement.measure(state_stack, TestMarioPhysics(game_events, atlas))
     #state_stack.push()
     PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
-    #state_stack.push(TestLevel(game_events, assets, Level(assets)))
-    #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets, Level(assets)))
+    #state_stack.push(TestLevel(game_events, assets, Level(assets, entity_manager)))
+    #PerformanceMeasurement.measure(state_stack, TestLevel(game_events, assets, Level(assets, entity_manager)))
 
     game_timer.reset()
 
