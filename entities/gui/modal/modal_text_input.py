@@ -15,7 +15,7 @@ class ModalTextInput(GameState, EventHandler):
 
     """This is kind of a lazy way of going about this, but we can avoid dealing with control focus
     and other things that the simple gui the game uses wasn't really designed to do"""
-    def __init__(self, gui_atlas, title, on_ok_callback, on_cancel_callback):
+    def __init__(self, gui_atlas, title, on_ok_callback, on_cancel_callback, input_text=""):
         # create own instance of game events: this way, events that aren't used by this modal dialog
         # will just vanish rather than trickle down into other listeners
         game_events = GameEvents()
@@ -68,7 +68,7 @@ class ModalTextInput(GameState, EventHandler):
 
         # state
         self._finished = False
-        self.input_handler = TextInputHandler()
+        self.input_handler = TextInputHandler(input_text)
 
     def update(self, dt):
         self.dialog.update(dt, None)
@@ -124,5 +124,5 @@ class ModalTextInput(GameState, EventHandler):
                     self.consume(evt)
 
     @staticmethod
-    def spawn(gui_atlas, title, on_ok_callback, on_cancel_callback):
-        state_stack.push(ModalTextInput(gui_atlas, title, on_ok_callback, on_cancel_callback))
+    def spawn(gui_atlas, title, on_ok_callback, on_cancel_callback, initial_text=""):
+        state_stack.push(ModalTextInput(gui_atlas, title, on_ok_callback, on_cancel_callback, initial_text))

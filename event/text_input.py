@@ -6,9 +6,9 @@ from .game_events import EventHandler
 class TextInputHandler(EventHandler):
     string: str
 
-    def __init__(self):
+    def __init__(self, initial_text=""):
         super().__init__()
-        self.string = ""
+        self.string = initial_text or ""
 
     def handle_event(self, evt, game_events):
         if evt.type == KEYDOWN and not EventHandler.is_consumed(evt):

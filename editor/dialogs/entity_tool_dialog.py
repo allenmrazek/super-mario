@@ -46,7 +46,6 @@ class EntityToolDialog(ToolDialog):
 
     def _set_tool(self, which):
         self.active_tool = which
-        print("Tool:", which)
 
     @property
     def align_bottom(self):

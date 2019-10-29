@@ -38,6 +38,8 @@ class EditorState(GameState, EventHandler):
     def __init__(self, game_events, assets):
         super().__init__(game_events)
 
+        game_events = self.game_events or game_events
+
         self.assets = assets  # type: AssetManager
         self.entity_manager = EntityManager([Layer.Interface], [Layer.Interface])  # own manager for interface
 

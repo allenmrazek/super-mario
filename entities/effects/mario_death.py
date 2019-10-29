@@ -1,7 +1,9 @@
+import pygame
 from entities.entity_manager import Entity
 from util import make_vector, mario_str_to_pixel_value_velocity as mstpvv
 from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import world_to_screen
+from event import EventHandler
 
 """Death animation:
 
@@ -13,7 +15,7 @@ respawn mario
 """
 
 
-class MarioDeath(Entity):
+class MarioDeath(Entity, EventHandler):
     FREEZE_LENGTH = 0.25  # in seconds
     VELOCITY = mstpvv('04000')
     GRAVITY = mstpva('00200')
@@ -29,6 +31,12 @@ class MarioDeath(Entity):
         self._elapsed = 0.
         self._applied_jump = False
         self._velocity = make_vector(0, 0)
+        self._finished = False
+
+        # play death music
+        music = pygame.mixer_music.load('sounds/music/smb_mariodie.wav')
+        pygame.mixer_music.set_endevent(type=pygame.USEREVENT)
+
 
     def update(self, dt, view_rect):
         self._elapsed += dt

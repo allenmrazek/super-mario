@@ -106,11 +106,18 @@ class LevelConfigDialog(Dialog):
 
     def _on_save_map(self):
         def _save_map(filename):
-            path = os.path.join("levels", filename + ".level")
+            path = os.path.join("levels", filename)
+
+            sp = os.path.splitext(path)
+            if len(sp) == 1 or sp[1] != '.lvl':
+                path += '.lvl'
 
             if len(filename) == 0:
                 print("failed to save map -- no filename")
                 return
+
+            #self.level.filename = os.path.basename(path)
+            print("is file base name = ", os.path.basename(path), '?')
 
             with open(path, 'w') as f:
                 f.write(json.dumps(self.level.serialize()))
@@ -119,7 +126,7 @@ class LevelConfigDialog(Dialog):
         def _cancel():
             pass
 
-        ModalTextInput.spawn(self.gui_atlas, "Enter Filename:", _save_map, _cancel)
+        ModalTextInput.spawn(self.gui_atlas, "Enter Filename:", _save_map, _cancel, self.level.filename)
 
     def _on_load_map(self):
         def _load_map(filename):
