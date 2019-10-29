@@ -44,7 +44,6 @@ class Mario(LevelEntity):
         self._invincibility_period = max(0., self._invincibility_period - dt)
 
     def draw(self, screen, view_rect):
-
         true_pos = world_to_screen(self.rect.topleft, view_rect)
         screen.blit(self.animator.image, true_pos)
         self.movement.draw(screen, view_rect)

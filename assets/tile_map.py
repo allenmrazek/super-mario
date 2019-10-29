@@ -173,3 +173,11 @@ class TileMap:
         for x in range(self.width):
             for y in range(self.height):
                 self.tile_map[x][y].deserialize(tiles.pop(0))
+
+    @property
+    def width_pixels(self):
+        return self.tileset.tile_width * self.width
+
+    @property
+    def height_pixels(self):
+        return self.tileset.tile_height * self.height

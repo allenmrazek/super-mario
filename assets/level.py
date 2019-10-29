@@ -83,7 +83,7 @@ class Level(EventHandler):
                 raise RuntimeError
 
         self.mario.position = ground_collider.position
-        
+
         # set level scroll position to be one quarter-screen behind mario, unless that would result in left edge
         # of map being visible
         scroll_pos = make_vector(max(0, self.mario.position.x - self.view_rect.width // 4), self.position.y)
@@ -161,5 +161,8 @@ class Level(EventHandler):
 
     @position.setter
     def position(self, new_pos):
-        self._scroll_position = make_vector(new_pos[0], new_pos[1])
+        max_w, max_h = self.tile_map.width_pixels - self._view_rect.width, \
+                       self.tile_map.height_pixels - self._view_rect.height
+
+        self._scroll_position = make_vector(min(max_w, new_pos[0]), min(max_h, new_pos[1]))
         self._view_rect.topleft = self._scroll_position

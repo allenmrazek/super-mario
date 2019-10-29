@@ -418,9 +418,15 @@ class MarioMovement:
         collisions = hitbox.approach(self.mario_entity.position + new_position + offset)
         self.position = hitbox.position - offset
 
+        # don't allow off left of screen
         if self.position.x < self.mario_entity.level.position.x:
             self._velocity.x = 0
             self.position = make_vector(self.mario_entity.level.position.x, self.position.y)
+
+        # don't allow off right side of world
+        if self.position.x + self.rect.width > self.mario_entity.level.tile_map.width_pixels:
+            self._velocity.x = 0
+            self.position = make_vector(self.mario_entity.level.tile_map.width_pixels - self.rect.width, self.position.y)
 
         if collisions:  # immediately stop horizontal movement on horizontal collision
             self._velocity.x = 0.
