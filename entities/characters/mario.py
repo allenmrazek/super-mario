@@ -104,6 +104,11 @@ class Mario(LevelEntity):
         return self.movement.vertical_speed
 
     @property
+    def head_position(self):
+        # return coordinates of mario's head in world space
+        return self.movement.get_head_position()
+
+    @property
     def velocity(self):
         return self.movement.get_velocity()
 

@@ -11,7 +11,6 @@ class PickupSpawner(LevelEntity):
     def __init__(self, level):
         self.level = level
 
-
         self.image = level.asset_manager.pickup_atlas.load_static("mushroom_red").image
 
         super().__init__(self.image.get_rect())

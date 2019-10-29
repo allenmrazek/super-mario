@@ -256,6 +256,18 @@ def load_pickup_atlas():
     return atlas
 
 
+def load_interactive_atlas():
+    atlas = SpriteAtlas(get_atlas_path("interactive"), tf_use_rescale_factor=True)
+    kwargs = {"color_key": config.transparent_color}
+
+    atlas.initialize_static("brick", **kwargs)
+    atlas.initialize_static("brick_debris", **kwargs)
+
+    atlas.initialize_animation("coin_block_ow", 16 * config.rescale_factor, 16 * config.rescale_factor, 1, config.transparent_color)
+
+    return atlas
+
+
 def load_sound_fx():
     sounds = {}
 
@@ -279,5 +291,7 @@ def load_sound_fx():
     sounds['jump_super'] = load_sound('smb_jump-super.wav')
     sounds['pipe'] = load_sound('smb_pipe.wav')
     sounds['downgrade'] = sounds['pipe']
+    sounds['breakblock'] = load_sound('smb_breakblock.wav')
+    sounds['bump'] = load_sound('smb_bump.wav')
 
     return sounds

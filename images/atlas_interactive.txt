@@ -1,0 +1,3 @@
+brick = 0 16 16 16
+brick_debris = 16 16 16 16
+coin_block_ow = 0 0 64 16

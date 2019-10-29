@@ -57,7 +57,9 @@ class PassableMode(EditorMode):
     def on_map_motion(self, evt, screen_mouse_pos):
         coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position,
                                              self.tile_map.tileset)
-        self._set_tile_passability(coords, self._motion_set)
+
+        if self.tile_map.is_in_bounds(coords):
+            self._set_tile_passability(coords, self._motion_set)
 
     def on_map_mouseup(self, evt, screen_mouse_pos):
         pass

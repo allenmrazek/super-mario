@@ -415,7 +415,7 @@ class MarioMovement:
         offset = self._get_hitbox_offset()
 
         hitbox.position = self.position + offset
-        collisions = hitbox.approach(self.mario_entity.position + new_position + offset)
+        collisions = hitbox.approach(self.mario_entity.position + new_position + offset, tf_dispatch_events=True)
         self.position = hitbox.position - offset
 
         # don't allow off left of screen
@@ -433,3 +433,6 @@ class MarioMovement:
 
     def bounce(self, new_y_velocity):
         self._velocity.y = new_y_velocity
+
+    def get_head_position(self):
+        return make_vector(*self._get_active_hitbox().rect.topmiddle)

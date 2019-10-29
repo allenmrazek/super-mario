@@ -96,10 +96,10 @@ class TileMap:
         tw, th = config.base_tile_dimensions[0] * config.rescale_factor, \
                  config.base_tile_dimensions[1] * config.rescale_factor
 
-        x_min = int(view_region.left) // tw
-        x_max = min(int(view_region.right) // tw + 1, self.width)
-        y_min = int(view_region.top) // th
-        y_max = min(int(view_region.bottom) // th + 1, self.height)
+        x_min = min(self.width - 1, max(0, int(view_region.left) // tw))
+        x_max = min(self.width - 1, max(0, min(int(view_region.right) // tw + 1, self.width)))
+        y_min = min(self.height - 1, max(0, int(view_region.top) // th))
+        y_max = min(self.height - 1, max(0, min(int(view_region.bottom) // th + 1, self.height)))
 
         return x_min, y_min, x_max, y_max
 
@@ -165,6 +165,9 @@ class TileMap:
     def deserialize(self, values):
         self.width = int(values['width'])
         self.height = int(values['height'])
+
+        assert self.width >= 0
+        assert self.height >= 0
 
         self._create_map()
 
