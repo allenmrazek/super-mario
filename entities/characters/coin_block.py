@@ -53,7 +53,8 @@ class CoinBlock(LevelEntity):
         super().update(dt, view_rect)
 
         self.smashable.update(dt)
-
+        self.animation.update(dt)
+        
     def draw(self, screen, view_rect):
         super().draw(screen, view_rect)
 

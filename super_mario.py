@@ -31,10 +31,10 @@ def run():
     pygame.display.set_caption("Super Mario")
     assets = AssetManager()
 
-    # PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
+    PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
     #PerformanceMeasurement.measure(state_stack, RunLevel.run(assets, 'levels/level11.level'))
 
-    state_stack.push(MainMenu(assets))
+    #state_stack.push(MainMenu(assets))
 
     game_timer.reset()
 

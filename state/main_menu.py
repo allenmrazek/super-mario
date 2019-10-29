@@ -3,8 +3,6 @@ from pygame import Color
 from .game_state import GameState
 from event import GameEvents, EventHandler
 from assets.level import Level
-from entities.gui import Button, Window, Frame, Text
-from entities.gui import Anchor
 from state.run_level import RunLevel
 from .game_state import state_stack
 from editor.editor_state import EditorState
@@ -99,3 +97,6 @@ class MainMenu(GameState, EventHandler):
         if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
             self._finished = True
             self.consume(evt)
+
+    def activated(self):
+        pygame.mixer_music.stop()

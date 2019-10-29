@@ -126,9 +126,16 @@ class Level(EventHandler):
         if spawn_point:
             self.spawn_mario(spawn_point)
 
-    def load_from_path(self, filename):
+    def load_from_path(self, filename, spawn_idx=0):
         with open(filename, 'r') as f:
             self.deserialize(json.loads(f.read()))
+
+        if spawn_idx > 0:
+            spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)
+            spawn_points.sort(key=lambda spawn: spawn.position.x)
+
+            selected = spawn_points[spawn_idx:1]
+            self.position.x = selected[0].position.x
 
     def _find_spawn_point(self):
         spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)

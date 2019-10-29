@@ -30,6 +30,9 @@ class EntityMode(EditorMode):
 
                 self.level.entity_manager.register(entity)
 
+                if hasattr(entity, "spawned_in_editor"):
+                    entity.spawned_in_editor()
+
         if self.tool_dialog.active_tool == ActiveEntityTool.DELETE:
             # delete any entities intersecting this square
             tile_coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position,
