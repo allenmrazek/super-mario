@@ -255,7 +255,7 @@ def load_pickup_atlas():
 
     atlas.initialize_static("mushroom_red", **kwargs)
     atlas.initialize_animation("coin_world", fw, fh, 2., config.transparent_color)
-    atlas.initialize_animation("coin_spin", fw, fh, 2., config.transparent_color)
+    atlas.initialize_animation("coin_spin", fw, fh, .25, config.transparent_color)
 
     return atlas
 

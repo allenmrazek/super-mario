@@ -177,7 +177,7 @@ class ColliderManager:
                 # halve distance
                 dist *= 0.5
 
-                if dist < 0.005:
+                if dist < 0.05:
                     break
 
         if tf_dispatch_events:

@@ -4,7 +4,9 @@ from entities.entity import Layer
 
 
 class MarioSpawnPoint(LevelEntity):
-    def __init__(self, character_atlas):
+    def __init__(self, level):
+        self.level = level
+        character_atlas = level.asset_manager.character_atlas
         self.image = character_atlas.load_static("mario_stand_right").image
 
         super().__init__(self.image.get_rect())
@@ -23,11 +25,13 @@ class MarioSpawnPoint(LevelEntity):
         return self.image
 
     def destroy(self):
-        pass
+        super().destroy()
+
+        self.level.entity_manager.unregister(self)
 
     @staticmethod
     def factory(level, values):
-        spawn = MarioSpawnPoint(level.asset_manager.character_atlas)
+        spawn = MarioSpawnPoint(level)
 
         if values is not None:
             spawn.deserialize(values)
