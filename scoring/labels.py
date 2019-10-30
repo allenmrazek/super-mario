@@ -7,6 +7,8 @@ Y = 675
 
 class Labels:
     time = 400
+    coins = 0
+    lives = 3
 
     def __init__(self, screen):
         self.screen = screen
@@ -14,10 +16,32 @@ class Labels:
         self.bg_color = (0, 0, (0, 0, 0))
         self.text_color = (255, 255, 255)
         self.points = 0
-        self.coins = 0
         self.world = '1-1'
-        self.lives = 3
         self.font = pygame.font.Font("scoring/super_mario_font.ttf", 22)
+
+        # Declared here to get rid of warnings
+        self.text1_image = None
+        self.text1_rect = None
+        self.text2_image = None
+        self.text2_rect = None
+        self.text3_image = None
+        self.text3_rect = None
+        self.text4_image = None
+        self.text4_rect = None
+        self.text5_image = None
+        self.text5_rect = None
+        self.points_image = None
+        self.points_rect = None
+        self.time_image = None
+        self.time_rect = None
+        self.world_image = None
+        self.world_rect = None
+        self.coins_image = None
+        self.coins_rect = None
+        self.lives_image = None
+        self.lives_rect = None
+
+        # Prep it all
         self.prep_labels()
         self.prep_lives()
         self.prep_coins()
@@ -75,13 +99,13 @@ class Labels:
         self.world_rect.top = 48
 
     def prep_coins(self):
-        self.coins_image = self.font.render(str(self.coins), True, self.text_color, self.bg_color)
+        self.coins_image = self.font.render(str(Labels.coins), True, self.text_color, self.bg_color)
         self.coins_rect = self.coins_image.get_rect()
         self.coins_rect.left = self.coins_rect.left + 715
         self.coins_rect.top = 48
 
     def prep_lives(self):
-        self.lives_image = self.font.render(str(self.lives), True, self.text_color, self.bg_color)
+        self.lives_image = self.font.render(str(Labels.lives), True, self.text_color, self.bg_color)
         self.lives_rect = self.lives_image.get_rect()
         self.lives_rect.left = self.lives_rect.left + 915
         self.lives_rect.top = 48

@@ -6,6 +6,7 @@ from util import world_to_screen
 from event import EventHandler
 from state import state_stack
 from entities.entity import Layer
+from scoring import labels
 
 
 """Death animation:
@@ -41,6 +42,10 @@ class MarioDeath(Entity, EventHandler):
         pygame.mixer_music.set_endevent(pygame.USEREVENT)
 
         pygame.mixer_music.play()
+
+        # Decrement live counter
+        if labels.Labels.lives != 0:
+            labels.Labels.lives -= 1
 
         state_stack.top.game_events.register(self)
 
