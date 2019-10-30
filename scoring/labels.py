@@ -9,13 +9,13 @@ class Labels:
     time = 400
     coins = 0
     lives = 3
+    points = 0
 
     def __init__(self, screen):
         self.screen = screen
         self.screen_rect = screen.get_rect()
         self.bg_color = (0, 0, (0, 0, 0))
         self.text_color = (255, 255, 255)
-        self.points = 0
         self.world = '1-1'
         self.font = pygame.font.Font("scoring/super_mario_font.ttf", 22)
 
@@ -81,9 +81,9 @@ class Labels:
         self.text5_rect.top = 25
 
     def prep_points(self):
-        self.points_image = self.font.render(str(self.points), True, self.text_color, self.bg_color)
+        self.points_image = self.font.render(str(Labels.points), True, self.text_color, self.bg_color)
         self.points_rect = self.points_image.get_rect()
-        self.points_rect.left = self.points_rect.left + 100
+        self.points_rect.left = self.points_rect.left + 50
         self.points_rect.top = 48
 
     def prep_time(self):
