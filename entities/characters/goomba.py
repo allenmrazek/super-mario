@@ -13,6 +13,8 @@ goomba_parameters = MovementParameters.create(100, mstvpv('04800'), mstvpv('0400
 
 
 class Goomba(Enemy):
+    POINT_VALUE = 200
+
     def __init__(self, level, position):
         self.animation = level.asset_manager.character_atlas.load_animation("goomba")
 
@@ -41,7 +43,8 @@ class Goomba(Enemy):
 
     def die(self):
         self.destroy()
-        labels.Labels.points += 100
+
+        self.level.stats.score += Goomba.POINT_VALUE
 
         corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
                         1., self.position)

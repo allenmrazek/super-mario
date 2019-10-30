@@ -6,6 +6,7 @@ from .behaviors import Smashable
 from entities.entity import Entity
 from .corpse import Corpse
 import config
+import constants
 
 
 class AirCoin(Corpse):  # weird right? I know
@@ -67,10 +68,12 @@ class CoinBlock(LevelEntity):
             self._smashed = True
 
             self.animation = self.empty
+            self.level.stats.score += constants.COIN_POINT_VALUE
 
             air_coin = AirCoin(self.level, self.coin_up, self.position, AirCoin.VELOCITY)
 
             self.level.entity_manager.register(air_coin)
+
         else:
             self.level.asset_manager.sounds['bump'].play()
 

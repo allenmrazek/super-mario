@@ -2,10 +2,6 @@ import pygame
 import pygame.font
 import config
 
-#
-# X = 1024
-# Y = 675
-
 
 class Labels:
     def __init__(self):

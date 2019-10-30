@@ -5,6 +5,7 @@ from assets.level import Level
 from assets.statistics import Statistics
 from event.game_events import EventHandler
 from .game_state import state_stack
+from scoring import Labels
 
 
 class RunLevel(GameState):
@@ -18,6 +19,7 @@ class RunLevel(GameState):
 
     def update(self, dt):
         self.level.update(dt)
+        self.stats.update(dt)
 
     def draw(self, screen):
         screen.fill(self.level.background_color)
@@ -29,11 +31,9 @@ class RunLevel(GameState):
 
     def activated(self):
         self.game_events.register(self.level)
-        #self.game_events.register(self)
 
     def deactivated(self):
         self.game_events.unregister(self.level)
-        #self.game_events.unregister(self)
 
     @staticmethod
     def run(assets, level_filename):
@@ -41,6 +41,4 @@ class RunLevel(GameState):
 
         level.load_from_path(level_filename)
 
-        return RunLevel(None, assets, level, Statistics())
-
-
+        return RunLevel(None, assets, level, Statistics(Labels()))

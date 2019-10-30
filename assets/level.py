@@ -16,7 +16,7 @@ class Level(EventHandler):
     #UPDATE_RECT_DISTANCE_FACTOR = 1.25  # entities within view_rect +- this factor * its width will be updated, else they'll be frozen
 
     """A level is the highest-level object containing everything that makes up a level"""
-    def __init__(self, assets, entity_manager):
+    def __init__(self, assets, entity_manager, stats):
         super().__init__()
 
         assert entity_manager is not None
@@ -26,8 +26,9 @@ class Level(EventHandler):
         self.tile_map = TileMap((60, 20), assets.tileset)
         self.collider_manager = ColliderManager(self.tile_map)
         self.background_color = (0, 0, 0)
-        self.filename = "test_level.lvl"
+        self.filename = ""
         self.normal_physics = True
+        self.stats = stats
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
@@ -187,3 +188,32 @@ class Level(EventHandler):
 
         self._scroll_position = make_vector(min(max_w, new_pos[0]), min(max_h, new_pos[1]))
         self._view_rect.topleft = self._scroll_position
+
+    def snapshot(self, filename):
+        capture = pygame.Surface((self.tile_map.width_pixels, self.tile_map.height_pixels))
+        screen = pygame.Surface(config.screen_size)
+
+        current_pos = self.position
+
+        for x in range(0, capture.get_width() + config.screen_size[0], config.screen_size[0]):
+            y = 0  # todo: something broken with painting on y coords, low urgency
+
+            #for y in range(0, capture.get_height() + config.screen_size[1], config.screen_size[1]):
+            self.position = make_vector(x, y)
+            screen.fill(self.background_color)
+            self.draw(screen)
+
+            capture.blit(screen, (x, y))
+
+        # restore state
+        self.position = current_pos
+
+        # save results
+        pygame.image.save(capture, filename)
+
+    @staticmethod
+    def take_snapshot(assets, entity_manager, level_filename, save_path):
+        lvl = Level(assets, entity_manager, None)
+        lvl.load_from_path(level_filename)
+
+        lvl.snapshot(save_path)

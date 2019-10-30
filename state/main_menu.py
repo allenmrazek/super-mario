@@ -10,6 +10,7 @@ from entities.entity_manager import EntityManager
 from util import make_vector
 import config
 from scoring import Labels
+from assets.statistics import Statistics
 
 
 class MainMenu(GameState, EventHandler):
@@ -33,7 +34,7 @@ class MainMenu(GameState, EventHandler):
         self._buttons = [play_btn, editor_btn, quit_btn]
         self._selected = 0
 
-        self.level = Level(assets, EntityManager.create_default())
+        self.level = Level(assets, EntityManager.create_default(), Statistics(self._scoring))
         self.level.load_from_path('levels/mainmenu.level')
 
         self.game_events.register(self)
@@ -85,10 +86,10 @@ class MainMenu(GameState, EventHandler):
         self._scoring.show_labels(screen)
 
     def _on_play(self):
-        state_stack.push(RunSession(GameEvents(), self.assets))
+        state_stack.push(RunSession(self.assets))
 
     def _on_editor(self):
-        state_stack.push(EditorState(GameEvents(), self.assets))
+        state_stack.push(EditorState(self.assets))
 
     def _on_quit(self):
         self._finished = True
@@ -100,6 +101,7 @@ class MainMenu(GameState, EventHandler):
     def handle_event(self, evt, game_events):
         if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
             self._finished = True
+            print("menu handled event")
             self.consume(evt)
 
     def activated(self):

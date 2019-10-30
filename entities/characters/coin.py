@@ -2,7 +2,7 @@ from .behaviors import Interactive
 from .level_entity import LevelEntity
 from entities.entity import Layer
 from util import make_vector, world_to_screen
-from scoring import labels
+import constants
 
 
 class Coin(LevelEntity):
@@ -32,8 +32,9 @@ class Coin(LevelEntity):
         self.level.entity_manager.unregister(self)
 
     def _on_collected(self, collision):
-        labels.Labels.coins += 1
-        labels.Labels.points += 200
+        self.level.stats.coins += 1
+        self.level.stats.score += constants.COIN_POINT_VALUE
+
         self.collect_sound.play()
 
         self.destroy()

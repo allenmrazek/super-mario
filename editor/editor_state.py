@@ -21,6 +21,8 @@ from .entity_mode import EntityMode
 from state.performance_measurement import PerformanceMeasurement
 from entities.gui.modal import ModalTextInput
 from assets.gui_helper import *
+from assets.statistics import Statistics
+from scoring import Labels
 
 
 class _ModeDrawHelper(Element):
@@ -35,16 +37,14 @@ class _ModeDrawHelper(Element):
 
 
 class EditorState(GameState, EventHandler):
-    def __init__(self, game_events, assets):
-        super().__init__(game_events)
-
-        game_events = self.game_events or game_events
+    def __init__(self, assets):
+        super().__init__()
 
         self.assets = assets  # type: AssetManager
         self.entity_manager = EntityManager([Layer.Interface], [Layer.Interface])  # own manager for interface
 
         # create a level to edit
-        self.level = Level(assets, EntityManager.create_editor())
+        self.level = Level(assets, EntityManager.create_editor(), Statistics(Labels()))
 
         # shim to create a callback before UI draws
         self.entity_manager.register(_ModeDrawHelper(self.on_pre_ui_draw))

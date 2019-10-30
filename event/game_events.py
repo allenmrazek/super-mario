@@ -35,9 +35,6 @@ class GameEvents:
             for handler in handlers:
                 handler.handle_event(evt, self)
 
-                if evt.consumed:
-                    break
-
     def register(self, handler: EventHandler):
         if handler not in self._handlers:
             self._handlers.append(handler)
