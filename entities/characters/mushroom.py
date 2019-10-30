@@ -1,14 +1,14 @@
 from entities.entity import Entity
 import entities.characters.behaviors
 from entities.characters.level_entity import MovementParameters
-from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva
+from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva, mario_str_to_pixel_value_velocity as mstpvv
 import entities.effects
 from scoring import labels
 import constants
 
 
-# todo: scale this by rescale factor
-mushroom_movement = MovementParameters(50, 50, 0., 0., mstpva('04000'))
+# todo: scale this by rescale factor?
+mushroom_movement = MovementParameters(50, mstpvv('04000'), 0., 0., mstpva('00300'))
 
 
 class Mushroom(Entity):

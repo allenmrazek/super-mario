@@ -156,7 +156,7 @@ class Level(EventHandler):
             current_spawn = self._find_spawn_point()
 
             self.load_from_path(self.loaded_from, current_spawn[1])  # want idx, not actual point
-            self.stats.remaining_time = constants.TIME_PER_LEVEL
+            self.stats.reset_time()
 
             print("reset level")
         else:
@@ -182,7 +182,7 @@ class Level(EventHandler):
 
             assert len(spawn_points) > 0
 
-            self.position.x = spawn_points[0][0].position.x
+            self.position.x = spawn_points[spawn_idx].position.x
 
     def _find_spawn_point(self):
         spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)

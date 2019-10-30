@@ -1,12 +1,4 @@
-import pygame
 from state.game_state import GameState
-
-import entities.entity_manager
-from assets.level import Level
-from assets.statistics import Statistics
-from event.game_events import EventHandler
-from .game_state import state_stack
-from scoring import Labels
 
 
 class RunLevel(GameState):
@@ -35,11 +27,3 @@ class RunLevel(GameState):
 
     def deactivated(self):
         self.game_events.unregister(self.level)
-
-    @staticmethod
-    def run(assets, level_filename):
-        level = Level(assets, entities.entity_manager.EntityManager.create_default())
-
-        level.load_from_path(level_filename)
-
-        return RunLevel(None, assets, level, Statistics(Labels()))

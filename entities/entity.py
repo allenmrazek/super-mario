@@ -3,9 +3,7 @@ from pygame.sprite import Rect
 from enum import IntFlag
 from util import copy_vector
 from util import make_vector
-
-
-
+import constants
 
 
 class Entity(ABC):
@@ -30,7 +28,7 @@ class Entity(ABC):
 
     @property
     def layer(self):
-        return Layer.Background
+        return constants.Background
 
     @property
     def rect(self):

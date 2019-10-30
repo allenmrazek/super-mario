@@ -42,7 +42,7 @@ class EditorState(GameState, EventHandler):
         super().__init__()
 
         self.assets = assets  # type: AssetManager
-        self.entity_manager = EntityManager([Layer.Interface], [Layer.Interface])  # own manager for interface
+        self.entity_manager = EntityManager([constants.Interface], [constants.Interface])  # own manager for interface
 
         # create a level to edit
         self.level = Level(assets, EntityManager.create_editor(), Statistics(Labels()))

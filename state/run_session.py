@@ -23,8 +23,11 @@ class RunSession(GameState, EventHandler):
         self.assets = assets
         self.scoring_labels = Labels()
         self.mario_stats = Statistics(self.scoring_labels)
+        self.mario_stats.reset()
 
-        self.levels = [('level-1-1.level', "WORLD 1-1"), ('level-1-2.level', "WORLD 1-2")]
+        self.levels = [('level-1-1.level', "WORLD 1-1"),
+                       ('level-1-2.level', "WORLD 1-2"),
+                       ('level-1-3.level', "WORLD 1-3")]
         self.current_level = None
         self.level_runner = None
 
@@ -45,7 +48,7 @@ class RunSession(GameState, EventHandler):
 
     @property
     def finished(self):
-        return self._finished or self.mario_stats.lives <= 0 or not any(self.levels)
+        return self._finished or (self.current_level is not None and self.mario_stats.lives <= 0) or not any(self.levels)
 
     def change_state(self):
         if self.mario_stats.lives == 0:
@@ -53,13 +56,19 @@ class RunSession(GameState, EventHandler):
             self._finished = True
         else:
             # play again if didn't clear it or haven't tried yet
-            self.current_level = self.current_level or Level(self.assets, entities.entity_manager.EntityManager.create_default(), self.mario_stats)
+            self.current_level = self.current_level or Level(self.assets,
+                                                             entities.entity_manager.EntityManager.create_default(),
+                                                             self.mario_stats)
 
             if self.current_level.cleared and len(self.levels) > 0:
                 self.levels.pop(0)
 
             if len(self.levels) > 0:
                 # load and play next level
+                self.current_level = Level(self.assets,
+                      entities.entity_manager.EntityManager.create_default(),
+                      self.mario_stats)
+
                 self.current_level.load_from_path("levels/" + self.levels[0][0])
                 self.current_level.title = self.levels[0][1]
 

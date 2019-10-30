@@ -48,6 +48,7 @@ class CoinBlock(SpawnBlock):
 
             self.animation = self.empty
             self.level.stats.score += constants.COIN_POINT_VALUE
+            self.level.stats.coins += 1
 
             air_coin = AirCoin(self.level, self.coin_up, self.position, AirCoin.VELOCITY)
 
