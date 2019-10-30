@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import NamedTuple
 from .level_entity import LevelEntity
 import constants
 
@@ -32,6 +31,3 @@ class Enemy(LevelEntity, ABC):
     @abstractmethod
     def destroy(self):
         pass
-
-
-

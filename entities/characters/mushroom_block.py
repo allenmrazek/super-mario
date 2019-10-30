@@ -1,9 +1,7 @@
 from .level_entity import LevelEntity
 from util import make_vector
 from util import world_to_screen
-from .behaviors import Smashable
 from entities.entity import Entity
-from .corpse import Corpse
 import config
 import entities.collider
 from .spawn_block import SpawnBlock

@@ -1,13 +1,10 @@
-import pygame
 from state.game_state import GameState
 from event.game_events import GameEvents, EventHandler
 from state.game_state import state_stack
-from entities.gui import Text, Frame, Dialog, Anchor
 from util import make_vector
 from assets.gui_helper import *
 import config
 from event import TextInputHandler
-from util import bind_callback_parameters
 
 
 class ModalTextInput(GameState, EventHandler):

@@ -10,4 +10,5 @@ from .mushroom_block import MushroomBlock
 
 import entities.characters.triggers  # force triggers to be loaded
 
-__all__ = ['Mario', 'Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'MovementParameters', 'Brick', 'Coin', 'CoinBlock', 'MushroomBlock']
+__all__ = ['Mario', 'Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'MovementParameters', 'Brick', 'Coin', 'CoinBlock',
+           'MushroomBlock']

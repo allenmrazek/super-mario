@@ -1,9 +1,4 @@
-import os
-import random
-import pygame
-from animation import Animation
 import config
-from util import tile_index_to_coords
 
 
 class TileMap:

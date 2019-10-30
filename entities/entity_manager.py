@@ -1,11 +1,6 @@
-from abc import ABC, abstractmethod
-from copy import copy
 from .entity import Entity
 from .characters import LevelEntity
 from pygame.sprite import Rect
-from enum import IntFlag
-from util import copy_vector
-from util import make_vector
 import constants
 
 
@@ -19,16 +14,17 @@ class EntityManager:
         self.update_ordering = update_layer_ordering
         self.draw_ordering = draw_layer_ordering
 
-        self.layers = dict(zip([layer_name for layer_name in constants.LayerList], [list() for _ in constants.LayerList]))
+        self.layers = dict(zip([layer_name for layer_name in constants.LayerList],
+                               [list() for _ in constants.LayerList]))
 
     @staticmethod
     def create_default():
         # create a default entity manager. This is standard gameplay
         update_order = [constants.Background, constants.Block, constants.Spawner, constants.Trigger,
-                    constants.Enemy, constants.Mario, constants.Active, constants.Interface, constants.Overlay]
+                        constants.Enemy, constants.Mario, constants.Active, constants.Interface, constants.Overlay]
 
         draw_order = [constants.Background, constants.Block,
-                    constants.Enemy, constants.Mario, constants.Active, constants.Interface, constants.Overlay]
+                      constants.Enemy, constants.Mario, constants.Active, constants.Interface, constants.Overlay]
 
         return EntityManager(update_order, draw_order)
 

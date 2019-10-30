@@ -5,6 +5,7 @@ from ..behaviors import Interactive
 from util import world_to_screen
 from entities.gui.modal.modal_text_input import ModalTextInput
 import constants
+from util import make_vector
 
 
 class LevelWarp(LevelEntity):
@@ -47,7 +48,7 @@ class LevelWarp(LevelEntity):
 
         screen.blit(self.surface, world_to_screen(self.position, view_rect))
         screen.blit(self.target_text, world_to_screen(self.position, view_rect))
-        screen.blit(self.idx_text, world_to_screen(self.position + pygame.Vector2(0, 20), view_rect))
+        screen.blit(self.idx_text, world_to_screen(self.position + make_vector(0, 20), view_rect))
 
     def destroy(self):
         self.level.entity_manager.unregister(self)
@@ -75,12 +76,14 @@ class LevelWarp(LevelEntity):
         self.spawn_idx = int(values['spawner_idx']) if 'spawner_idx' in values else 0
 
     def spawned_in_editor(self):
-        ModalTextInput.spawn(self.level.asset_manager.gui_atlas, "Enter target level", self.on_file_set, self.on_file_cancel)
+        ModalTextInput.spawn(self.level.asset_manager.gui_atlas, "Enter target level",
+                             self.on_file_set, self.on_file_cancel)
 
     def on_file_set(self, text):
         self.next_level_file = text
 
-        ModalTextInput.spawn(self.level.asset_manager.gui_atlas, "Enter spawn location index", self.on_idx_set, self.on_idx_cancel)
+        ModalTextInput.spawn(self.level.asset_manager.gui_atlas, "Enter spawn location index",
+                             self.on_idx_set, self.on_idx_cancel)
 
     def on_file_cancel(self):
         self.destroy()

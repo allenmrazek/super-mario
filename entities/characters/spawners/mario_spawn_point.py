@@ -2,6 +2,7 @@ from ..level_entity import LevelEntity
 from util import world_to_screen
 import constants
 
+
 class MarioSpawnPoint(LevelEntity):
     def __init__(self, level):
         self.level = level

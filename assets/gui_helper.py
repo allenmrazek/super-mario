@@ -13,7 +13,8 @@ def get_default_font():
     return default_font
 
 
-def create_button(gui_atlas, position, size, text=None, on_click_callback=None, font=None, anchor=None, text_color=config.default_text_color):
+def create_button(gui_atlas, position, size, text=None, on_click_callback=None, font=None, anchor=None,
+                  text_color=config.default_text_color):
     bkg = gui_atlas.load_sliced("button_bkg_dark")
     bkg_mo = gui_atlas.load_sliced("button_bkg_light")
 
@@ -29,7 +30,8 @@ def create_dialog(gui_atlas, position, size, title, font=None, text_color=config
     font = font or get_default_font()
     tb_bkg = tb_bkg or gui_atlas.load_sliced("tb_frame")
 
-    return Dialog(position, size, bkg_window, font, text_color, tb_bkg, title, additional_height=8, text_start_offset=(12, 5))
+    return Dialog(position, size, bkg_window, font, text_color, tb_bkg, title, additional_height=8,
+                  text_start_offset=(12, 5))
 
 
 def create_slider(gui_atlas, position, width_or_height, min_value, max_value, on_value_changed, background=None,

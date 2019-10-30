@@ -1,7 +1,7 @@
 import math
 from pygame import Vector2
 from entities.characters.mario_constants import *
-from entities.collider import Collider, ColliderManager
+from entities.collider import Collider
 from util import make_vector, copy_vector
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 import config
@@ -47,7 +47,8 @@ class MarioMovement:
         #
         # remember that positions of these colliders != mario's position: they can have offsets and different
         # sizing
-        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, constants.Block)  # todo: should active be included in these hitboxes?
+        # todo: should active be included in these hitboxes?
+        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, constants.Block)
         self._small_hitbox.rect.width, self._small_hitbox.rect.height = rescale_vector(make_vector(10, 14))
         self._small_hitbox_offset = rescale_vector(make_vector(3, 2))
         self._small_hitbox.position = self.mario_entity.position + self._small_hitbox_offset
@@ -202,7 +203,8 @@ class MarioMovement:
             #   airborne
             #   trying to jump
             #   a direction key is pressed
-            self.crouching = self.input_state.down and not self.input_state.jump and not (self.input_state.left ^ self.input_state.right)
+            self.crouching = self.input_state.down and not self.input_state.jump and \
+                             not (self.input_state.left ^ self.input_state.right)
 
     def _handle_horizontal_acceleration(self, dt):
         """Left or right is pressed: this means we're accelerating, but direction will determine whether
@@ -345,7 +347,8 @@ class MarioMovement:
             self.airborne_collider.rect.width = current_hitbox.rect.width
             self.airborne_collider.rect.height = current_hitbox.rect.height
 
-            collisions = self.airborne_collider.test(self.mario_entity.position + self._get_hitbox_offset() + make_vector(0, 1))
+            collisions = self.airborne_collider.test(
+                self.mario_entity.position + self._get_hitbox_offset() + make_vector(0, 1))
 
             if collisions:
                 # todo: invoke callbacks for collisions? maybe this should be done in ColliderManager?
@@ -426,7 +429,8 @@ class MarioMovement:
         # don't allow off right side of world
         if self.position.x + self.rect.width > self.mario_entity.level.tile_map.width_pixels:
             self._velocity.x = 0
-            self.position = make_vector(self.mario_entity.level.tile_map.width_pixels - self.rect.width, self.position.y)
+            self.position = make_vector(
+                self.mario_entity.level.tile_map.width_pixels - self.rect.width, self.position.y)
 
         if collisions:  # immediately stop horizontal movement on horizontal collision
             self._velocity.x = 0.

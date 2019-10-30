@@ -1,6 +1,6 @@
 from .behavior import Behavior
 from entities.collider import Collider
-from util import make_vector, world_to_screen, rescale_vector
+from util import world_to_screen, rescale_vector
 import config
 import constants
 

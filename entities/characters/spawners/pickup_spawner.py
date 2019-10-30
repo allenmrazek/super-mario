@@ -1,8 +1,6 @@
 from ..level_entity import LevelEntity
-from util import world_to_screen
 from entities.characters.mushroom import Mushroom
-from util import world_to_screen, make_vector
-import config
+from util import world_to_screen
 import constants
 
 

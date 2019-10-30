@@ -1,10 +1,10 @@
 import pygame
 import pygame.gfxdraw
 from .editor_mode import EditorMode
-from .grid_functions import draw_grid, draw_selection_square
+from .grid_functions import draw_grid
 from .dialogs.entity_picker_dialog import EntityPickerDialog
 from entities.characters.level_entity import LevelEntity
-from util import pixel_coords_to_tile_coords, tile_coords_to_pixel_coords, make_vector
+from util import pixel_coords_to_tile_coords, make_vector
 from editor.dialogs.entity_tool_dialog import ActiveEntityTool
 import config
 
@@ -38,7 +38,8 @@ class EntityMode(EditorMode):
             tile_coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position,
                                                       self.level_map.tileset)
 
-            r = pygame.Rect(tile_coords[0] * self.level_map.tileset.tile_width, tile_coords[1] * self.level_map.tileset.tile_height,
+            r = pygame.Rect(tile_coords[0] * self.level_map.tileset.tile_width,
+                            tile_coords[1] * self.level_map.tileset.tile_height,
                             self.level_map.tileset.tile_width, self.level_map.tileset.tile_height)
 
             for e in self.level.entity_manager.get_entities_inside_region(r):

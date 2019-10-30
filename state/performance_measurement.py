@@ -8,7 +8,6 @@ from entities.entity_manager import EntityManager
 from util import make_vector
 import config
 import constants
-from scoring import labels
 
 
 class _Measurement(NamedTuple):

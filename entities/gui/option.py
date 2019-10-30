@@ -1,5 +1,4 @@
-from copy import copy
-from . import Button, SlicedImage, Text, Anchor, Texture
+from . import Button, Text, Anchor, Texture
 import config
 from util import make_vector, copy_vector
 

@@ -216,14 +216,15 @@ class SpriteAtlas:
         intersections = get_names(self).intersection(get_names(other))
 
         for inter in intersections:
-            print(f"Warning! Two sprites named '{inter}' in atlases to be combined; consider renaming one of the sprites")
+            print(f"Warning! Two sprites named '{inter}' "
+                  f"in atlases to be combined; consider renaming one of the sprites")
 
         new_atlas = SpriteAtlas()
 
         for new_d, our_d, other_d in [(new_atlas.sprite_rects, self.sprite_rects, other.sprite_rects),
-                  (new_atlas.statics, self.statics, other.statics),
-                  (new_atlas.animations, self.animations, other.animations),
-                  (new_atlas.sliced, self.sliced, other.sliced)]:
+                                      (new_atlas.statics, self.statics, other.statics),
+                                      (new_atlas.animations, self.animations, other.animations),
+                                      (new_atlas.sliced, self.sliced, other.sliced)]:
             new_d.update(our_d)
             new_d.update(other_d)
 

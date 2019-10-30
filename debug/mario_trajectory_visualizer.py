@@ -1,7 +1,6 @@
 import math
 import pygame
 from util import distance_squared
-from util import copy_vector
 from util import make_vector
 from util import world_to_screen
 

@@ -1,6 +1,5 @@
-from pygame import Rect, Surface
+from pygame import Rect
 from .element import Element
-from entities.gui import Button, Window
 from util import make_vector
 from entities.gui.drawing import smart_draw
 from util import copy_vector

@@ -1,7 +1,7 @@
 from enum import Enum
 import pygame
 from pygame import Rect
-from . import Button, Window, Anchor, Element
+from . import Button, Anchor, Element
 from . import smart_draw
 from util import make_vector
 
@@ -66,7 +66,8 @@ class Scrollbar(Element):
         self.on_value_changed = None
 
         # create slider button
-        self.slider = _SliderButton(make_vector(self.width // 2, self.height // 2), None, self, sb_button_background, sb_button_mouseover)
+        self.slider = _SliderButton(make_vector(self.width // 2, self.height // 2), None, self, sb_button_background,
+                                    sb_button_mouseover)
         self.add_child(self.slider)
 
         self.layout()

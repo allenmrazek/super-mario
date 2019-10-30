@@ -1,25 +1,17 @@
-from abc import abstractmethod, ABC
-import random
 import copy
-import json
-import pygame
 from state.game_state import GameState, state_stack
 from state.run_level import RunLevel
-from entities.gui import Frame, Element, Anchor, Scrollbar, ScrollbarType
-from editor.dialogs import ToolDialog, TilePickerDialog, ModeDialog, LevelConfigDialog, EntityPickerDialog, EntityToolDialog
+from editor.dialogs import TilePickerDialog, ModeDialog, LevelConfigDialog, EntityPickerDialog, EntityToolDialog
 from entities import EntityManager
 from assets.asset_manager import AssetManager
-import config
 from util import make_vector, bind_callback_parameters
 from assets import Level
 from event import EventHandler
-from util import pixel_coords_to_tile_coords
 from .place_mode import PlaceMode
 from .passable_mode import PassableMode
 from .config_mode import ConfigMode
 from .entity_mode import EntityMode
 from state.performance_measurement import PerformanceMeasurement
-from entities.gui.modal import ModalTextInput
 from assets.gui_helper import *
 from assets.statistics import Statistics
 from scoring import Labels
@@ -55,19 +47,23 @@ class EditorState(GameState, EventHandler):
         self.entity_manager.register(self.frame)
 
         # scrollbars to move map
-        self.scroll_map_horizontal = create_slider(self.assets.gui_atlas, pygame.Vector2(*config.screen_rect.bottomleft) + make_vector(10, -20),
-                                               config.screen_rect.width - 20, 0, self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
+        self.scroll_map_horizontal = create_slider(self.assets.gui_atlas,
+                                                   make_vector(*config.screen_rect.bottomleft) + make_vector(10, -20),
+                                                   config.screen_rect.width - 20, 0,
+                                                   self.level.tile_map.width * self.level.tile_map.tileset.tile_width,
                                                    on_value_changed=bind_callback_parameters(self.on_horizontal_scroll),
                                                    thumb=self.assets.gui_atlas.load_static("sb_thumb"),
                                                    thumb_mo=self.assets.gui_atlas.load_static("sb_thumb_light"),
                                                    sb_type=ScrollbarType.HORIZONTAL)
 
-        self.scroll_map_vertical = create_slider(self.assets.gui_atlas, pygame.Vector2(*config.screen_rect.topright) + make_vector(-20, 10),
-                                               config.screen_rect.height - 40, 0, self.level.tile_map.height * self.level.tile_map.tileset.tile_height,
-                                                   on_value_changed=bind_callback_parameters(self.on_vertical_scroll),
-                                                   thumb=self.assets.gui_atlas.load_static("sb_thumb"),
-                                                   thumb_mo=self.assets.gui_atlas.load_static("sb_thumb_light"),
-                                                   sb_type=ScrollbarType.VERTICAL)
+        self.scroll_map_vertical = create_slider(self.assets.gui_atlas,
+                                                 make_vector(*config.screen_rect.topright) + make_vector(-20, 10),
+                                                 config.screen_rect.height - 40, 0,
+                                                 self.level.tile_map.height * self.level.tile_map.tileset.tile_height,
+                                                 on_value_changed=bind_callback_parameters(self.on_vertical_scroll),
+                                                 thumb=self.assets.gui_atlas.load_static("sb_thumb"),
+                                                 thumb_mo=self.assets.gui_atlas.load_static("sb_thumb_light"),
+                                                 sb_type=ScrollbarType.VERTICAL)
 
         self.frame.add_child(self.scroll_map_horizontal)
         self.frame.add_child(self.scroll_map_vertical)
@@ -98,8 +94,8 @@ class EditorState(GameState, EventHandler):
 
         self.mode_dialog = ModeDialog(self.assets.gui_atlas,
                                       on_tile_mode_callback=bind_callback_parameters(self.set_mode, self.place_mode),
-                                      on_passable_mode_callback=
-                                      bind_callback_parameters(self.set_mode, self.passable_mode),
+                                      on_passable_mode_callback=bind_callback_parameters(
+                                          self.set_mode, self.passable_mode),
                                       on_config_mode_callback=bind_callback_parameters(self.set_mode, self.config_mode),
                                       on_entity_mode_callback=bind_callback_parameters(self.set_mode, self.entity_mode))
 

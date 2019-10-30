@@ -12,8 +12,8 @@ class TileSet:
 
         self.surface = pygame.image.load(path)
         self.surface = pygame.transform.scale(self.surface,
-                                         (self.surface.get_width() * config.rescale_factor,
-                                          self.surface.get_height() * config.rescale_factor))\
+                                              (self.surface.get_width() * config.rescale_factor,
+                                               self.surface.get_height() * config.rescale_factor))\
             .convert(pygame.display.get_surface())
 
         self.surface.set_colorkey(config.transparent_color)
@@ -21,7 +21,7 @@ class TileSet:
         self.tiles = []
 
         self._tile_width, self._tile_height = config.base_tile_dimensions[0] * config.rescale_factor, \
-                                            config.base_tile_dimensions[1] * config.rescale_factor
+            config.base_tile_dimensions[1] * config.rescale_factor
 
         src_rect = pygame.Rect(0, 0, self.tile_width, self.tile_height)
 

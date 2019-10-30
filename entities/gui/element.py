@@ -1,5 +1,4 @@
 from enum import Enum
-from copy import deepcopy
 import pygame
 from entities.entity import Entity
 from event import EventHandler

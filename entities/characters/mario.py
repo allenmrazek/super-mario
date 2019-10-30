@@ -1,14 +1,10 @@
 import math
 from enum import IntEnum
-from entities.entity import Entity
 from entities.characters.level_entity import LevelEntity
-from entities.collider import Collider
 from animation import Animation
-from util import make_vector, world_to_screen
-import config
+from util import world_to_screen
 import entities.characters.behaviors
 from .mario_constants import *
-from util import rescale_vector
 import constants
 
 
@@ -34,9 +30,6 @@ class Mario(LevelEntity):
         self._enabled = False
         self._active_effects = MarioEffects.Small
         self._invincibility_period = 0.
-
-        #self.make_invincible(3000)
-        #self._active_effects = MarioEffects.Super
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
@@ -156,77 +149,99 @@ class _MarioAnimation:
         self.stand = _Variation(
             # small mario variants
             _AnimationSet(
-                _DirectionSet(atlas.load_static("mario_stand_left"), atlas.load_static("mario_stand_right")),
-                _DirectionSet(atlas.load_static("mario_fire_stand_left"), atlas.load_static("mario_fire_stand_right")),
+                _DirectionSet(atlas.load_static("mario_stand_left"),
+                              atlas.load_static("mario_stand_right")),
+                _DirectionSet(atlas.load_static("mario_fire_stand_left"),
+                              atlas.load_static("mario_fire_stand_right")),
                 None),
 
             # large mario variants
             _AnimationSet(
-                _DirectionSet(atlas.load_static("super_mario_stand_left"), atlas.load_static("super_mario_stand_right")),
-                _DirectionSet(atlas.load_static("super_mario_fire_stand_left"), atlas.load_static("super_mario_fire_stand_right")),
+                _DirectionSet(atlas.load_static("super_mario_stand_left"),
+                              atlas.load_static("super_mario_stand_right")),
+                _DirectionSet(atlas.load_static("super_mario_fire_stand_left"),
+                              atlas.load_static("super_mario_fire_stand_right")),
             None))
 
         self.walk = _Variation(
             # small walk variants
             _AnimationSet(
-                _DirectionSet(atlas.load_animation("mario_walk_left"), atlas.load_animation("mario_walk_right")),
-                _DirectionSet(atlas.load_animation("mario_fire_walk_left"), atlas.load_animation("mario_fire_walk_right")),
+                _DirectionSet(atlas.load_animation("mario_walk_left"),
+                              atlas.load_animation("mario_walk_right")),
+                _DirectionSet(atlas.load_animation("mario_fire_walk_left"),
+                              atlas.load_animation("mario_fire_walk_right")),
             None),
 
             # super walk variants
             _AnimationSet(
-                _DirectionSet(atlas.load_animation("super_mario_walk_left"), atlas.load_animation("super_mario_walk_right")),
-                _DirectionSet(atlas.load_animation("super_mario_fire_walk_left"), atlas.load_animation("super_mario_fire_walk_right")),
+                _DirectionSet(atlas.load_animation("super_mario_walk_left"),
+                              atlas.load_animation("super_mario_walk_right")),
+                _DirectionSet(atlas.load_animation("super_mario_fire_walk_left"),
+                              atlas.load_animation("super_mario_fire_walk_right")),
             None))
 
         self.run = _Variation(
             # small variants
             _AnimationSet(
-                _DirectionSet(atlas.load_animation("mario_run_left"), atlas.load_animation("mario_run_right")),
-                _DirectionSet(atlas.load_animation("mario_fire_run_left"), atlas.load_animation("mario_fire_run_right")),
+                _DirectionSet(atlas.load_animation("mario_run_left"),
+                              atlas.load_animation("mario_run_right")),
+                _DirectionSet(atlas.load_animation("mario_fire_run_left"),
+                              atlas.load_animation("mario_fire_run_right")),
                 None),
 
             # super variants
             _AnimationSet(
-                _DirectionSet(atlas.load_animation("super_mario_run_left"), atlas.load_animation("super_mario_run_right")),
-                _DirectionSet(atlas.load_animation("super_mario_fire_run_left"), atlas.load_animation("super_mario_fire_run_right")),
+                _DirectionSet(atlas.load_animation("super_mario_run_left"),
+                              atlas.load_animation("super_mario_run_right")),
+                _DirectionSet(atlas.load_animation("super_mario_fire_run_left"),
+                              atlas.load_animation("super_mario_fire_run_right")),
                 None))
 
         self.skid = _Variation(
             # small variants
             _AnimationSet(
-                _DirectionSet(atlas.load_static("mario_skid_right"), atlas.load_static("mario_skid_left")),
-                _DirectionSet(atlas.load_static("mario_fire_skid_right"), atlas.load_static("mario_fire_skid_left")),
+                _DirectionSet(atlas.load_static("mario_skid_right"),
+                              atlas.load_static("mario_skid_left")),
+                _DirectionSet(atlas.load_static("mario_fire_skid_right"),
+                              atlas.load_static("mario_fire_skid_left")),
                 None),
 
             # super variants
             _AnimationSet(
-                _DirectionSet(atlas.load_static("super_mario_skid_right"), atlas.load_static("super_mario_skid_left")),
-                _DirectionSet(atlas.load_static("super_mario_fire_skid_right"), atlas.load_static("super_mario_fire_skid_left")),
+                _DirectionSet(atlas.load_static("super_mario_skid_right"),
+                              atlas.load_static("super_mario_skid_left")),
+                _DirectionSet(atlas.load_static("super_mario_fire_skid_right"),
+                              atlas.load_static("super_mario_fire_skid_left")),
                 None))
 
         self.jump = _Variation(
             # small variants
-            _AnimationSet(_DirectionSet(atlas.load_static("mario_jump_left"), atlas.load_static("mario_jump_right")),
-                          _DirectionSet(atlas.load_static("mario_fire_jump_left"), atlas.load_static("mario_fire_jump_right")),
+            _AnimationSet(_DirectionSet(atlas.load_static("mario_jump_left"),
+                                        atlas.load_static("mario_jump_right")),
+                          _DirectionSet(atlas.load_static("mario_fire_jump_left"),
+                                        atlas.load_static("mario_fire_jump_right")),
                           None),
 
             # super variants
-            _AnimationSet(_DirectionSet(atlas.load_static("super_mario_jump_left"), atlas.load_static("super_mario_jump_right")),
-                          _DirectionSet(atlas.load_static("super_mario_fire_jump_left"), atlas.load_static("super_mario_fire_jump_right")),
+            _AnimationSet(_DirectionSet(atlas.load_static("super_mario_jump_left"),
+                                        atlas.load_static("super_mario_jump_right")),
+                          _DirectionSet(atlas.load_static("super_mario_fire_jump_left"),
+                                        atlas.load_static("super_mario_fire_jump_right")),
                           None))
 
         self.crouch = _Variation(
             # super variants (these would be used for small, but that should never happen ...
             _AnimationSet(
-                _DirectionSet(atlas.load_static("super_mario_crouch_left"), atlas.load_static("super_mario_crouch_right")),
+                _DirectionSet(atlas.load_static("super_mario_crouch_left"),
+                              atlas.load_static("super_mario_crouch_right")),
                 _DirectionSet(atlas.load_static("super_mario_fire_crouch_left"),
-                          atlas.load_static("super_mario_fire_crouch_right")),
+                              atlas.load_static("super_mario_fire_crouch_right")),
                 None),
 
             # super variants
             _AnimationSet(
-                _DirectionSet(atlas.load_static("super_mario_crouch_left"), atlas.load_static("super_mario_crouch_right")),
+                _DirectionSet(atlas.load_static("super_mario_crouch_left"),
+                              atlas.load_static("super_mario_crouch_right")),
                 _DirectionSet(atlas.load_static("super_mario_fire_crouch_left"),
                               atlas.load_static("super_mario_fire_crouch_right")),
                 None))
@@ -240,10 +255,8 @@ class _MarioAnimation:
         # now, which animation set to use will depend on the most significant
         # flag set ..
         if mario.effects & MarioEffects.Star:
-            #return variation.star
             raise NotImplementedError
         elif mario.effects & MarioEffects.Fire:
-            #return variation.fire
             raise NotImplementedError
         else:
             return variation.normal
@@ -275,4 +288,3 @@ class _MarioAnimation:
 
 
 LevelEntity.register_factory(Mario, Mario.factory)
-

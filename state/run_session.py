@@ -48,7 +48,8 @@ class RunSession(GameState, EventHandler):
 
     @property
     def finished(self):
-        return self._finished or (self.current_level is not None and self.mario_stats.lives <= 0) or not any(self.levels)
+        return self._finished or\
+               (self.current_level is not None and self.mario_stats.lives <= 0) or not any(self.levels)
 
     def change_state(self):
         if self.mario_stats.lives == 0:
@@ -66,8 +67,8 @@ class RunSession(GameState, EventHandler):
             if len(self.levels) > 0:
                 # load and play next level
                 self.current_level = Level(self.assets,
-                      entities.entity_manager.EntityManager.create_default(),
-                      self.mario_stats)
+                                           entities.entity_manager.EntityManager.create_default(),
+                                           self.mario_stats)
 
                 self.current_level.load_from_path("levels/" + self.levels[0][0])
                 self.current_level.title = self.levels[0][1]

@@ -14,7 +14,8 @@ class GameOver(GameState, EventHandler):
 
         self._finished = False
         self.game_over = Labels.font.render("Game Over", True, pygame.Color('white'))
-        self.game_over_pos = make_vector(*config.screen_rect.center) - make_vector(self.game_over.get_width() // 2, self.game_over.get_height() // 2)
+        self.game_over_pos = make_vector(*config.screen_rect.center) - make_vector(self.game_over.get_width() // 2,
+                                                                                   self.game_over.get_height() // 2)
 
         # play game over music
         pygame.mixer_music.load('sounds/music/smb_gameover.wav')

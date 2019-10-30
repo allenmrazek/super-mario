@@ -3,7 +3,7 @@ import pygame.gfxdraw
 from .editor_mode import EditorMode
 from .grid_functions import draw_grid, draw_selection_square
 from .dialogs.tile_picker_dialog import TilePickerDialog
-from util import pixel_coords_to_tile_coords, tile_coords_to_pixel_coords, make_vector
+from util import pixel_coords_to_tile_coords, make_vector
 import config
 
 
@@ -20,7 +20,8 @@ class PlaceMode(EditorMode):
         self.on_map_motion(evt, screen_mouse_pos)
 
     def on_map_motion(self, evt, screen_mouse_pos):
-        tile_coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position, self.level_map.tileset)
+        tile_coords = pixel_coords_to_tile_coords(make_vector(*screen_mouse_pos) + self.level.position,
+                                                  self.level_map.tileset)
 
         if self.level_map.is_in_bounds(tile_coords):
             idx = self.picker_dialog.selected_tile_idx if (pygame.key.get_mods() & pygame.KMOD_CTRL) == 0 else None

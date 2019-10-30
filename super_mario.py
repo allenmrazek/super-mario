@@ -33,8 +33,6 @@ def run():
     # timer initialize
     accumulator = 0.0
 
-    #Level.take_snapshot(assets, EntityManager.create_editor(), 'levels/level11.level', 'captured.png')
-
     while state_stack.top is not None:
         state_stack.top.do_events()
         game_timer.update()

@@ -3,7 +3,6 @@ from pygame import Rect
 from .element import Element
 from .element import Anchor
 from .text import Text
-from .sliced_image import SlicedImage
 from util import make_vector
 from .drawing import smart_draw
 import config
@@ -21,7 +20,8 @@ class Button(Element):
         self._text = None
 
         if text is not None:
-            self._text = Text(make_vector(size[0] // 2 + 1, size[1] // 2 + 2), text, font, text_color, anchor=Anchor.CENTER)
+            self._text = Text(make_vector(size[0] // 2 + 1, size[1] // 2 + 2), text, font,
+                              text_color, anchor=Anchor.CENTER)
 
             self.add_child(self._text)
 

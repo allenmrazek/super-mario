@@ -1,9 +1,7 @@
 from entities.characters.enemy import Enemy
 from .damage_mario import DamageMario
-from .interactive import Interactive
 from entities.collider import Collision, Collider
 from ..mario import Mario
-from util import make_vector
 
 
 class Squashable(DamageMario):

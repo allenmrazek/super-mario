@@ -77,7 +77,7 @@ class MovementParameters(NamedTuple):
     @staticmethod
     def create(hmax, vmax, jump, squash, gravity):
         return MovementParameters(max_horizontal_velocity=hmax,
-                               max_vertical_velocity=vmax,
-                               jump_velocity=jump,
-                               squash_bounce_velocity=squash,
-                               gravity=gravity)
+                                  max_vertical_velocity=vmax,
+                                  jump_velocity=jump,
+                                  squash_bounce_velocity=squash,
+                                  gravity=gravity)

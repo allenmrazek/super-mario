@@ -76,8 +76,9 @@ class MarioDeath(Entity, EventHandler):
                 while run_session is not None and not isinstance(run_session, state.run_session.RunSession):
                     run_session = state_stack.get_next(run_session)
 
-                state_stack.push(state.level_begin.LevelBegin(self.level.asset_manager, self.level, run_session.scoring_labels,
-                                            self.level.stats))
+                state_stack.push(state.level_begin.LevelBegin(
+                    self.level.asset_manager, self.level, run_session.scoring_labels,
+                    self.level.stats))
 
                 # also resetore level state...
                 self.level.reset()
@@ -95,4 +96,3 @@ class MarioDeath(Entity, EventHandler):
     @property
     def layer(self):
         return constants.Active
-

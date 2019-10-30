@@ -1,24 +1,11 @@
-import pygame
-from entities.entity_manager import Entity
-from util import make_vector, mario_str_to_pixel_value_velocity as mstpvv
-from util import mario_str_to_pixel_value_acceleration as mstpva
-from util import world_to_screen
 from entities.characters.mario import MarioEffects
-from state.game_state import GameState, state_stack
-from animation import Animation, OneShotAnimation
-from util import world_to_screen
-from event.game_events import GameEvents, EventHandler
-import config
+from state.game_state import GameState
+from event.game_events import GameEvents
 import pygame
-from entities.entity_manager import Entity
-from util import make_vector, mario_str_to_pixel_value_velocity as mstpvv
-from util import mario_str_to_pixel_value_acceleration as mstpva
+from util import make_vector
 from util import world_to_screen
-from event import EventHandler
-from state import state_stack
 import entities.characters.triggers.flag
 import entities.characters.mario
-import event.player_input
 
 """
 Jumps on pole, left side
@@ -54,7 +41,6 @@ class LevelCleared(GameState):
 
         pygame.mixer_music.play()
 
-        #state_stack.top.game_events.register(self)
         self.game_events.register(self)
 
         # locate the pole
@@ -67,7 +53,8 @@ class LevelCleared(GameState):
 
         # put a doppelganger where he would be on the pole
         self.doppler = self._create_doppleganger(self.mario)
-        self.doppler.position = make_vector(self.pole.position.x - self.doppler.rect.width // 3, self.level.mario.position.y)
+        self.doppler.position = make_vector(self.pole.position.x - self.doppler.rect.width // 3,
+                                            self.level.mario.position.y)
 
         # keep track of state
         self.waiting = False
@@ -89,7 +76,6 @@ class LevelCleared(GameState):
                 self.mario.reset()
                 self.mario.enabled = True
                 self.mario.movement.input_state = _FakeInput()
-
 
                 # now wait for fake mario to reach castle
                 # a trigger should be set up to hide him or move into a pipe

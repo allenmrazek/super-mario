@@ -6,4 +6,5 @@ from .mario_movement import MarioMovement
 from .interactive import Interactive
 from .smashable import Smashable
 
-__all__ = ['SimpleMovement', 'JumpingMovement', 'DamageMario', 'Squashable', 'MarioMovement', 'Interactive', 'Smashable']
+__all__ = ['SimpleMovement', 'JumpingMovement', 'DamageMario', 'Squashable', 'MarioMovement', 'Interactive',
+           'Smashable']

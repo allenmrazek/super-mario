@@ -5,7 +5,8 @@ from assets.gui_helper import *
 class ModeDialog(Dialog):
     SIZE = 200, 170
 
-    def __init__(self, gui_atlas, on_tile_mode_callback, on_passable_mode_callback, on_config_mode_callback, on_entity_mode_callback):
+    def __init__(self, gui_atlas, on_tile_mode_callback, on_passable_mode_callback, on_config_mode_callback,
+                 on_entity_mode_callback):
         font = pygame.font.SysFont("", 24)
 
         r = config.screen_rect.copy()
@@ -30,31 +31,39 @@ class ModeDialog(Dialog):
         bkg = bind_callback_parameters(gui_atlas.load_sliced, "option_button")
 
         # create tile mode
-        tile_mode_button = create_button(gui_atlas, make_vector(frame_width, self.get_title_bar_bottom() + delta_y), button_size,
-                                            "Tile", bind_callback_parameters(on_tile_mode_callback), font,
-                                            text_color=button_text_color)
+        tile_mode_button = create_button(gui_atlas, make_vector(frame_width, self.get_title_bar_bottom() + delta_y),
+                                         button_size,
+                                         "Tile", bind_callback_parameters(on_tile_mode_callback), font,
+                                         text_color=button_text_color)
 
         self.add_child(tile_mode_button)
 
         # passable mode
-        passable_mode_button = create_button(gui_atlas, make_vector(frame_width, tile_mode_button.relative_position.y + tile_mode_button.height + delta_y), button_size,
-                                            "Passability", bind_callback_parameters(on_passable_mode_callback), font,
-                                            text_color=button_text_color)
+        passable_mode_button = create_button(gui_atlas,
+                                             make_vector(frame_width,
+                                                         tile_mode_button.relative_position.y +
+                                                         tile_mode_button.height + delta_y), button_size,
+                                             "Passability", bind_callback_parameters(on_passable_mode_callback), font,
+                                             text_color=button_text_color)
 
         self.add_child(passable_mode_button)
 
         # entity mode
-        entity_mode_button = create_button(gui_atlas, make_vector(frame_width, passable_mode_button.relative_position.y + passable_mode_button.height + delta_y), button_size,
-                                            "Entities", bind_callback_parameters(on_entity_mode_callback), font,
-                                            text_color=button_text_color)
+        entity_mode_button = create_button(gui_atlas,
+                                           make_vector(frame_width,
+                                                       passable_mode_button.relative_position.y +
+                                                       passable_mode_button.height + delta_y), button_size,
+                                           "Entities", bind_callback_parameters(on_entity_mode_callback), font,
+                                           text_color=button_text_color)
 
         self.add_child(entity_mode_button)
 
         # config mode
-        config_mode_button = create_button(gui_atlas, make_vector(frame_width, entity_mode_button.relative_position.y + entity_mode_button.height + delta_y), button_size,
-                                            "Configuration", bind_callback_parameters(on_config_mode_callback), font,
-                                            text_color=button_text_color)
+        config_mode_button = create_button(gui_atlas,
+                                           make_vector(frame_width,
+                                                       entity_mode_button.relative_position.y +
+                                                       entity_mode_button.height + delta_y), button_size,
+                                           "Configuration", bind_callback_parameters(on_config_mode_callback), font,
+                                           text_color=button_text_color)
 
         self.add_child(config_mode_button)
-
-

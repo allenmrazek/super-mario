@@ -1,8 +1,4 @@
-import pygame
-from entities.gui import Dialog, ScrollableContents, ScrollbarType, Scrollbar
-import config
 from util import make_vector
-from util import tile_coords_to_pixel_coords
 from util import pixel_coords_to_tile_coords
 from util import tile_index_to_coords
 from assets.gui_helper import *
@@ -32,17 +28,21 @@ class TilePickerDialog(Dialog):
         self.layout()  # ensure scrollable is positioned
 
         # create scrollbars
-        self.vertical_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.right + 4, self.scrollable.rect.top + 10),
-                                             self.scrollable.rect.height - 15, 0,  max(0, self.tileset.surface.get_height() - self.scrollable.height),
+        self.vertical_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.right + 4,
+                                                                           self.scrollable.rect.top + 10),
+                                             self.scrollable.rect.height - 15, 0,
+                                             max(0, self.tileset.surface.get_height() - self.scrollable.height),
                                              self._on_scroll_changed, thumb=assets.gui_atlas.load_static("sb_thumb"),
                                              thumb_mo=assets.gui_atlas.load_static("sb_thumb_light"),
                                              sb_type=ScrollbarType.VERTICAL)
 
-        self.horizontal_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.left + 5, self.scrollable.rect.bottom + 5),
-                                             self.scrollable.rect.width, 0,  max(0, self.tileset.surface.get_width() - self.scrollable.width),
-                                             self._on_scroll_changed, thumb=assets.gui_atlas.load_static("sb_thumb"),
-                                             thumb_mo=assets.gui_atlas.load_static("sb_thumb_light"),
-                                             sb_type=ScrollbarType.HORIZONTAL)
+        self.horizontal_scroll = create_slider(assets.gui_atlas, make_vector(self.scrollable.rect.left + 5,
+                                                                             self.scrollable.rect.bottom + 5),
+                                               self.scrollable.rect.width, 0,
+                                               max(0, self.tileset.surface.get_width() - self.scrollable.width),
+                                               self._on_scroll_changed, thumb=assets.gui_atlas.load_static("sb_thumb"),
+                                               thumb_mo=assets.gui_atlas.load_static("sb_thumb_light"),
+                                               sb_type=ScrollbarType.HORIZONTAL)
 
         self.add_child(self.scrollable)
         self.add_child(self.vertical_scroll)

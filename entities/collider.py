@@ -2,24 +2,15 @@ import math
 import sys
 import copy
 from pygame import Rect
-from util import can_collide
 from util import distance_squared
 from util import copy_vector
 import constants
-import config
 
 epsilon_sqr = sys.float_info.epsilon ** 2
 
 
 def value_in_range(value, min_value, max_value):
     return (value >= min_value) and (value <= max_value)
-
-
-def rect_overlap(A, B):
-    x_overlap = value_in_range(A.x, B.x, B.x + B.width) or value_in_range(B.x, A.x, A.x + A.width)
-    y_overlap = value_in_range(A.y, B.y, B.y + B.height) or value_in_range(B.y, A.y, A.y + A.height)
-
-    return x_overlap and y_overlap
 
 
 class Collision:
@@ -117,13 +108,10 @@ class ColliderManager:
         collisions = []
 
         # check for collisions against world grid, if applicable
-        #if can_collide(collider.mask, Layer.Block.value):
-        #if not collider.mask.value & Layer.Block.value:
         if (collider.mask & constants.Block) != 0:
             collisions.extend(self.get_world_collisions(collider))
 
         for other_collider in (c for c in self._colliders if c is not collider):
-            #if not can_collide(collider.mask, other_collider.layer):
             if (collider.mask & other_collider.layer) == 0:
                 continue
 
@@ -193,11 +181,14 @@ class ColliderManager:
 
     def get_world_collisions(self, collider):
         # determine which grid square(s) the collider is in
-        left, right = int(collider.rect.left / self.tile_map.tile_width), int(collider.rect.right / self.tile_map.tile_width)
-        top, bottom = int(collider.rect.top / self.tile_map.tile_height), int(collider.rect.bottom / self.tile_map.tile_height)
+        left, right = int(collider.rect.left / self.tile_map.tile_width), \
+                      int(collider.rect.right / self.tile_map.tile_width)
+        top, bottom = int(collider.rect.top / self.tile_map.tile_height),\
+            int(collider.rect.bottom / self.tile_map.tile_height)
 
         collisions = []
-        r = Rect(left * self.tile_map.tile_width, top * self.tile_map.tile_height, self.tile_map.tile_width, self.tile_map.tile_height)
+        r = Rect(left * self.tile_map.tile_width, top * self.tile_map.tile_height,
+                 self.tile_map.tile_width, self.tile_map.tile_height)
 
         # each of these tiles is potentially intersecting the collider
         for x in range(left, right + 1):
@@ -214,7 +205,8 @@ class ColliderManager:
                     r.y = y * self.tile_map.tile_height
 
                     if collider.rect.colliderect(r):
-                        collisions.append(Collision(moved_collider=collider, hit_thing=(x, y), moved_collider_position=copy_vector(collider.position)))
+                        collisions.append(Collision(moved_collider=collider, hit_thing=(x, y),
+                                                    moved_collider_position=copy_vector(collider.position)))
 
         return collisions
 
@@ -229,4 +221,3 @@ class ColliderManager:
 
                 if collider.on_collision is not None and c is not collider:
                     collider.on_collision(c)
-

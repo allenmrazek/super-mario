@@ -4,6 +4,7 @@ from entities.characters.level_entity import MovementParameters
 from entities.collider import Collider
 import constants
 
+
 class SimpleMovement(Behavior):
     """Side-to-side movement, moving left initially, changes direction on hitting an enemy or block
     (to left or right)"""
@@ -17,8 +18,8 @@ class SimpleMovement(Behavior):
         self.entity = entity
         self.collider_manager = collider_manager
 
-        self.movement_collider = movement_collider or Collider.from_entity(entity,
-                                                                           collider_manager, constants.Block | constants.Enemy)
+        self.movement_collider = movement_collider or \
+            Collider.from_entity(entity, collider_manager, constants.Block | constants.Enemy)
         self.parameters = parameters  # type: MovementParameters
         self.velocity = make_vector(-self.parameters.max_horizontal_velocity, 0.)
 
@@ -74,7 +75,6 @@ class SimpleMovement(Behavior):
         vel = make_vector(0, self.velocity.y)
         target_pos = self.entity.position + vel * dt
         self.movement_collider.position = self.entity.position
-        #self.movement_collider.approach(target_pos, True)
         self.movement_collider.try_move(target_pos, True)
         self.entity.position = self.movement_collider.position
 

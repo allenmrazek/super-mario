@@ -17,7 +17,7 @@ class Statistics:
         # initial values
         self.score = 0
         self.lives = 3
-        self.coins = 95
+        self.coins = 0
         self._remaining_time = constants.TIME_PER_LEVEL
         self._elapsed = 0.
 
@@ -26,8 +26,6 @@ class Statistics:
         self._scoring.prep_lives()
         self._scoring.prep_coins()
         self._scoring.prep_points()
-
-        print("note: coins set to 95, to demonstrate 1up on 100")
 
     def update(self, dt):
         self._elapsed += dt
@@ -60,7 +58,6 @@ class Statistics:
     @coins.setter
     def coins(self, val):
         self._coins = val
-
 
         if self.coins >= 100:
             self.lives += self.coins // 100

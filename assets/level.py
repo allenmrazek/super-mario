@@ -14,8 +14,6 @@ import constants
 
 
 class Level(EventHandler):
-    #UPDATE_RECT_DISTANCE_FACTOR = 1.25  # entities within view_rect +- this factor * its width will be updated, else they'll be frozen
-
     """A level is the highest-level object containing everything that makes up a level"""
     def __init__(self, assets, entity_manager, stats, title="Not Titled"):
         super().__init__()
@@ -87,7 +85,8 @@ class Level(EventHandler):
         # prevent mario from phasing into the ground (should he be super mario and the spawn point is on the ground)
         ground_collider = Collider.from_entity(self.mario, self.collider_manager, constants.Block)
         ground_collider.rect.width = 16 * config.rescale_factor
-        ground_collider.rect.height = 16 * config.rescale_factor if not self.mario.is_super else 32 * config.rescale_factor
+        ground_collider.rect.height = 16 * config.rescale_factor \
+            if not self.mario.is_super else 32 * config.rescale_factor
         ground_collider.position = self.mario.position
 
         tries = 0
@@ -198,7 +197,8 @@ class Level(EventHandler):
 
         # otherwise, we haven't reached any spawn points. But there might be one visible
         # on screen. Try that one next
-        visible = [sp for sp in spawn_points if self.position.x <= sp.position.x <= self.position.x + self.view_rect.width]
+        visible = [sp for sp in spawn_points
+                   if self.position.x <= sp.position.x <= self.position.x + self.view_rect.width]
 
         if visible:
             return visible[-1], visible.index(visible[-1])
@@ -230,7 +230,6 @@ class Level(EventHandler):
         for x in range(0, capture.get_width() + config.screen_size[0], config.screen_size[0]):
             y = 0  # todo: something broken with painting on y coords, low urgency
 
-            #for y in range(0, capture.get_height() + config.screen_size[1], config.screen_size[1]):
             self.position = make_vector(x, y)
             screen.fill(self.background_color)
             self.draw(screen)

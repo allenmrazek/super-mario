@@ -2,7 +2,6 @@ import pygame
 from .element import Element
 from .element import Anchor
 from .drawing import smart_draw
-from .sliced_image import SlicedImage
 
 
 class Texture(Element):

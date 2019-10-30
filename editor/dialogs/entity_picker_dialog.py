@@ -1,6 +1,3 @@
-import warnings
-import pygame
-from entities.gui import Dialog, ScrollbarType, Scrollbar, Button, Container
 from entities.entity_manager import EntityManager
 from util import make_vector
 from entities.characters.level_entity import LevelEntity
@@ -48,7 +45,7 @@ class EntityPickerDialog(Dialog):
 
         super().__init__(make_vector(0, 0),
                          EntityPickerDialog.SIZE, self.assets.gui_atlas.load_sliced("window_bkg_large"),
-                        tb_bkg=self.assets.gui_atlas.load_sliced("tb_frame"),
+                         tb_bkg=self.assets.gui_atlas.load_sliced("tb_frame"),
                          additional_height=8, text_start_offset=(12, 5),
                          font=font, title="Entities")
 
@@ -57,7 +54,8 @@ class EntityPickerDialog(Dialog):
 
         # create vertical scrollbar
         self.vertical_scroll = create_slider(self.assets.gui_atlas,
-                                             make_vector(self.scrolling_container.rect.right + 5, self.scrolling_container.rect.top + 5),
+                                             make_vector(self.scrolling_container.rect.right + 5,
+                                                         self.scrolling_container.rect.top + 5),
                                              self.scrolling_container.rect.height - 15, 0, 100, self._on_scroll_changed,
                                              thumb=self.assets.gui_atlas.load_static("sb_thumb"),
                                              thumb_mo=self.assets.gui_atlas.load_static("sb_thumb_light"),
@@ -81,15 +79,17 @@ class EntityPickerDialog(Dialog):
         y_offset = 0
 
         frame = Container(make_vector(10, self.get_title_bar_bottom() + 4),
-                      (EntityPickerDialog.SIZE[0] - 50,
-                       EntityPickerDialog.SIZE[0] - self.get_title_bar_bottom() - 20))
+                          (EntityPickerDialog.SIZE[0] - 50,
+                           EntityPickerDialog.SIZE[0] - self.get_title_bar_bottom() - 20))
 
         for name, factory in LevelEntity.Factories.items():
             if name == "Mario":  # want spawner for mario instead
                 continue
 
-            entity_button = create_button(self.assets.gui_atlas, make_vector(15, y_offset), EntityPickerDialog.BUTTON_SIZE,
-                                          name, bind_callback_parameters(self._make_selection, name), font, text_color=pygame.Color('white'))
+            entity_button = create_button(self.assets.gui_atlas, make_vector(15, y_offset),
+                                          EntityPickerDialog.BUTTON_SIZE,
+                                          name, bind_callback_parameters(self._make_selection, name),
+                                          font, text_color=pygame.Color('white'))
 
             frame.add_child(entity_button)
             y_offset += entity_button.height + 3

@@ -8,8 +8,6 @@ import config
 class Text(Element):
     def __init__(self, element_position, text, font, text_color=config.default_text_color, anchor=Anchor.TOP_LEFT,
                  anti_alias=True, background=None):
-        # color=config.default_text_color, anchor=Anchor.CENTER,
-        #          anti_alias=True, bg_color=None):
         super().__init__(element_position, anchor=anchor)
 
         # todo: actual SMB font

@@ -18,7 +18,8 @@ def draw_grid(screen, line_color, grid_size, view_rect):
 
 
 def draw_selection_square(screen, level_map, color, view_rect):
-    tile_coords = pixel_coords_to_tile_coords(pygame.mouse.get_pos() + make_vector(view_rect.x, view_rect.y), level_map.tileset)
+    tile_coords = pixel_coords_to_tile_coords(pygame.mouse.get_pos() + make_vector(view_rect.x, view_rect.y),
+                                              level_map.tileset)
 
     if level_map.is_in_bounds(tile_coords):
         r = pygame.Rect(

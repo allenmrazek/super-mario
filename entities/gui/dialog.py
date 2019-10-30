@@ -1,4 +1,3 @@
-import pygame
 from .element import Element
 from .element import Anchor
 from .window import Window
@@ -26,7 +25,6 @@ class _TitleBar(Element):
         current_clip = screen.get_clip()
         screen.set_clip(r)
 
-        #screen.fill(self.bar_color, r)
         smart_draw(screen, self.bkg, r)
 
         screen.blit(self.surface, (r.x + self.text_offset[0], r.y + self.text_offset[1]))

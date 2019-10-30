@@ -33,7 +33,8 @@ class LevelBegin(GameState):
 
         # scale it up
         self.mario_icon = pygame.transform.scale2x(little_mario).convert()
-        self.mario_pos = copy_vector(self.x_pos) - make_vector(self.mario_icon.get_width() * 2, self.mario_icon.get_height() // 4)
+        self.mario_pos = copy_vector(self.x_pos) - \
+            make_vector(self.mario_icon.get_width() * 2, self.mario_icon.get_height() // 4)
 
         self.lives = Labels.font_large.render(str(mario_stats.lives), True, tc).convert_alpha()
         self.lives_pos = self.x_pos + make_vector(self.mario_icon.get_width(), 0)

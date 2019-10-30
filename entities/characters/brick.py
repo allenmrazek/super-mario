@@ -1,15 +1,8 @@
-from . import Enemy
-from entities.characters.mario import MarioEffects
 from entities.characters.corpse import Corpse
-from .level_entity import LevelEntity, MovementParameters
-from .behaviors import SimpleMovement, Squashable, DamageMario
-from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa
-from util import mario_str_to_pixel_value_velocity as mstvpv
-from util import get_corpse_position, world_to_screen, pixel_coords_to_tile_coords
+from .level_entity import LevelEntity
+from util import make_vector
+from util import get_corpse_position, world_to_screen
 from .behaviors import Smashable
-import constants
-from scoring import labels
-import config
 import constants
 
 

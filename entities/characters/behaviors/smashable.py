@@ -1,7 +1,7 @@
-from .interactive import Interactive
 from entities.collider import Collider, Collision
 from .behavior import Behavior
-from util import make_vector, rescale_vector, world_to_screen, pixel_coords_to_tile_coords, distance_squared, tile_coords_to_pixel_coords
+from util import make_vector, world_to_screen, pixel_coords_to_tile_coords, distance_squared, \
+    tile_coords_to_pixel_coords
 from entities.characters.mario import Mario
 import config
 import constants

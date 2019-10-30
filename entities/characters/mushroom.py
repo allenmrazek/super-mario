@@ -1,9 +1,9 @@
 from entities.entity import Entity
 import entities.characters.behaviors
 from entities.characters.level_entity import MovementParameters
-from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva, mario_str_to_pixel_value_velocity as mstpvv
+from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva, \
+    mario_str_to_pixel_value_velocity as mstpvv
 import entities.effects
-from scoring import labels
 import constants
 
 
@@ -20,8 +20,10 @@ class Mushroom(Entity):
         super().__init__(self.animation.image.get_rect())
 
         self.level = level
-        self.pickup = entities.characters.behaviors.interactive.Interactive(level, self, (0, 0), (16, 16), self.on_collected)
-        self.movement = entities.characters.behaviors.simple_movement.SimpleMovement(self, level.collider_manager, mushroom_movement)
+        self.pickup = entities.characters.behaviors.interactive.Interactive(
+            level, self, (0, 0), (16, 16), self.on_collected)
+        self.movement = entities.characters.behaviors.simple_movement.SimpleMovement(
+            self, level.collider_manager, mushroom_movement)
         self.movement.movement_collider.mask = constants.Block  # exclude enemies
 
         self.position = position

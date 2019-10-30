@@ -1,13 +1,8 @@
-import pygame
-from entities.entity_manager import Entity
-from util import make_vector, mario_str_to_pixel_value_velocity as mstpvv
-from util import mario_str_to_pixel_value_acceleration as mstpva
-from util import world_to_screen
+from util import make_vector
 from entities.characters.mario import MarioEffects
 from state.game_state import GameState, state_stack
-from animation import Animation, OneShotAnimation
+from animation import OneShotAnimation
 from util import world_to_screen
-from event.game_events import GameEvents, EventHandler
 import config
 
 

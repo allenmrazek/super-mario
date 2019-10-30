@@ -1,6 +1,6 @@
 from .behaviors import Interactive
 from .level_entity import LevelEntity
-from util import make_vector, world_to_screen
+from util import world_to_screen
 import constants
 
 

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from pygame.sprite import Rect
-from enum import IntFlag
 from util import copy_vector
 from util import make_vector
 import constants
