@@ -3,6 +3,7 @@ from entities.characters.behaviors import Interactive, SimpleMovement
 from entities.characters.level_entity import MovementParameters
 from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva
 from ..effects import MarioTransformSuper
+from scoring import labels
 
 mushroom_movement = MovementParameters(50, 50, 0., 0., mstpva('04000'))
 
@@ -34,6 +35,7 @@ class Mushroom(Entity):
 
     def on_collected(self, collision):
         self.level.entity_manager.unregister(self)
+        labels.Labels.points += 1000
 
         print("mushroom collected!")
 
