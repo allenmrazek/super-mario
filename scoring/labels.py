@@ -6,24 +6,24 @@ Y = 675
 
 
 class Labels:
+    time = 400
+
     def __init__(self, screen):
         self.screen = screen
         self.screen_rect = screen.get_rect()
         self.bg_color = (0, 0, (0, 0, 0))
         self.text_color = (255, 255, 255)
-        self.initial_time = 481
-        self.initial_points = 0
-        self.initial_coins = 0
-        self.initial_world = '1-1'
-        self.initial_lives = 3
+        self.points = 0
+        self.coins = 0
+        self.world = '1-1'
+        self.lives = 3
         self.font = pygame.font.Font("scoring/super_mario_font.ttf", 22)
-
         self.prep_labels()
         self.prep_lives()
         self.prep_coins()
         self.prep_world()
-        self.prep_time()
         self.prep_points()
+        self.prep_time()
 
     def prep_labels(self):
         text1 = "SCORE"
@@ -57,31 +57,31 @@ class Labels:
         self.text5_rect.top = 25
 
     def prep_points(self):
-        self.points_image = self.font.render(str(self.initial_points), True, self.text_color, self.bg_color)
+        self.points_image = self.font.render(str(self.points), True, self.text_color, self.bg_color)
         self.points_rect = self.points_image.get_rect()
         self.points_rect.left = self.points_rect.left + 100
         self.points_rect.top = 48
 
     def prep_time(self):
-        self.time_image = self.font.render(str(self.initial_time), True, self.text_color, self.bg_color)
+        self.time_image = self.font.render(str(Labels.time), True, self.text_color, self.bg_color)
         self.time_rect = self.time_image.get_rect()
         self.time_rect.left = self.time_rect.left + 260
         self.time_rect.top = 48
 
     def prep_world(self):
-        self.world_image = self.font.render(self.initial_world, True, self.text_color, self.bg_color)
+        self.world_image = self.font.render(self.world, True, self.text_color, self.bg_color)
         self.world_rect = self.world_image.get_rect()
         self.world_rect.left = self.world_rect.left + 495
         self.world_rect.top = 48
 
     def prep_coins(self):
-        self.coins_image = self.font.render(str(self.initial_coins), True, self.text_color, self.bg_color)
+        self.coins_image = self.font.render(str(self.coins), True, self.text_color, self.bg_color)
         self.coins_rect = self.coins_image.get_rect()
         self.coins_rect.left = self.coins_rect.left + 715
         self.coins_rect.top = 48
 
     def prep_lives(self):
-        self.lives_image = self.font.render(str(self.initial_lives), True, self.text_color, self.bg_color)
+        self.lives_image = self.font.render(str(self.lives), True, self.text_color, self.bg_color)
         self.lives_rect = self.lives_image.get_rect()
         self.lives_rect.left = self.lives_rect.left + 915
         self.lives_rect.top = 48
