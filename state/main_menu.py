@@ -101,7 +101,6 @@ class MainMenu(GameState, EventHandler):
     def handle_event(self, evt, game_events):
         if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
             self._finished = True
-            print("menu handled event")
             self.consume(evt)
 
     def activated(self):

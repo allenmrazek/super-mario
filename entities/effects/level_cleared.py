@@ -62,16 +62,12 @@ class LevelCleared(GameState):
         self.pole = self.level.entity_manager.search_by_type(entities.characters.triggers.flag.Flag)[0]
 
         # hide mario
-        self.level.mario.enabled = False
-
-        # create another mario that we'll control ourselves
-        self.fake_input = event.player_input.PlayerInputHandler()
-        self.fake_mario = entities.characters.mario.Mario(_FakeInput(), self.level)
-        self.fake_mario.effects = self.level.mario.effects
-        self.fake_mario.enabled = False
+        self.mario = self.level.mario
+        self.mario_input = self.mario.movement.input_state
+        self.mario.enabled = False
 
         # put a doppelganger where he would be on the pole
-        self.doppler = self._create_doppleganger(self.fake_mario)
+        self.doppler = self._create_doppleganger(self.mario)
         self.doppler.position = make_vector(self.pole.position.x - self.doppler.rect.width // 3, self.level.mario.position.y)
 
         # keep track of state
@@ -89,15 +85,18 @@ class LevelCleared(GameState):
 
                 self.pole.set_flag_position(1.0)
 
-                # activate fake mario, drop him from the pole and make him move right
-                self.fake_input.right = True
-                self.fake_mario.position = make_vector(self.pole.position.x, self.doppler.position.y)
-                self.fake_mario.enabled = True
+                # drop mario and make him move right
+                self.mario.position = make_vector(self.pole.position.x, self.doppler.position.y)
+                self.mario.reset()
+                self.mario.enabled = True
+                self.mario.movement.input_state = _FakeInput()
+
 
                 # now wait for fake mario to reach castle
-                # todo
+                # a trigger should be set up to hide him or move into a pipe
 
-            self.fake_mario.update(dt, self.level.view_rect)
+            self.mario.update(dt, self.level.view_rect)
+            self.level.update_triggers_only(dt)
 
     def draw(self, screen):
         self.game_state.draw(screen)
@@ -105,7 +104,8 @@ class LevelCleared(GameState):
         if not self.waiting:
             screen.blit(self.doppler.image, world_to_screen(self.doppler.position, self.level.view_rect))
         else:
-            self.fake_mario.draw(screen, self.level.view_rect)
+            if self.mario.enabled:
+                self.mario.draw(screen, self.level.view_rect)
 
     def _create_doppleganger(self, fake):
         ca = self.level.asset_manager.character_atlas
@@ -131,13 +131,13 @@ class LevelCleared(GameState):
         # only event we care about is the end of sound one
         if evt.type == pygame.USEREVENT:
             self._finished = True
-            pygame.mixer_music.set_endevent()
-            state_stack.top.game_events.unregister(self)
-            self.level.mario.input_state.reset()
 
     @property
     def finished(self):
         return self._finished
 
     def deactivated(self):
+        pygame.mixer_music.set_endevent()
+        self.mario.movement.input_state = self.mario_input  # restore mario's input handler
+        self.mario.movement.input_state.reset()
         self.level.set_cleared()

@@ -2,7 +2,7 @@ from pygame import Rect
 from pygame import Color
 
 debug_jumps = False
-debug_hitboxes = False
+debug_hitboxes = True
 
 screen_size = 1024, 675
 screen_rect = Rect(0, 0, *screen_size)

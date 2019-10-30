@@ -79,8 +79,5 @@ class RunSession(GameState, EventHandler):
         self.game_events.unregister(self)
 
     def handle_event(self, evt, game_events):
-        print("event", evt)
-
-        #if not self.is_consumed(evt):
         if evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE:
             self._finished = True

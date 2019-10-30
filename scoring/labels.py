@@ -4,11 +4,16 @@ import config
 
 
 class Labels:
+    font = None
+    font_small = None
+
     def __init__(self):
         self.bg_color = (0, 0, (0, 0, 0))
         self.text_color = (255, 255, 255)
+
         self.world = '1-1'
-        self.font = pygame.font.Font("scoring/super_mario_font.ttf", 22)
+        Labels.font = pygame.font.Font("scoring/super_mario_font.ttf", 22)
+        Labels.font_small = pygame.font.Font("scoring/super_mario_font.ttf", 12)
 
         self.time = 400
         self.coins = 0

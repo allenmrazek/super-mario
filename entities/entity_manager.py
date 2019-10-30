@@ -62,31 +62,39 @@ class EntityManager:
 
         self.layers[entity.layer].remove(entity)
 
-    def update(self, dt, view_rect):
-        # todo: update only screen and a quarter
-        def update_entity(entity, vr):
-            entity.update(dt, vr)
-
-        self._do_on_each_layer(update_entity, view_rect, self.update_ordering)
-
     def draw(self, screen, view_rect):
         # todo: draw only screen and a quarter
-        def draw_entity(entity, vr):
-            entity.draw(screen, vr)
 
-        self._do_on_each_layer(draw_entity, view_rect, self.draw_ordering)
+        for layer in self.draw_ordering:
+            self.draw_layer(layer, screen, view_rect)
 
-    def _do_on_each_layer(self, fn, view_rect, order):
-        for layer in order:
-            entities = list(self.layers[layer])
+    def draw_layer(self, layer, screen, view_rect):
+        assert layer in self.layers
 
-            for entity in entities:
-                if hasattr(entity, "enabled"):
-                    if entity.enabled:
-                        fn(entity, view_rect)
+        for entity in self.layers[layer]:
+            if hasattr(entity, "enabled"):
+                if entity.enabled:
+                    entity.draw(screen, view_rect)
+            else:
+                entity.draw(screen, view_rect)
 
-                else:
-                    fn(entity, view_rect)
+    def update(self, dt, view_rect):
+        # todo: update only screen and a quarter
+
+        for layer in self.update_ordering:
+            self.update_layer(layer, dt, view_rect)
+
+    def update_layer(self, layer, dt, view_rect):
+        assert layer in self.layers
+
+        entities = list(self.layers[layer])  # since entities might be removed
+
+        for entity in entities:
+            if hasattr(entity, "enabled"):
+                if entity.enabled:
+                    entity.update(dt, view_rect)
+            else:
+                entity.update(dt, view_rect)
 
     def serialize(self):
         values = {"__class__": self.__class__.__name__}

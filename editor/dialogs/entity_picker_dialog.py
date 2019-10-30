@@ -7,6 +7,8 @@ from entities.characters.level_entity import LevelEntity
 from util import bind_callback_parameters
 from assets.level import Level
 from assets.gui_helper import *
+from assets.statistics import Statistics
+from scoring import Labels
 
 
 class PickedEntity:
@@ -17,7 +19,7 @@ class PickedEntity:
         factory = LevelEntity.Factories[entity_name]
 
         # create a fake level, since we don't want any factory to affect the real level
-        fake_level = Level(level.asset_manager, EntityManager.create_default())
+        fake_level = Level(level.asset_manager, EntityManager.create_default(), Statistics(Labels()))
 
         # create preview image
         preview_entity = factory(fake_level, None)

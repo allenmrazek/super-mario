@@ -1,17 +1,11 @@
 import os
 import pygame
-from event.game_events import GameEvents, EventHandler
+from event.game_events import EventHandler
 from state.game_state import state_stack
-from state import PerformanceMeasurement
 from state import MainMenu
-from editor.editor_state import EditorState
-from state import RunLevel
-from assets.level import Level
 import config
 from timer import game_timer
 from assets import AssetManager
-from entities.entity_manager import EntityManager
-from scoring import labels
 
 
 class _QuitListener(EventHandler):
@@ -32,9 +26,6 @@ def run():
     pygame.display.set_caption("Super Mario")
     assets = AssetManager()
 
-    #PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
-    #PerformanceMeasurement.measure(state_stack, RunLevel.run(assets, 'levels/level11.level'))
-
     state_stack.push(MainMenu(assets))
 
     game_timer.reset()
@@ -42,7 +33,7 @@ def run():
     # timer initialize
     accumulator = 0.0
 
-    Level.take_snapshot(assets, EntityManager.create_editor(), 'levels/level11.level', 'captured.png')
+    #Level.take_snapshot(assets, EntityManager.create_editor(), 'levels/level11.level', 'captured.png')
 
     while state_stack.top is not None:
         state_stack.top.do_events()
@@ -50,14 +41,11 @@ def run():
 
         # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
-        #updated = False  # no interpolation, so don't waste time drawing screen if it didn't change anyways
 
         while accumulator > config.PHYSICS_DT:
-            #updated = True
             state_stack.update(config.PHYSICS_DT)
             accumulator -= config.PHYSICS_DT
 
-        #if updated:
         state_stack.draw(screen)
         pygame.display.flip()
 

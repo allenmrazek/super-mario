@@ -42,6 +42,10 @@ class Level(EventHandler):
     def add_entity(self, entity):
         self.entity_manager.register(entity)
 
+    def update_triggers_only(self, dt):
+        # doesn't scroll map or update anything other than triggers
+        self.entity_manager.update_layer(Layer.Trigger, dt, self.view_rect)
+
     def update(self, dt):
         self.entity_manager.update(dt, self.view_rect)
 
@@ -83,6 +87,7 @@ class Level(EventHandler):
 
             tries += 1
             if tries > 1000:
+                print("error -- couldn't find suitable spawn location for mario")
                 raise RuntimeError
 
         self.mario.position = ground_collider.position
@@ -93,7 +98,7 @@ class Level(EventHandler):
         self.position = scroll_pos
 
         pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
-        pygame.mixer_music.play()
+        pygame.mixer_music.play(-1)
 
     def despawn_mario(self):
         assert self.mario.enabled
