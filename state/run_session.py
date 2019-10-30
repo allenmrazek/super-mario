@@ -8,6 +8,7 @@ from state.game_state import state_stack
 from scoring import Labels
 from event import EventHandler
 from .level_begin import LevelBegin
+from .game_over import GameOver
 
 
 class RunSession(GameState, EventHandler):
@@ -28,24 +29,29 @@ class RunSession(GameState, EventHandler):
         self.level_runner = None
 
     def update(self, dt):
-        self.level_runner.update(dt)
-        self.mario_stats.update(dt)
+        if not self.finished:
+            self.level_runner.update(dt)
+            self.mario_stats.update(dt)
 
-        if self.level_runner.finished:
-            self.change_state()
+            if self.level_runner.finished:
+                self.change_state()
 
     def draw(self, screen):
-        self.level_runner.draw(screen)
-        self.scoring_labels.show_labels(screen)
+        if not self.finished:
+            self.level_runner.draw(screen)
+            self.scoring_labels.show_labels(screen)
 
     @property
     def finished(self):
         return self._finished or self.mario_stats.lives <= 0 or not any(self.levels)
 
     def change_state(self):
+        self.mario_stats.lives = 0
+
         if self.mario_stats.lives == 0:
-            # todo: game over
-            print("game over message")
+            state_stack.push(GameOver(self.scoring_labels))
+            print("game over")
+            self._finished = True
         else:
             # play again if didn't clear it or haven't tried yet
             self.current_level = self.current_level or Level(self.assets, EntityManager.create_default(), self.mario_stats)
@@ -66,14 +72,18 @@ class RunSession(GameState, EventHandler):
             else:
                 # todo: won the game!
                 print("won the game!")
-                pass
+                self._finished = True
 
     def activated(self):
+        if self.finished:
+            return
+        
         if not self.level_runner or self.level_runner.finished:
             if self.current_level and self.current_level.cleared:
                 # show clear message
                 # todo: push clear message
                 self.level_runner = None
+                self.change_state()
             else:
                 self.change_state()  # move to next state (loss, victory, or level start)
         elif self.level_runner:
