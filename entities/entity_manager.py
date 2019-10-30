@@ -8,6 +8,8 @@ from util import make_vector
 
 
 class EntityManager:
+    ENTITY_UPDATE_RANGE_MULTIPLIER = 1.25
+
     def __init__(self, update_layer_ordering: list, draw_layer_ordering):
         assert update_layer_ordering is not None
         assert draw_layer_ordering is not None
@@ -63,38 +65,54 @@ class EntityManager:
         self.layers[entity.layer].remove(entity)
 
     def draw(self, screen, view_rect):
-        # todo: draw only screen and a quarter
+        # draw only screen and a quarter
+        offscreen_range = view_rect.width * (EntityManager.ENTITY_UPDATE_RANGE_MULTIPLIER - 1)
+
+        minx = view_rect.left - offscreen_range
+        maxx = view_rect.right + offscreen_range
 
         for layer in self.draw_ordering:
-            self.draw_layer(layer, screen, view_rect)
+            self.draw_layer(layer, screen, view_rect, minx, maxx)
 
-    def draw_layer(self, layer, screen, view_rect):
+    def draw_layer(self, layer, screen, view_rect, minx=None, maxx=None):
         assert layer in self.layers
 
         for entity in self.layers[layer]:
-            if hasattr(entity, "enabled"):
-                if entity.enabled:
-                    entity.draw(screen, view_rect)
-            else:
-                entity.draw(screen, view_rect)
+            xpos = entity.position.x
+
+            if not minx or xpos >= minx:
+                if not maxx or xpos <= maxx:
+                    if hasattr(entity, "enabled"):
+                        if entity.enabled:
+                            entity.draw(screen, view_rect)
+                    else:
+                        entity.draw(screen, view_rect)
 
     def update(self, dt, view_rect):
-        # todo: update only screen and a quarter
+        # update only screen and a quarter
+        offscreen_range = view_rect.width * (EntityManager.ENTITY_UPDATE_RANGE_MULTIPLIER - 1)
+
+        minx = view_rect.left - offscreen_range
+        maxx = view_rect.right + offscreen_range
 
         for layer in self.update_ordering:
-            self.update_layer(layer, dt, view_rect)
+            self.update_layer(layer, dt, view_rect, minx, maxx)
 
-    def update_layer(self, layer, dt, view_rect):
+    def update_layer(self, layer, dt, view_rect, minx=None, maxx=None):
         assert layer in self.layers
 
         entities = list(self.layers[layer])  # since entities might be removed
 
         for entity in entities:
-            if hasattr(entity, "enabled"):
-                if entity.enabled:
-                    entity.update(dt, view_rect)
-            else:
-                entity.update(dt, view_rect)
+            xpos = entity.position.x
+
+            if not minx or xpos >= minx:
+                if not maxx or xpos <= maxx:
+                    if hasattr(entity, "enabled"):
+                        if entity.enabled:
+                            entity.update(dt, view_rect)
+                    else:
+                        entity.update(dt, view_rect)
 
     def serialize(self):
         values = {"__class__": self.__class__.__name__}
