@@ -70,7 +70,6 @@ def copy_vector(v):
 
 def make_vector(x, y):
     new_v = pygame.Vector2()
-
     new_v.x, new_v.y = x, y
 
     return new_v

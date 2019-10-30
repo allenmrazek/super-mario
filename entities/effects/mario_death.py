@@ -6,8 +6,8 @@ from util import world_to_screen
 from event import EventHandler
 from state import state_stack
 from entities.entity import Layer
-from scoring import labels
-
+import state.level_begin
+import state.run_session
 
 """Death animation:
 
@@ -43,10 +43,6 @@ class MarioDeath(Entity, EventHandler):
 
         pygame.mixer_music.play()
 
-        # Decrement live counter
-        if labels.Labels.lives != 0:
-            labels.Labels.lives -= 1
-
         state_stack.top.game_events.register(self)
 
     def update(self, dt, view_rect):
@@ -64,7 +60,23 @@ class MarioDeath(Entity, EventHandler):
 
         if self._finished:
             self.level.entity_manager.unregister(self)
-            self.level.spawn_mario()
+
+            # Decrement live counter
+            self.level.stats.lives -= 1
+
+            # if have more lives, display world start again
+            if self.level.stats.lives > 0:
+                # kludgy :( no time to do it the nice way though
+                run_session = state_stack.top
+
+                while run_session is not None and not isinstance(run_session, state.run_session.RunSession):
+                    run_session = state_stack.get_next(run_session)
+
+                state_stack.push(state.level_begin.LevelBegin(self.level.asset_manager, self.level, run_session.scoring_labels,
+                                            self.level.stats))
+
+                # also resetore level state...
+                self.level.reset()
 
     def draw(self, screen, view_rect):
         screen.blit(self.animation.image, world_to_screen(self.position, view_rect))

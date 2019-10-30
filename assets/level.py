@@ -6,17 +6,19 @@ from assets.tile_map import TileMap
 import config
 from util import make_vector, copy_vector
 from entities.entity import Layer
-from entities.characters import Mario
+import entities.characters
 from entities.characters.spawners import MarioSpawnPoint
 from event import PlayerInputHandler
 from event.game_events import EventHandler
+import entities.effects.mario_death
+import constants
 
 
 class Level(EventHandler):
     #UPDATE_RECT_DISTANCE_FACTOR = 1.25  # entities within view_rect +- this factor * its width will be updated, else they'll be frozen
 
     """A level is the highest-level object containing everything that makes up a level"""
-    def __init__(self, assets, entity_manager, stats):
+    def __init__(self, assets, entity_manager, stats, title="Not Titled"):
         super().__init__()
 
         assert entity_manager is not None
@@ -29,10 +31,12 @@ class Level(EventHandler):
         self.filename = ""
         self.normal_physics = True
         self.stats = stats
+        self.title = title
+        self.loaded_from = ""
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
-        self.mario = Mario(self.player_input, self)
+        self.mario = entities.characters.mario.Mario(self.player_input, self)
         self.mario.enabled = False
 
         self._scroll_position = make_vector(0, 0)
@@ -54,6 +58,10 @@ class Level(EventHandler):
             left = self.mario.position.x - self.view_rect.width // 4
 
             self.position = make_vector(left if self.position.x < left else self.position.x, 0)
+
+            if self.mario.position.y > self.tile_map.height_pixels + self.mario.rect.height:
+                self.despawn_mario()
+                self.entity_manager.register(entities.effects.mario_death.MarioDeath(self, self.mario.position))
 
     def draw(self, screen):
         vr = self.view_rect  # send copy: don't want our private stuff messed with
@@ -97,9 +105,6 @@ class Level(EventHandler):
         scroll_pos = make_vector(max(0, self.mario.position.x - self.view_rect.width // 4), self.position.y)
         self.position = scroll_pos
 
-        pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
-        pygame.mixer_music.play(-1)
-
     def despawn_mario(self):
         assert self.mario.enabled
 
@@ -125,18 +130,11 @@ class Level(EventHandler):
         self.normal_physics = values["normal_physics"] if "normal_physics" in values else True
 
         # we only want one unique mario, ignore any that might have been deserialized
-        for existing in self.entity_manager.search_by_type(Mario):
+        for existing in self.entity_manager.search_by_type(entities.characters.mario.Mario):
             existing.destroy()
 
         # add our unique mario
         self.entity_manager.register(self.mario)
-
-        # search for mario spawn point(s)
-        # removed so level doesn't start yet
-        # spawn_point = self._find_spawn_point()
-        #
-        # if spawn_point:
-        #     self.spawn_mario(spawn_point)
 
     def begin(self):
         if self.mario.enabled:
@@ -145,12 +143,23 @@ class Level(EventHandler):
         spawn_point = self._find_spawn_point()
 
         if spawn_point:
-            self.spawn_mario(spawn_point)
+            self.spawn_mario(spawn_point[0])
         else:
             print("warning -- couldn't find mario spawn point")
 
     def set_cleared(self):
         self._cleared = True
+
+    def reset(self):
+        if self.loaded_from:
+            current_spawn = self._find_spawn_point()
+
+            self.load_from_path(self.loaded_from, current_spawn[1])  # want idx, not actual point
+            self.stats.remaining_time = constants.TIME_PER_LEVEL
+
+            print("reset level")
+        else:
+            print("warning: failed to reset level -- was not loaded from disk")
 
     @property
     def cleared(self):
@@ -162,12 +171,14 @@ class Level(EventHandler):
         with open(filename, 'r') as f:
             self.deserialize(json.loads(f.read()))
 
+        self.loaded_from = filename
+
         if spawn_idx > 0:
             spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)
             spawn_points.sort(key=lambda spawn: spawn.position.x)
 
             selected = spawn_points[spawn_idx:1]
-            self.position.x = selected[0].position.x
+            self.position.x = selected[0][0].position.x
 
     def _find_spawn_point(self):
         spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)
@@ -179,14 +190,14 @@ class Level(EventHandler):
         reached = [sp for sp in spawn_points if sp.position.x <= self.position.x]
 
         if reached:
-            return reached[len(reached) - 1]  # choose the rightmost reached spawn location
+            return reached[-1], reached.index(reached[-1])  # choose the rightmost reached spawn location
 
         # otherwise, we haven't reached any spawn points. But there might be one visible
         # on screen. Try that one next
         visible = [sp for sp in spawn_points if self.position.x <= sp.position.x <= self.position.x + self.view_rect.width]
 
         if visible:
-            return visible[len(visible) - 1]
+            return visible[-1], visible.index(visible[-1])
 
         # nothing visible, no checkpoints reached -> just don't spawn mario
 

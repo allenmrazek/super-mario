@@ -81,7 +81,9 @@ class GameStateStack:
         if top:
             top.update(dt)
 
-            if top.finished:
+            # one of the things that might've happened is the top state switched ... so don't use top here, use
+            # self.top
+            if self.top.finished:
                 self.pop()
 
     def draw(self, screen):

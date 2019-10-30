@@ -43,3 +43,5 @@ class GameOver(GameState, EventHandler):
     def handle_event(self, evt, game_events):
         if evt.type == pygame.USEREVENT:
             self._finished = True
+        elif evt.type == pygame.QUIT:
+            exit()

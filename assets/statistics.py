@@ -1,9 +1,8 @@
 from scoring import Labels
+import constants
 
 
 class Statistics:
-    INITIAL_TIME = 400
-
     def __init__(self, scoring: Labels):
         # make pep8 happy
         self._score = 0
@@ -19,13 +18,13 @@ class Statistics:
         self.score = 0
         self.lives = 3
         self.coins = 0
-        self.remaining_time = Statistics.INITIAL_TIME
+        self.remaining_time = constants.TIME_PER_LEVEL
         self._elapsed = 0.
 
     def update(self, dt):
         self._elapsed += dt
 
-        new_time = max(Statistics.INITIAL_TIME - int(self._elapsed), 0)
+        new_time = max(constants.TIME_PER_LEVEL - int(self._elapsed), 0)
 
         if new_time != self.remaining_time:
             self.remaining_time = new_time  # avoid creating new surface every update

@@ -1,6 +1,7 @@
 import pygame
 from state.game_state import GameState
-from entities.entity_manager import EntityManager
+
+import entities.entity_manager
 from assets.level import Level
 from assets.statistics import Statistics
 from event.game_events import EventHandler
@@ -37,7 +38,7 @@ class RunLevel(GameState):
 
     @staticmethod
     def run(assets, level_filename):
-        level = Level(assets, EntityManager.create_default())
+        level = Level(assets, entities.entity_manager.EntityManager.create_default())
 
         level.load_from_path(level_filename)
 

@@ -1,8 +1,8 @@
 from entities.entity import Entity, Layer
-from entities.characters.behaviors import Interactive, SimpleMovement
+import entities.characters.behaviors
 from entities.characters.level_entity import MovementParameters
 from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva
-from ..effects import MarioTransformSuper
+import entities.effects
 from scoring import labels
 
 # todo: scale this by rescale factor
@@ -10,14 +10,16 @@ mushroom_movement = MovementParameters(50, 50, 0., 0., mstpva('04000'))
 
 
 class Mushroom(Entity):
+    POINT_VALUE = 1000
+
     def __init__(self, level, position):
         self.animation = level.asset_manager.pickup_atlas.load_static("mushroom_red")
 
         super().__init__(self.animation.image.get_rect())
 
         self.level = level
-        self.pickup = Interactive(level, self, (0, 0), (16, 16), self.on_collected)
-        self.movement = SimpleMovement(self, level.collider_manager, mushroom_movement)
+        self.pickup = entities.characters.behaviors.interactive.Interactive(level, self, (0, 0), (16, 16), self.on_collected)
+        self.movement = entities.characters.behaviors.simple_movement.SimpleMovement(self, level.collider_manager, mushroom_movement)
         self.movement.movement_collider.mask = Layer.Block  # exclude enemies
 
         self.position = position
@@ -36,8 +38,6 @@ class Mushroom(Entity):
 
     def on_collected(self, collision):
         self.level.entity_manager.unregister(self)
-        labels.Labels.points += 1000
+        self.level.stats.score += Mushroom.POINT_VALUE
 
-        print("mushroom collected!")
-
-        MarioTransformSuper.apply_transform(self.level, self.level.mario)
+        entities.effects.mario_transform_super.MarioTransformSuper.apply_transform(self.level, self.level.mario)

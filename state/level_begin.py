@@ -8,12 +8,13 @@ from util import make_vector, copy_vector
 class LevelBegin(GameState):
     DURATION = 3.
 
-    def __init__(self, assets, scoring_labels: Labels, mario_stats):
+    def __init__(self, assets, level, scoring_labels: Labels, mario_stats):
         super().__init__()
 
         self.assets = assets
         self.scoring_labels = scoring_labels
         self.mario_stats = mario_stats
+        self.level = level
 
         def make_centered(surface):
             return make_vector(*sr.center) - make_vector(surface.get_width() // 2, surface.get_height() // 2)
@@ -22,7 +23,7 @@ class LevelBegin(GameState):
         tc = pygame.Color('white')
 
         self.elapsed = 0
-        self.world_title = Labels.font_large.render("World Title", True, tc).convert_alpha()
+        self.world_title = Labels.font_large.render(level.title, True, tc).convert_alpha()
         self.world_title_pos = make_centered(self.world_title) - make_vector(0, 100)
 
         self.x = Labels.font_large.render("x", True, tc)
@@ -51,3 +52,14 @@ class LevelBegin(GameState):
     @property
     def finished(self):
         return self.elapsed >= LevelBegin.DURATION
+
+    def activated(self):
+        pygame.mixer_music.stop()
+
+    def deactivated(self):
+        pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
+        pygame.mixer_music.play(-1)
+
+        self.level.begin()
+
+        print("playing theme music")

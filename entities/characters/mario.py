@@ -31,11 +31,11 @@ class Mario(LevelEntity):
                                                                     level.asset_manager.sounds['jump_super'])
 
         self._enabled = False
-        self._active_effects = MarioEffects.Super
-        #self._active_effects = MarioEffects.Small
+        self._active_effects = MarioEffects.Small
         self._invincibility_period = 0.
 
         #self.make_invincible(3000)
+        #self._active_effects = MarioEffects.Super
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
