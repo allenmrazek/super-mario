@@ -108,9 +108,6 @@ class PerformanceMeasurement(GameState):
             max(self.draw_performance.max_overall, self.draw_performance.max)
         )
 
-        labels_ = labels.Labels(screen)
-        labels_.show_labels()
-
     def activated(self):
         self.target_state.activated()
 

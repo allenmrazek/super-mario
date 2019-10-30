@@ -39,14 +39,14 @@ class NoStatesError(RuntimeError):
 
 class GameStateStack:
     def __init__(self, initial_state=None):
-        self._states = [] if initial_state is None else [initial_state]
+        self.states = [] if initial_state is None else [initial_state]
 
         if self.top is not None:
             initial_state.activated()
 
     @property
     def top(self):
-        return self._states[len(self._states) - 1] if len(self._states) > 0 else None
+        return self.states[-1] if len(self.states) > 0 else None
 
     def push(self, state):
         assert state is not None
@@ -54,7 +54,7 @@ class GameStateStack:
         if self.top is not None:
             self.top.deactivated()
 
-        self._states.append(state)
+        self.states.append(state)
         self.top.activated()
 
     def pop(self):
@@ -64,7 +64,7 @@ class GameStateStack:
             # deactivate current top
             top.deactivated()
 
-            old_top = self._states.pop(len(self._states) - 1)
+            old_top = self.states.pop(len(self.states) - 1)
 
             # get new top (if any) and let it know it just became active
             top = self.top
@@ -98,10 +98,10 @@ class GameStateStack:
 
     def get_next(self, state):
         # given a state, return the next state that would run once state finishes
-        idx = self._states.index(state)
+        idx = self.states.index(state)
 
         if idx > 0:
-            return self._states[idx - 1]
+            return self.states[idx - 1]
         return None
 
 

@@ -41,7 +41,7 @@ def run():
 
         # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
-
+        accumulator = min(0.20, accumulator)
         while accumulator > config.PHYSICS_DT:
             state_stack.update(config.PHYSICS_DT)
             accumulator -= config.PHYSICS_DT

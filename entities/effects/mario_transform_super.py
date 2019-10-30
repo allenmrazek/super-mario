@@ -58,8 +58,6 @@ class MarioTransformSuper(GameState):
         self.animation = self.build_animation(powerup.get_length(), fixed_little, middle.image, super_mario.image)
         mario.enabled = False
 
-        self._finished = False
-
         # since we're positioning by top-left corner and super mario is larger than small mario,
         # we need a corrective offset
         self._offset = make_vector(0, -little_mario.image.get_height())
@@ -104,16 +102,19 @@ class MarioTransformSuper(GameState):
         return OneShotAnimation(frames, duration, self._animation_finished)
 
     def _animation_finished(self):
-        self._finished = True
+        # have to manipulate game state stack directly since this state was originally designed
+        # to be pushed over RunLevel, but now it's over RunSession
+        # we don't want RunSession's activate to fire
+        assert state_stack.top is self
+        state_stack.states.pop()
+        self.deactivated()
 
     @property
     def finished(self):
-        return self._finished
+        return False
 
     @staticmethod
     def apply_transform(level, mario):
         # transform little mario into super mario
-
         transform = MarioTransformSuper(level, mario)
-
-        state_stack.push(transform)
+        state_stack.states.append(transform)

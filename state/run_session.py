@@ -80,7 +80,7 @@ class RunSession(GameState, EventHandler):
 
         if not self.level_runner or self.level_runner.finished:
             if self.current_level and self.current_level.cleared:
-                # show clear message
+                # show clear message if finished world
                 # todo: push clear message
                 self.level_runner = None
                 self.change_state()

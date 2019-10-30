@@ -58,7 +58,7 @@ class EntityPickerDialog(Dialog):
         # create vertical scrollbar
         self.vertical_scroll = create_slider(self.assets.gui_atlas,
                                              make_vector(self.scrolling_container.rect.right + 5, self.scrolling_container.rect.top + 5),
-                                             self.scrolling_container.rect.height - 15, 0, 20, self._on_scroll_changed,
+                                             self.scrolling_container.rect.height - 15, 0, 100, self._on_scroll_changed,
                                              thumb=self.assets.gui_atlas.load_static("sb_thumb"),
                                              thumb_mo=self.assets.gui_atlas.load_static("sb_thumb_light"),
                                              sb_type=ScrollbarType.VERTICAL)

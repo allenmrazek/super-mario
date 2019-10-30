@@ -92,11 +92,15 @@ class MarioTransformSmall(GameState):
         return OneShotAnimation(frames, duration, self._animation_finished)
 
     def _animation_finished(self):
-        self._finished = True
+        # see super transform for explanation
+        assert state_stack.top is self
+        state_stack.states.pop()
+        self.deactivated()
 
     @property
     def finished(self):
-        return self._finished
+        # see super transform for explanation
+        return False
 
     @staticmethod
     def apply_transform(level, mario):

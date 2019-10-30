@@ -104,6 +104,9 @@ class ColliderManager:
     def unregister(self, collider: Collider):
         self._colliders.remove(collider)
 
+    def clear(self):
+        self._colliders = set()
+
     def contains(self, collider):
         return collider in self._colliders
 
@@ -220,7 +223,6 @@ class ColliderManager:
         for c in collisions:
             if c.hit_collider is not None and c.hit_collider.on_collision is not None:
                 c.hit_collider.on_collision(c)
-                print("collision event")
 
                 if collider.on_collision is not None and c is not collider:
                     collider.on_collision(c)

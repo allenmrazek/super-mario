@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from copy import copy
 from .entity import Entity, Layer
 from .characters import LevelEntity
 from pygame.sprite import Rect
@@ -77,7 +78,7 @@ class EntityManager:
     def draw_layer(self, layer, screen, view_rect, minx=None, maxx=None):
         assert layer in self.layers
 
-        for entity in self.layers[layer]:
+        for entity in self.layers[layer].copy():
             xpos = entity.position.x
 
             if not minx or xpos >= minx:
@@ -136,7 +137,7 @@ class EntityManager:
 
         # clear any existing values and load new ones from disk
         for layer in self.layers:
-            entity_list = self.layers[layer]
+            entity_list = self.layers[layer].copy()
 
             for existing_entity in entity_list:
                 if hasattr(existing_entity, "destroy"):
@@ -154,6 +155,18 @@ class EntityManager:
 
                 if entity is not None:
                     self.register(entity)
+
+    def clear(self):
+        for layer in self.layers:
+            entity_list = self.layers[layer].copy()
+
+            for existing_entity in entity_list:
+                d = getattr(existing_entity, "destroy", None)
+
+                if d:
+                    existing_entity.destroy()
+
+            entity_list.clear()
 
     def search_by_type(self, cls):
         found = []

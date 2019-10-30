@@ -8,6 +8,7 @@ from util import mario_str_to_pixel_value_velocity as mstvpv
 from util import get_corpse_position, world_to_screen, pixel_coords_to_tile_coords
 from entities.entity import Layer
 from .behaviors import Smashable
+import constants
 from scoring import labels
 import config
 
@@ -42,7 +43,7 @@ class Brick(LevelEntity):
         if mario.is_super:
             # destroy this brick
             self.die()
-            labels.Labels.points += 50
+            self.level.stats.score += constants.BRICK_VALUE
         else:
             # mario can't break it, small movement instead
             self.level.asset_manager.sounds['bump'].play()

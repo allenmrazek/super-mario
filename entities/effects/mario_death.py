@@ -8,6 +8,7 @@ from state import state_stack
 from entities.entity import Layer
 import state.level_begin
 import state.run_session
+import entities.characters.mario
 
 """Death animation:
 
@@ -66,6 +67,9 @@ class MarioDeath(Entity, EventHandler):
 
             # if have more lives, display world start again
             if self.level.stats.lives > 0:
+                # reset any state mario might have had
+                self.level.mario.effects = entities.characters.mario.MarioEffects.Small
+                
                 # kludgy :( no time to do it the nice way though
                 run_session = state_stack.top
 

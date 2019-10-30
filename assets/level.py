@@ -59,7 +59,7 @@ class Level(EventHandler):
 
             self.position = make_vector(left if self.position.x < left else self.position.x, 0)
 
-            if self.mario.position.y > self.tile_map.height_pixels + self.mario.rect.height:
+            if self.mario.position.y > self.tile_map.height_pixels + self.mario.rect.height * 4:
                 self.despawn_mario()
                 self.entity_manager.register(entities.effects.mario_death.MarioDeath(self, self.mario.position))
 
@@ -73,6 +73,8 @@ class Level(EventHandler):
         self.player_input.handle_event(evt, game_events)
 
     def spawn_mario(self, spawn_point=None):
+        print("spawning mario")
+
         spawn_point = spawn_point or self._find_spawn_point()
 
         assert isinstance(spawn_point, MarioSpawnPoint)
@@ -167,6 +169,11 @@ class Level(EventHandler):
 
     def load_from_path(self, filename, spawn_idx=0):
         self._cleared = False
+
+        # self.entity_manager = entities.entity_manager.EntityManager(self.entity_manager.update_ordering, self.entity_manager.draw_ordering)
+        # self.collider_manager = ColliderManager(self.tile_map)
+        self.entity_manager.clear()
+
 
         with open(filename, 'r') as f:
             self.deserialize(json.loads(f.read()))

@@ -178,12 +178,14 @@ class EditorState(GameState, EventHandler):
 
                 # easiest way to handle this is to serialize our level, then load it rather than some
                 # complicated deepcopy incomplementation
-                test_level = Level(self.assets, EntityManager.create_default())
+                stats = copy.copy(self.level.stats)
+
+                test_level = Level(self.assets, EntityManager.create_default(), stats)
                 test_level.deserialize(self.level.serialize())
                 test_level.position = self.level.position
 
                 state_stack.push(PerformanceMeasurement(state_stack, self.game_events,
-                                                        RunLevel(self.game_events, self.assets, test_level)))
+                                                        RunLevel(self.game_events, self.assets, test_level, stats)))
 
         if evt.type == pygame.MOUSEBUTTONUP:
             self.current_mode.on_map_mouseup(evt, pygame.mouse.get_pos())

@@ -5,6 +5,7 @@ from entities.entity import Layer
 from .behaviors import Smashable
 from entities.entity import Entity
 from .corpse import Corpse
+from .spawn_block import SpawnBlock
 import config
 import constants
 
@@ -30,39 +31,18 @@ class AirCoin(Corpse):  # weird right? I know
         return Layer.Background
 
 
-class CoinBlock(LevelEntity):
+class CoinBlock(SpawnBlock):
     def __init__(self, level, position):
         self.level = level
-
-        iatlas = level.asset_manager.interactive_atlas
         patlas = level.asset_manager.pickup_atlas
 
-        self.animation = iatlas.load_animation("coin_block_ow")
-        self.empty = iatlas.load_static("coin_block_empty_ow")
         self.coin_up = patlas.load_animation("coin_spin")
 
-        super().__init__(self.empty.get_rect())
+        super().__init__(level, position)
 
         self.position = position
 
-        # note: Smashable assumes we're passing in UNSCALED values, so don't use our own rect size
-        self.smashable = Smashable(level, self, self._on_smashed)
-
-        self._smashed = False
-
-    def update(self, dt, view_rect):
-        super().update(dt, view_rect)
-
-        self.smashable.update(dt)
-        self.animation.update(dt)
-        
-    def draw(self, screen, view_rect):
-        super().draw(screen, view_rect)
-
-        screen.blit(self.animation.image, world_to_screen(self.position, view_rect))
-        self.smashable.draw(screen, view_rect)
-
-    def _on_smashed(self):
+    def smashed(self):
         if not self._smashed:
             self.level.asset_manager.sounds['coin'].play()
             self._smashed = True
@@ -77,15 +57,11 @@ class CoinBlock(LevelEntity):
         else:
             self.level.asset_manager.sounds['bump'].play()
 
-    def destroy(self):
-        self.level.entity_manager.unregister(self)
-
     def create_preview(self):
-        return self.animation.image.copy()
+        block = super().create_preview()
+        block.blit(self.coin_up.image, (0, 0))
 
-    @property
-    def layer(self):
-        return Layer.Block
+        return block
 
 
 def make_coin_block(level, values):

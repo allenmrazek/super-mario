@@ -313,5 +313,6 @@ def load_sound_fx():
     sounds['breakblock'] = load_sound('smb_breakblock.wav')
     sounds['bump'] = load_sound('smb_bump.wav')
     sounds['coin'] = load_sound('smb_coin.wav')
+    sounds['powerup_appears'] = load_sound('smb_powerup_appears.wav')
 
     return sounds
