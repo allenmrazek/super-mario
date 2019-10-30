@@ -9,8 +9,9 @@ class Statistics:
         self._score = 0
         self._lives = 0
         self._coins = 0
-        self._time_left = 0
         self._scoring = scoring
+        self._elapsed = 0.
+        self._remaining_time = 0
         self.reset()
 
     def reset(self):
@@ -19,6 +20,15 @@ class Statistics:
         self.lives = 3
         self.coins = 0
         self.remaining_time = Statistics.INITIAL_TIME
+        self._elapsed = 0.
+
+    def update(self, dt):
+        self._elapsed += dt
+
+        new_time = max(Statistics.INITIAL_TIME - int(self._elapsed), 0)
+
+        if new_time != self.remaining_time:
+            self.remaining_time = new_time  # avoid creating new surface every update
 
     @property
     def score(self):
@@ -32,11 +42,11 @@ class Statistics:
 
     @property
     def remaining_time(self):
-        return self._time_left
+        return self._remaining_time
 
     @remaining_time.setter
     def remaining_time(self, val):
-        self._time_left = val
+        self._remaining_time = val
         self._scoring.time = val
         self._scoring.prep_time()
 

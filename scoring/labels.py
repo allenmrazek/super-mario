@@ -49,24 +49,6 @@ class Labels:
         self.prep_points()
         self.prep_time()
 
-        # clock initialize
-        self.last_tick = pygame.time.get_ticks()
-        self.seconds = 0
-        self.milliseconds = 0
-
-    def update(self):
-        new_tick = pygame.time.get_ticks()
-        self.milliseconds += self.last_tick - new_tick
-        self.last_tick = new_tick
-
-        if self.time > 0:
-            if self.milliseconds > 1000:
-                self.seconds += 1
-                self.milliseconds -= 1000
-                if self.seconds == 1:
-                    self.time -= 1
-                    self.seconds = 0
-
     def prep_labels(self):
         text1 = "SCORE"
         self.text1_image = self.font.render(text1, True, self.text_color, self.bg_color)
