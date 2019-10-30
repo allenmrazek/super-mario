@@ -1,0 +1,5 @@
+Sound effects: https://themushroomkingdom.net/media/smb/wav
+UI sprites: https://www.sprites-inc.co.uk/sprite.php?local=Classic/MMLC/Misc/UI/
+Music: http://www.mariomayhem.com/downloads/sound_tracks/super_mario_bros_1_soundtrack.php
+
+Sprites: Vincent DeAugustine for splitting, many others for creating
