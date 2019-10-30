@@ -132,10 +132,22 @@ class Level(EventHandler):
         self.entity_manager.register(self.mario)
 
         # search for mario spawn point(s)
+        # removed so level doesn't start yet
+        # spawn_point = self._find_spawn_point()
+        #
+        # if spawn_point:
+        #     self.spawn_mario(spawn_point)
+
+    def begin(self):
+        if self.mario.enabled:
+            self.mario.enabled = False
+
         spawn_point = self._find_spawn_point()
 
         if spawn_point:
             self.spawn_mario(spawn_point)
+        else:
+            print("warning -- couldn't find mario spawn point")
 
     def set_cleared(self):
         self._cleared = True
