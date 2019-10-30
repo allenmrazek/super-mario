@@ -5,6 +5,7 @@ from .behaviors import SimpleMovement, Squashable, DamageMario
 from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa
 from util import mario_str_to_pixel_value_velocity as mstvpv
 from util import get_corpse_position, world_to_screen
+from scoring import labels
 import config
 
 # Goomba
@@ -40,6 +41,7 @@ class Goomba(Enemy):
 
     def die(self):
         self.destroy()
+        labels.Labels.points += 100
 
         corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
                         1., self.position)

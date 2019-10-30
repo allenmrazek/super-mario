@@ -86,13 +86,11 @@ class GameStateStack:
 
     def draw(self, screen):
         top = self.top
-
         if top:
             top.draw(screen)
 
     def event(self, event):
         top = self.top
-
         if top:
             top.event(event)
 

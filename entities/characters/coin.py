@@ -2,6 +2,7 @@ from .behaviors import Interactive
 from .level_entity import LevelEntity
 from entities.entity import Layer
 from util import make_vector, world_to_screen
+from scoring import labels
 
 
 class Coin(LevelEntity):
@@ -31,7 +32,8 @@ class Coin(LevelEntity):
         self.level.entity_manager.unregister(self)
 
     def _on_collected(self, collision):
-        # todo: increase mario coin counter
+        labels.Labels.coins += 1
+        labels.Labels.points += 200
         self.collect_sound.play()
 
         self.destroy()
