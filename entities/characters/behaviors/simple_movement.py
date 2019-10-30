@@ -2,8 +2,7 @@ from .behavior import Behavior
 from util import make_vector
 from entities.characters.level_entity import MovementParameters
 from entities.collider import Collider
-from entities import Layer
-
+import constants
 
 class SimpleMovement(Behavior):
     """Side-to-side movement, moving left initially, changes direction on hitting an enemy or block
@@ -19,11 +18,11 @@ class SimpleMovement(Behavior):
         self.collider_manager = collider_manager
 
         self.movement_collider = movement_collider or Collider.from_entity(entity,
-                                                                           collider_manager, Layer.Block | Layer.Enemy)
+                                                                           collider_manager, constants.Block | constants.Enemy)
         self.parameters = parameters  # type: MovementParameters
         self.velocity = make_vector(-self.parameters.max_horizontal_velocity, 0.)
 
-        self.airborne_collider = Collider.from_entity(entity, collider_manager, Layer.Block)
+        self.airborne_collider = Collider.from_entity(entity, collider_manager, constants.Block)
 
         # allow other things to collider with our movement collider. Note they
         # must have a mask that hits Layer.Enemy to do this
@@ -75,7 +74,8 @@ class SimpleMovement(Behavior):
         vel = make_vector(0, self.velocity.y)
         target_pos = self.entity.position + vel * dt
         self.movement_collider.position = self.entity.position
-        self.movement_collider.approach(target_pos, True)
+        #self.movement_collider.approach(target_pos, True)
+        self.movement_collider.try_move(target_pos, True)
         self.entity.position = self.movement_collider.position
 
     def _handle_horizontal_movement(self, dt):
@@ -101,5 +101,5 @@ class SimpleMovement(Behavior):
             # only flip directions if it will improve situation
             if (is_left and self.velocity.x < 0.) or (is_right and self.velocity.x > 0.):
                 self._reverse_direction = True
-        elif collision.hit_collider is not None and collision.hit_collider.layer == Layer.Enemy:
+        elif collision.hit_collider is not None and collision.hit_collider.layer == constants.Enemy:
             self._reverse_direction = True

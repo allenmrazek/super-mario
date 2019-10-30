@@ -1,9 +1,11 @@
-from entities.entity import Entity, Layer
+from entities.entity import Entity
 import entities.characters.behaviors
 from entities.characters.level_entity import MovementParameters
 from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpva
 import entities.effects
 from scoring import labels
+import constants
+
 
 # todo: scale this by rescale factor
 mushroom_movement = MovementParameters(50, 50, 0., 0., mstpva('04000'))
@@ -20,7 +22,7 @@ class Mushroom(Entity):
         self.level = level
         self.pickup = entities.characters.behaviors.interactive.Interactive(level, self, (0, 0), (16, 16), self.on_collected)
         self.movement = entities.characters.behaviors.simple_movement.SimpleMovement(self, level.collider_manager, mushroom_movement)
-        self.movement.movement_collider.mask = Layer.Block  # exclude enemies
+        self.movement.movement_collider.mask = constants.Block  # exclude enemies
 
         self.position = position
 

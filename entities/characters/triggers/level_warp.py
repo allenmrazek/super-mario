@@ -3,8 +3,8 @@ import pygame
 from entities.characters import LevelEntity
 from ..behaviors import Interactive
 from util import world_to_screen
-from entities.entity import Layer
 from entities.gui.modal.modal_text_input import ModalTextInput
+import constants
 
 
 class LevelWarp(LevelEntity):
@@ -58,7 +58,7 @@ class LevelWarp(LevelEntity):
 
     @property
     def layer(self):
-        return Layer.Trigger
+        return constants.Trigger
 
     def serialize(self):
         values = super().serialize()

@@ -7,7 +7,7 @@ from state.game_state import GameState, state_stack
 from state.run_level import RunLevel
 from entities.gui import Frame, Element, Anchor, Scrollbar, ScrollbarType
 from editor.dialogs import ToolDialog, TilePickerDialog, ModeDialog, LevelConfigDialog, EntityPickerDialog, EntityToolDialog
-from entities import EntityManager, Layer
+from entities import EntityManager
 from assets.asset_manager import AssetManager
 import config
 from util import make_vector, bind_callback_parameters
@@ -23,6 +23,7 @@ from entities.gui.modal import ModalTextInput
 from assets.gui_helper import *
 from assets.statistics import Statistics
 from scoring import Labels
+import constants
 
 
 class _ModeDrawHelper(Element):
@@ -109,7 +110,7 @@ class EditorState(GameState, EventHandler):
     def draw(self, screen):
         screen.fill(self.level.background_color)
         self.level.draw(screen)
-        self.entity_manager.draw(screen, self.level.view_rect)
+        self.entity_manager.draw(screen, self.level.view_rect, False)
 
     def set_mode(self, new_mode):
         if new_mode is self.place_mode:
@@ -139,7 +140,7 @@ class EditorState(GameState, EventHandler):
         self.current_mode = new_mode
 
     def update(self, dt):
-        self.entity_manager.update(dt, self.level.view_rect)
+        self.entity_manager.update(dt, self.level.view_rect, False)
 
     @property
     def finished(self):

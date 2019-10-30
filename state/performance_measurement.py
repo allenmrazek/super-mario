@@ -4,10 +4,10 @@ from .game_state import GameState
 from .game_state import GameStateStack
 from entities.gui.element import Anchor
 from entities.gui.text import Text
-from entities.entity import Layer
 from entities.entity_manager import EntityManager
 from util import make_vector
 import config
+import constants
 from scoring import labels
 
 
@@ -27,7 +27,7 @@ class PerformanceMeasurement(GameState):
         self.target_state = target_state
         self.state_stack = state_stack
 
-        self.entities = EntityManager([Layer.Interface], [Layer.Interface])
+        self.entities = EntityManager([constants.Interface], [constants.Interface])
 
         text_position = make_vector(config.screen_rect.right, config.screen_rect.top)
 

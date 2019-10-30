@@ -5,10 +5,10 @@ from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import world_to_screen
 from event import EventHandler
 from state import state_stack
-from entities.entity import Layer
 import state.level_begin
 import state.run_session
 import entities.characters.mario
+import constants
 
 """Death animation:
 
@@ -69,7 +69,7 @@ class MarioDeath(Entity, EventHandler):
             if self.level.stats.lives > 0:
                 # reset any state mario might have had
                 self.level.mario.effects = entities.characters.mario.MarioEffects.Small
-                
+
                 # kludgy :( no time to do it the nice way though
                 run_session = state_stack.top
 
@@ -94,5 +94,5 @@ class MarioDeath(Entity, EventHandler):
 
     @property
     def layer(self):
-        return Layer.Active
+        return constants.Active
 

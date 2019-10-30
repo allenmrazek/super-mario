@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import NamedTuple
 from .level_entity import LevelEntity
+import constants
 
 
 class Enemy(LevelEntity, ABC):
@@ -14,8 +15,7 @@ class Enemy(LevelEntity, ABC):
 
     @property
     def layer(self):
-        import entities.entity
-        return entities.entity.Layer.Enemy
+        return constants.Enemy
 
     @abstractmethod
     def update(self, dt, view_rect):

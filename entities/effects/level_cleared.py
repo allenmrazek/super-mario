@@ -16,7 +16,6 @@ from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import world_to_screen
 from event import EventHandler
 from state import state_stack
-from entities.entity import Layer
 import entities.characters.triggers.flag
 import entities.characters.mario
 import event.player_input

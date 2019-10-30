@@ -1,7 +1,6 @@
 from .level_entity import LevelEntity
 from util import make_vector
 from util import world_to_screen
-from entities.entity import Layer
 from .behaviors import Smashable
 from entities.entity import Entity
 from .corpse import Corpse
@@ -28,7 +27,7 @@ class AirCoin(Corpse):  # weird right? I know
 
     @property
     def layer(self):
-        return Layer.Background
+        return constants.Background
 
 
 class CoinBlock(SpawnBlock):

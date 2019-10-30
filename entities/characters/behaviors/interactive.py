@@ -1,8 +1,8 @@
 from .behavior import Behavior
 from entities.collider import Collider
-from entities.entity import Layer
 from util import make_vector, world_to_screen, rescale_vector
 import config
+import constants
 
 
 class Interactive(Behavior):
@@ -17,7 +17,7 @@ class Interactive(Behavior):
 
         self.level = level
         self.entity = entity
-        self.hitbox = Collider.from_entity(entity, level.collider_manager, Layer.Mario)
+        self.hitbox = Collider.from_entity(entity, level.collider_manager, constants.Mario)
         self.hitbox.rect.size = rescale_vector(hitbox_size)
         self.hitbox_offset = rescale_vector(hitbox_offset)
         self.hitbox.position = entity.position + self.hitbox_offset

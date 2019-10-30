@@ -1,6 +1,5 @@
 from .behaviors import Interactive
 from .level_entity import LevelEntity
-from entities.entity import Layer
 from util import make_vector, world_to_screen
 import constants
 
@@ -44,7 +43,7 @@ class Coin(LevelEntity):
 
     @property
     def layer(self):
-        return Layer.Active
+        return constants.Active
 
 
 def make_coin(level, values):

@@ -5,7 +5,7 @@ from pygame import Rect
 from util import can_collide
 from util import distance_squared
 from util import copy_vector
-from entities.entity import Layer
+import constants
 import config
 
 epsilon_sqr = sys.float_info.epsilon ** 2
@@ -117,11 +117,14 @@ class ColliderManager:
         collisions = []
 
         # check for collisions against world grid, if applicable
-        if can_collide(collider.mask, Layer.Block.value):
+        #if can_collide(collider.mask, Layer.Block.value):
+        #if not collider.mask.value & Layer.Block.value:
+        if (collider.mask & constants.Block) != 0:
             collisions.extend(self.get_world_collisions(collider))
 
         for other_collider in (c for c in self._colliders if c is not collider):
-            if not can_collide(collider.mask, other_collider.layer):
+            #if not can_collide(collider.mask, other_collider.layer):
+            if (collider.mask & other_collider.layer) == 0:
                 continue
 
             if collider.rect.colliderect(other_collider.rect) and other_collider not in collisions:
@@ -180,7 +183,7 @@ class ColliderManager:
                 # halve distance
                 dist *= 0.5
 
-                if dist < 0.05:
+                if dist < 0.5:
                     break
 
         if tf_dispatch_events:

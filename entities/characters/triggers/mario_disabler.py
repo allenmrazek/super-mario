@@ -3,7 +3,6 @@ import pygame
 from entities.characters import LevelEntity
 from ..behaviors import Interactive
 from util import world_to_screen
-from entities.entity import Layer
 from entities.gui.modal.modal_text_input import ModalTextInput
 from util import make_vector, rescale_vector, world_to_screen
 from entities.effects.level_cleared import LevelCleared
@@ -11,6 +10,7 @@ from state.game_state import state_stack
 from ..behaviors import Interactive
 from ..mario import Mario
 import config
+import constants
 
 
 class MarioDisabler(LevelEntity):
@@ -49,7 +49,7 @@ class MarioDisabler(LevelEntity):
 
     @property
     def layer(self):
-        return Layer.Trigger
+        return constants.Trigger
 
 
 def make_disabler(level, values):

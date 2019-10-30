@@ -1,6 +1,6 @@
 import math
 from enum import IntEnum
-from entities.entity import Entity, Layer
+from entities.entity import Entity
 from entities.characters.level_entity import LevelEntity
 from entities.collider import Collider
 from animation import Animation
@@ -9,6 +9,7 @@ import config
 import entities.characters.behaviors
 from .mario_constants import *
 from util import rescale_vector
+import constants
 
 
 class MarioEffects(IntEnum):
@@ -53,7 +54,7 @@ class Mario(LevelEntity):
 
     @property
     def layer(self):
-        return Layer.Mario
+        return constants.Mario
 
     @property
     def enabled(self):

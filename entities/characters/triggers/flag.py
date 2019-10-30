@@ -3,11 +3,11 @@ import pygame
 from entities.characters import LevelEntity
 from ..behaviors import Interactive
 from util import world_to_screen
-from entities.entity import Layer
 from entities.gui.modal.modal_text_input import ModalTextInput
 from util import make_vector, rescale_vector
 from entities.effects.level_cleared import LevelCleared
 from state.game_state import state_stack
+import constants
 
 
 class Flag(LevelEntity):
@@ -45,7 +45,7 @@ class Flag(LevelEntity):
 
     @property
     def layer(self):
-        return Layer.Background
+        return constants.Background
 
     def set_flag_position(self, fpos):  # as a ratio
         self.flag_movement = make_vector(0, fpos * self._pole_height)

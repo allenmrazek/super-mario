@@ -1,7 +1,6 @@
 from ..level_entity import LevelEntity
 from util import world_to_screen
-from entities.entity import Layer
-
+import constants
 
 class MarioSpawnPoint(LevelEntity):
     def __init__(self, level):
@@ -19,7 +18,7 @@ class MarioSpawnPoint(LevelEntity):
 
     @property
     def layer(self):
-        return Layer.Spawner
+        return constants.Spawner
 
     def create_preview(self):
         return self.image

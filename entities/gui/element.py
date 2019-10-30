@@ -2,10 +2,10 @@ from enum import Enum
 from copy import deepcopy
 import pygame
 from entities.entity import Entity
-from entities.entity import Layer
 from event import EventHandler
 from util import make_vector
 from util import copy_vector
+import constants
 
 
 class Anchor(Enum):
@@ -44,7 +44,7 @@ class Element(Entity, EventHandler):
 
     @property
     def layer(self):
-        return Layer.Interface
+        return constants.Interface
 
     def handle_event(self, evt, game_events):
         self.handle_event_children(evt, game_events)

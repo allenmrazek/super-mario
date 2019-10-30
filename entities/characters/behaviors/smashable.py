@@ -2,9 +2,9 @@ from .interactive import Interactive
 from entities.collider import Collider, Collision
 from .behavior import Behavior
 from util import make_vector, rescale_vector, world_to_screen, pixel_coords_to_tile_coords, distance_squared, tile_coords_to_pixel_coords
-from entities.entity import Layer
 from entities.characters.mario import Mario
 import config
+import constants
 
 
 class Smashable(Behavior):
@@ -19,7 +19,7 @@ class Smashable(Behavior):
         self.level = level
         self.entity = entity
         self.hitbox = Collider(entity, self.level.collider_manager,
-                               Layer.Mario, entity.position, entity.rect, Layer.Block, self._on_mario_hit)
+                               constants.Mario, entity.position, entity.rect, constants.Block, self._on_mario_hit)
 
         self.hitbox.position = entity.position
         self.on_head_smash = on_head_smash

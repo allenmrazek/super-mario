@@ -47,9 +47,9 @@ class JumpParameters(NamedTuple):
 
 
 vertical_physics_parameters = [
-    JumpParameters.create('01000', '04000', '00200', '00700'),
-    JumpParameters.create('024FF', '04000', '001E0', '00600'),
-    JumpParameters.create('FFFFF', '05000', '00280', '00900')
+    JumpParameters.create('01000', '04300', '00200', '00700'),  # todo: original yinit values are slightly too small,
+    JumpParameters.create('024FF', '04300', '001E0', '00600'),  # need to investigate if time
+    JumpParameters.create('FFFFF', '05600', '00280', '00900')
 ]
 
 level_entry_vertical_physics = JumpParameters.create('00000', '00000', '00280', '00280')

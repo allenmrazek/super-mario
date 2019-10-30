@@ -1,12 +1,12 @@
 import math
 from pygame import Vector2
 from entities.characters.mario_constants import *
-from entities.entity import Layer
 from entities.collider import Collider, ColliderManager
 from util import make_vector, copy_vector
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 import config
 from util import rescale_vector, world_to_screen
+import constants
 
 
 class MarioMovement:
@@ -47,17 +47,17 @@ class MarioMovement:
         #
         # remember that positions of these colliders != mario's position: they can have offsets and different
         # sizing
-        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)  # todo: should active be included in these hitboxes?
+        self._small_hitbox = Collider.from_entity(mario_entity, self.collider_manager, constants.Block)  # todo: should active be included in these hitboxes?
         self._small_hitbox.rect.width, self._small_hitbox.rect.height = rescale_vector(make_vector(10, 14))
         self._small_hitbox_offset = rescale_vector(make_vector(3, 2))
         self._small_hitbox.position = self.mario_entity.position + self._small_hitbox_offset
 
-        self._large_hitbox = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)
+        self._large_hitbox = Collider.from_entity(mario_entity, self.collider_manager, constants.Block)
         self._large_hitbox.rect.width, self._large_hitbox.rect.height = rescale_vector(make_vector(13, 25))
         self._large_hitbox_offset = rescale_vector(make_vector(2, 7))
         self._large_hitbox.position = self.mario_entity.position + self._large_hitbox_offset
 
-        self.airborne_collider = Collider.from_entity(mario_entity, self.collider_manager, Layer.Block)
+        self.airborne_collider = Collider.from_entity(mario_entity, self.collider_manager, constants.Block)
 
     @property
     def is_running(self):

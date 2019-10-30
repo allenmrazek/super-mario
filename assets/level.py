@@ -5,7 +5,6 @@ from entities.collider import ColliderManager, Collider
 from assets.tile_map import TileMap
 import config
 from util import make_vector, copy_vector
-from entities.entity import Layer
 import entities.characters
 from entities.characters.spawners import MarioSpawnPoint
 from event import PlayerInputHandler
@@ -48,7 +47,7 @@ class Level(EventHandler):
 
     def update_triggers_only(self, dt):
         # doesn't scroll map or update anything other than triggers
-        self.entity_manager.update_layer(Layer.Trigger, dt, self.view_rect)
+        self.entity_manager.update_layer(constants.Trigger, dt, self.view_rect)
 
     def update(self, dt):
         self.entity_manager.update(dt, self.view_rect)
@@ -86,7 +85,7 @@ class Level(EventHandler):
         self.mario.reset()  # reset state
 
         # prevent mario from phasing into the ground (should he be super mario and the spawn point is on the ground)
-        ground_collider = Collider.from_entity(self.mario, self.collider_manager, Layer.Block)
+        ground_collider = Collider.from_entity(self.mario, self.collider_manager, constants.Block)
         ground_collider.rect.width = 16 * config.rescale_factor
         ground_collider.rect.height = 16 * config.rescale_factor if not self.mario.is_super else 32 * config.rescale_factor
         ground_collider.position = self.mario.position
@@ -170,10 +169,7 @@ class Level(EventHandler):
     def load_from_path(self, filename, spawn_idx=0):
         self._cleared = False
 
-        # self.entity_manager = entities.entity_manager.EntityManager(self.entity_manager.update_ordering, self.entity_manager.draw_ordering)
-        # self.collider_manager = ColliderManager(self.tile_map)
         self.entity_manager.clear()
-
 
         with open(filename, 'r') as f:
             self.deserialize(json.loads(f.read()))
@@ -184,8 +180,9 @@ class Level(EventHandler):
             spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)
             spawn_points.sort(key=lambda spawn: spawn.position.x)
 
-            selected = spawn_points[spawn_idx:1]
-            self.position.x = selected[0][0].position.x
+            assert len(spawn_points) > 0
+
+            self.position.x = spawn_points[0][0].position.x
 
     def _find_spawn_point(self):
         spawn_points = self.entity_manager.search_by_type(MarioSpawnPoint)

@@ -1,5 +1,6 @@
-from ..entity import Entity, Layer
+from ..entity import Entity
 from util import world_to_screen
+import constants
 
 
 class Corpse(Entity):
@@ -22,7 +23,7 @@ class Corpse(Entity):
 
     @property
     def layer(self):
-        return Layer.Enemy
+        return constants.Enemy
 
     def draw(self, screen, view_rect):
         screen.blit(self.animation.image, world_to_screen(self.position, view_rect))

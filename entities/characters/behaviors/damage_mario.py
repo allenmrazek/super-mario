@@ -2,10 +2,10 @@ from .behavior import Behavior
 from ...effects import MarioDeath
 from ...effects import MarioTransformSmall
 from entities.collider import Collider, ColliderManager, Collision
-from entities import Layer
 from util import make_vector, world_to_screen
 import config
 from .interactive import Interactive
+import constants
 
 
 class DamageMario(Interactive):

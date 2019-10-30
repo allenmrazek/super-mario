@@ -1,7 +1,6 @@
 from .level_entity import LevelEntity
 from util import make_vector
 from util import world_to_screen
-from entities.entity import Layer
 from .behaviors import Smashable
 from entities.entity import Entity
 from .corpse import Corpse
@@ -25,7 +24,7 @@ class _RisingMushroom(Entity):
 
         self.position = position
         self.velocity = make_vector(0, -16 * config.rescale_factor / appears.get_length())
-        self.collider = entities.collider.Collider.from_entity(self, level.collider_manager, Layer.Block)
+        self.collider = entities.collider.Collider.from_entity(self, level.collider_manager, constants.Block)
         self.level = level
 
     def update(self, dt, view_rect):
@@ -50,7 +49,7 @@ class _RisingMushroom(Entity):
 
     @property
     def layer(self):
-        return Layer.Background
+        return constants.Background
 
 
 class MushroomBlock(SpawnBlock):

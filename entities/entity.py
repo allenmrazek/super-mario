@@ -5,16 +5,7 @@ from util import copy_vector
 from util import make_vector
 
 
-class Layer(IntFlag):
-    Background = 1 << 0     # behind blocks
-    Block = 1 << 1          # layer blocks are drawn on
-    Spawner = 1 << 2        # spawners go here
-    Trigger = 1 << 3        # take a guess
-    Mario = 1 << 4          # take a guess
-    Enemy = 1 << 5          # take another guess
-    Active = 1 << 6         # "active" things: think fireballs and projectiles; mario death animations
-    Interface = 1 << 7      # interface stuff here
-    Overlay = 1 << 8        # a final layer that absolutely will overlay everything. Use sparingly
+
 
 
 class Entity(ABC):

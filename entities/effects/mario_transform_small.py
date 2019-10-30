@@ -105,4 +105,4 @@ class MarioTransformSmall(GameState):
     @staticmethod
     def apply_transform(level, mario):
         transform = MarioTransformSmall(level, mario)
-        state_stack.push(transform)
+        state_stack.states.append(transform)

@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 from copy import copy
-from .entity import Entity, Layer
+from .entity import Entity
 from .characters import LevelEntity
 from pygame.sprite import Rect
 from enum import IntFlag
 from util import copy_vector
 from util import make_vector
+import constants
 
 
 class EntityManager:
@@ -18,16 +19,16 @@ class EntityManager:
         self.update_ordering = update_layer_ordering
         self.draw_ordering = draw_layer_ordering
 
-        self.layers = dict(zip([layer_name for layer_name in Layer], [list() for _ in Layer]))
+        self.layers = dict(zip([layer_name for layer_name in constants.LayerList], [list() for _ in constants.LayerList]))
 
     @staticmethod
     def create_default():
         # create a default entity manager. This is standard gameplay
-        update_order = [Layer.Background, Layer.Block, Layer.Spawner, Layer.Trigger,
-                    Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
+        update_order = [constants.Background, constants.Block, constants.Spawner, constants.Trigger,
+                    constants.Enemy, constants.Mario, constants.Active, constants.Interface, constants.Overlay]
 
-        draw_order = [Layer.Background, Layer.Block,
-                    Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
+        draw_order = [constants.Background, constants.Block,
+                    constants.Enemy, constants.Mario, constants.Active, constants.Interface, constants.Overlay]
 
         return EntityManager(update_order, draw_order)
 
@@ -35,8 +36,8 @@ class EntityManager:
     def create_editor():
         # create entity manager for editor. This has its own manager because the editor has layers that
         # won't typically be drawn during play, but are relevant while editing (spawners, triggers)
-        ordering = [Layer.Background, Layer.Block, Layer.Spawner, Layer.Trigger,
-                    Layer.Enemy, Layer.Mario, Layer.Active, Layer.Interface, Layer.Overlay]
+        ordering = [constants.Background, constants.Block, constants.Spawner, constants.Trigger,
+                    constants.Enemy, constants.Mario, constants.Active, constants.Interface, constants.Overlay]
 
         return EntityManager(ordering, ordering)
 
@@ -65,9 +66,12 @@ class EntityManager:
 
         self.layers[entity.layer].remove(entity)
 
-    def draw(self, screen, view_rect):
+    def draw(self, screen, view_rect, tf_enforce_range=True):
         # draw only screen and a quarter
-        offscreen_range = view_rect.width * (EntityManager.ENTITY_UPDATE_RANGE_MULTIPLIER - 1)
+        if tf_enforce_range:
+            offscreen_range = view_rect.width * (EntityManager.ENTITY_UPDATE_RANGE_MULTIPLIER - 1)
+        else:
+            offscreen_range = 100000
 
         minx = view_rect.left - offscreen_range
         maxx = view_rect.right + offscreen_range
@@ -89,9 +93,12 @@ class EntityManager:
                     else:
                         entity.draw(screen, view_rect)
 
-    def update(self, dt, view_rect):
+    def update(self, dt, view_rect, tf_enforce_range=True):
         # update only screen and a quarter
-        offscreen_range = view_rect.width * (EntityManager.ENTITY_UPDATE_RANGE_MULTIPLIER - 1)
+        if tf_enforce_range:
+            offscreen_range = view_rect.width * (EntityManager.ENTITY_UPDATE_RANGE_MULTIPLIER - 1)
+        else:
+            offscreen_range = 100000
 
         minx = view_rect.left - offscreen_range
         maxx = view_rect.right + offscreen_range
@@ -119,7 +126,7 @@ class EntityManager:
         values = {"__class__": self.__class__.__name__}
 
         for layer in self.layers:
-            values[layer.name] = self._serialize_layer(layer)
+            values[constants.layer_to_name(layer)] = self._serialize_layer(layer)
 
         return values
 
@@ -146,10 +153,12 @@ class EntityManager:
             entity_list.clear()
 
             # find entries for this layer
-            if layer.name not in values.keys():
+            layer_name = constants.layer_to_name(layer)
+
+            if layer_name not in values.keys():
                 continue
 
-            for entity_values in values[layer.name]:
+            for entity_values in values[layer_name]:
                 # create these entities
                 entity = LevelEntity.build(level, entity_values)
 

@@ -42,6 +42,7 @@ class TextInputHandler(EventHandler):
                 EventHandler.consume(evt)
 
             else:  # could be things like ,/" etc
+
                 if chr(key) in '._-':
                     self.consume(evt)
                     self.string += chr(key)

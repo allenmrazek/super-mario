@@ -1,4 +1,4 @@
-from .element import Element, Layer, Anchor
+from .element import Element, Anchor
 from pygame import Rect
 
 
