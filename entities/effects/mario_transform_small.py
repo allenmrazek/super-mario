@@ -68,6 +68,7 @@ class MarioTransformSmall(GameState):
         # the top-left coordinate of mario needs to be moved to account for a smaller sprite
         self.mario.position = self.mario.position + self._offset
         self.mario.enabled = True
+        self.mario.input_state.reset()
 
     def build_animation(self, duration, small, middle, large):
         frames = []

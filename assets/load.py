@@ -159,6 +159,12 @@ def load_character_atlas():
     atlas.initialize_static_from_surface(
         "super_mario_fire_transform_left", pygame.transform.flip(atlas.load_static("super_mario_fire_transform_right").frames[0], True, False))
 
+    # pole moment
+    atlas.initialize_static("mario_pole_right", config.transparent_color)
+    atlas.initialize_static("fire_mario_pole_right", config.transparent_color)
+    atlas.initialize_static("super_mario_pole_right", config.transparent_color)
+    atlas.initialize_static("super_mario_fire_pole_right", config.transparent_color)
+
     # goomba enemy
     atlas.initialize_animation("goomba", small_frame_width, small_frame_height, .25, config.transparent_color)
     atlas.initialize_static("goomba_squashed", config.transparent_color)
@@ -234,6 +240,7 @@ def load_gui_atlas():
     atlas.initialize_static("level_warp")
     atlas.initialize_static("mm_Smb", **kwargs)
     atlas.initialize_static("menu_mushroom", **kwargs)
+    atlas.initialize_static("bulb", **kwargs)
 
     return atlas
 

@@ -28,6 +28,13 @@ class PlayerInputHandler(EventHandler):
             304: self._dash  # left shift
         }
 
+    def reset(self):
+        self.left, self.right, self.up, self.down = False, False, False, False
+        self.jump, self.dash, self.fire = False, False, False
+        self.left_click, self.right_click = False, False
+        self.mouse_position = pygame.mouse.get_pos()
+        self.quit = False
+
     def handle_event(self, evt, game_events):
         if not EventHandler.is_consumed(evt) and (evt.type == KEYDOWN or evt.type == KEYUP):
             state = True if evt.type == KEYDOWN else False
