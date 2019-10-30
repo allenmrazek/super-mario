@@ -35,7 +35,6 @@ def run():
     #PerformanceMeasurement.measure(state_stack, EditorState(None, assets))
     #PerformanceMeasurement.measure(state_stack, RunLevel.run(assets, 'levels/level11.level'))
 
-
     state_stack.push(MainMenu(assets))
 
     game_timer.reset()
@@ -43,24 +42,9 @@ def run():
     # timer initialize
     accumulator = 0.0
 
-    # clock initialize
-    clock = pygame.time.Clock()
-    seconds = 0
-    milliseconds = 0
-
     while state_stack.top is not None:
         state_stack.top.do_events()
         game_timer.update()
-
-        if labels.Labels.time > 0:
-            if milliseconds > 1000:
-                seconds += 1
-                milliseconds -= 1000
-                if seconds == 1:
-                    labels.Labels.time -= 1
-                    seconds = 0
-
-        milliseconds += clock.tick_busy_loop(60)
 
         # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed

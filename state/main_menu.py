@@ -9,6 +9,7 @@ from editor.editor_state import EditorState
 from entities.entity_manager import EntityManager
 from util import make_vector
 import config
+from scoring import Labels
 
 
 class MainMenu(GameState, EventHandler):
@@ -21,6 +22,7 @@ class MainMenu(GameState, EventHandler):
         font = pygame.font.Font(None, 48)
         self._banner = assets.gui_atlas.load_static("mm_Smb")
         self._mushroom = assets.gui_atlas.load_static("menu_mushroom")
+        self._scoring = Labels()
 
         play_btn = font.render("1 Player Game", True, Color('white'))
         editor_btn = font.render("Level Editor", True, Color('white'))
@@ -79,6 +81,8 @@ class MainMenu(GameState, EventHandler):
                 screen.blit(self._mushroom.image, mr)
 
             r.y += r.height + 10
+
+        self._scoring.show_labels(screen)
 
     def _on_play(self):
         state_stack.push(RunSession(GameEvents(), self.assets))
