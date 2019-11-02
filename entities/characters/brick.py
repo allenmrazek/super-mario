@@ -1,7 +1,7 @@
 from entities.characters.corpse import Corpse
 from .level_entity import LevelEntity
 from util import make_vector
-from util import get_corpse_position, world_to_screen
+from util import world_to_screen, get_aligned_foot_position
 from .behaviors import Smashable
 import constants
 
@@ -48,7 +48,7 @@ class Brick(LevelEntity):
                         0.1, self.position)
         self.level.asset_manager.sounds['breakblock'].play()
 
-        corpse.position = get_corpse_position(self.rect, corpse.rect)
+        corpse.position = get_aligned_foot_position(self.rect, corpse.rect)
 
         self.level.entity_manager.register(corpse)
 

@@ -3,28 +3,11 @@ import pygame
 import warnings
 from pygame.mixer import Sound
 from . import SpriteAtlas
-from animation import Animation
 from entities.gui.drawing import generated_selected_version_circle, generated_selected_version_darken
 import config
-
-
-def get_atlas_path(atlas_name):
-    return os.path.join("images", f"atlas_{atlas_name}.png")
-
-
-def _load_all_as_static(atlas_name, rescale=True):
-    path = get_atlas_path(atlas_name)
-
-    if not os.path.exists(path):
-        return SpriteAtlas(tf_use_rescale_factor=False)
-
-    atlas = SpriteAtlas(path, rescale)
-    kwargs = {"color_key": config.transparent_color}
-
-    for name in atlas.sprite_names:
-        atlas.initialize_static(name, **kwargs)
-
-    return atlas
+from .util import get_atlas_path, load_all_as_static
+from .load_characters import load_characters
+from .load_mario import load_mario
 
 
 def load_character_atlas():
@@ -33,155 +16,12 @@ def load_character_atlas():
     small_frame_width, small_frame_height = [16 * config.rescale_factor] * 2
     large_frame_width, large_frame_height = small_frame_width, 2 * small_frame_height
 
-    # stationary mario
-    atlas.initialize_static("mario_stand_right", config.transparent_color)
-    atlas.initialize_static_from_surface("mario_stand_left",
-                                         pygame.transform.flip
-                                         (atlas.load_static("mario_stand_right").frames[0], True, False))
+    load_mario(atlas, (small_frame_width, small_frame_height),
+               (large_frame_width, large_frame_height))
 
-    atlas.initialize_static("mario_fire_stand_right", config.transparent_color)
-    atlas.initialize_static_from_surface("mario_fire_stand_left",
-                                         pygame.transform.flip
-                                         (atlas.load_static("mario_fire_stand_right").frames[0], True, False))
-
-    atlas.initialize_static("super_mario_stand_right", config.transparent_color)
-    atlas.initialize_static_from_surface("super_mario_stand_left", pygame.transform.flip
-                                         (atlas.load_static("super_mario_stand_right").frames[0], True, False))
-
-    atlas.initialize_static("super_mario_fire_stand_right", config.transparent_color)
-    atlas.initialize_static_from_surface("super_mario_fire_stand_left", pygame.transform.flip
-                                         (atlas.load_static("super_mario_fire_stand_right").frames[0], True, False))
-
-    # running mario (left and right)
-    atlas.initialize_animation("mario_run_right",
-                               small_frame_width,
-                               small_frame_height,
-                               0.2, config.transparent_color)
-
-    mario_run_right = atlas.load_animation("mario_run_right")  # type: Animation
-    mario_left_run_frames = [pygame.transform.flip(f, True, False) for f in mario_run_right.frames]
-    atlas.initialize_animation_from_frames("mario_run_left", mario_left_run_frames, mario_run_right.duration)
-
-    atlas.initialize_animation("mario_fire_run_right",
-                               small_frame_width,
-                               small_frame_height,
-                               0.2, config.transparent_color)
-
-    mario_fire_run_right = atlas.load_animation("mario_fire_run_right")  # type: Animation
-    mario_fire_left_run_frames = [pygame.transform.flip(f, True, False) for f in mario_fire_run_right.frames]
-    atlas.initialize_animation_from_frames("mario_fire_run_left", mario_fire_left_run_frames,
-                                           mario_fire_run_right.duration)
-
-    atlas.initialize_animation("super_mario_run_right",
-                               large_frame_width,
-                               large_frame_height,
-                               0.2, config.transparent_color)
-
-    super_mario_run_right = atlas.load_animation("super_mario_run_right")  # type: Animation
-    super_mario_left_run_frames = [pygame.transform.flip(f, True, False) for f in super_mario_run_right.frames]
-    atlas.initialize_animation_from_frames("super_mario_run_left", super_mario_left_run_frames,
-                                           super_mario_run_right.duration)
-
-    atlas.initialize_animation("super_mario_fire_run_right",
-                               large_frame_width,
-                               large_frame_height,
-                               0.2, config.transparent_color)
-
-    super_mario_fire_run_right = atlas.load_animation("super_mario_fire_run_right")  # type: Animation
-    super_mario_fire_left_run_frames = [pygame.transform.flip(f, True, False)
-                                        for f in super_mario_fire_run_right.frames]
-    atlas.initialize_animation_from_frames("super_mario_fire_run_left", super_mario_fire_left_run_frames,
-                                           super_mario_fire_run_right.duration)
-
-    # walking mario (left and right)
-    # same frames as running, just slower
-    atlas.initialize_animation_from_frames("mario_walk_right", mario_run_right.frames, 0.4)
-    atlas.initialize_animation_from_frames("mario_walk_left", mario_left_run_frames, 0.4)
-
-    atlas.initialize_animation_from_frames("mario_fire_walk_right", mario_fire_run_right.frames, 0.4)
-    atlas.initialize_animation_from_frames("mario_fire_walk_left", mario_fire_left_run_frames, 0.4)
-
-    atlas.initialize_animation_from_frames("super_mario_walk_right", super_mario_run_right.frames, 0.4)
-    atlas.initialize_animation_from_frames("super_mario_walk_left", super_mario_left_run_frames, 0.4)
-
-    atlas.initialize_animation_from_frames("super_mario_fire_walk_right", super_mario_fire_run_right.frames, 0.4)
-    atlas.initialize_animation_from_frames("super_mario_fire_walk_left", super_mario_fire_left_run_frames, 0.4)
-
-    # jumping mario (left and right)
-    atlas.initialize_static("mario_jump_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "mario_jump_left", pygame.transform.flip(atlas.load_static("mario_jump_right").frames[0], True, False))
-
-    atlas.initialize_static("mario_fire_jump_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "mario_fire_jump_left", pygame.transform.flip(atlas.load_static("mario_fire_jump_right").frames[0], True,
-                                                      False))
-
-    atlas.initialize_static("super_mario_jump_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_jump_left", pygame.transform.flip(atlas.load_static("super_mario_jump_right").frames[0], True,
-                                                       False))
-
-    atlas.initialize_static("super_mario_fire_jump_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_fire_jump_left", pygame.transform.flip(atlas.load_static("super_mario_fire_jump_right").frames[0],
-                                                            True, False))
-
-    # skidding mario (left and right)
-    atlas.initialize_static("mario_skid_left", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "mario_skid_right", pygame.transform.flip(atlas.load_static("mario_skid_left").frames[0], True, False))
-
-    atlas.initialize_static("mario_fire_skid_left", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "mario_fire_skid_right", pygame.transform.flip(atlas.load_static("mario_fire_skid_left").frames[0], True,
-                                                       False))
-
-    atlas.initialize_static("super_mario_skid_left", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_skid_right", pygame.transform.flip(atlas.load_static("super_mario_skid_left").frames[0], True,
-                                                        False))
-
-    atlas.initialize_static("super_mario_fire_skid_left", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_fire_skid_right", pygame.transform.flip(atlas.load_static("super_mario_fire_skid_left").frames[0],
-                                                             True, False))
-
-    # death
-    atlas.initialize_static("mario_dead", config.transparent_color)
-    atlas.initialize_static("mario_fire_dead", config.transparent_color)
-
-    # crouching
-    atlas.initialize_static("super_mario_crouch_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_crouch_left", pygame.transform.flip(atlas.load_static("super_mario_crouch_right").frames[0], True,
-                                                         False))
-
-    atlas.initialize_static("super_mario_fire_crouch_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_fire_crouch_left", pygame.transform.flip(
-            atlas.load_static("super_mario_fire_crouch_right").frames[0], True, False))
-
-    # transformations
-    atlas.initialize_static("super_mario_transform_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_transform_left", pygame.transform.flip(atlas.load_static("super_mario_transform_right").frames[0],
-                                                            True, False))
-
-    atlas.initialize_static("super_mario_fire_transform_right", config.transparent_color)
-    atlas.initialize_static_from_surface(
-        "super_mario_fire_transform_left", pygame.transform.flip(
-            atlas.load_static("super_mario_fire_transform_right").frames[0], True, False))
-
-    # pole moment
-    atlas.initialize_static("mario_pole_right", config.transparent_color)
-    atlas.initialize_static("fire_mario_pole_right", config.transparent_color)
-    atlas.initialize_static("super_mario_pole_right", config.transparent_color)
-    atlas.initialize_static("super_mario_fire_pole_right", config.transparent_color)
-
-    # goomba enemy
-    atlas.initialize_animation("goomba", small_frame_width, small_frame_height, .25, config.transparent_color)
-    atlas.initialize_static("goomba_squashed", config.transparent_color)
+    load_characters(atlas,
+                    (small_frame_width, small_frame_height),
+                    (large_frame_width, large_frame_height))
 
     return atlas
 
@@ -260,7 +100,7 @@ def load_gui_atlas():
 
 
 def load_tile_atlas(tf_rescale=True):
-    return _load_all_as_static("tiles", rescale=tf_rescale)
+    return load_all_as_static("tiles", rescale=tf_rescale)
 
 
 def load_misc_atlas():

@@ -115,7 +115,7 @@ class LevelConfigDialog(Dialog):
         g = clamp(int(self.bkg_color_g_slider.value), 0, 255)
         b = clamp(int(self.bkg_color_b_slider.value), 0, 255)
 
-        clr = pygame.Color()
+        clr = pygame.Color('black')
         clr.r, clr.g, clr.b = r, g, b
 
         self.level.background_color = clr

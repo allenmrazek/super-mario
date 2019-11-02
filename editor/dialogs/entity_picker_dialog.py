@@ -50,13 +50,14 @@ class EntityPickerDialog(Dialog):
                          font=font, title="Entities")
 
         # create contents (buttons for each entity)
-        self.scrolling_container = self._create_container(font)
+        self.scrolling_container, scroll_height = self._create_container(font)
+        scroll_height -= self.scrolling_container.rect.height
 
         # create vertical scrollbar
         self.vertical_scroll = create_slider(self.assets.gui_atlas,
                                              make_vector(self.scrolling_container.rect.right + 5,
                                                          self.scrolling_container.rect.top + 5),
-                                             self.scrolling_container.rect.height - 15, 0, 100, self._on_scroll_changed,
+                                             self.scrolling_container.rect.height - 15, 0, scroll_height, self._on_scroll_changed,
                                              thumb=self.assets.gui_atlas.load_static("sb_thumb"),
                                              thumb_mo=self.assets.gui_atlas.load_static("sb_thumb_light"),
                                              sb_type=ScrollbarType.VERTICAL)
@@ -94,4 +95,4 @@ class EntityPickerDialog(Dialog):
             frame.add_child(entity_button)
             y_offset += entity_button.height + 3
 
-        return frame
+        return frame, y_offset

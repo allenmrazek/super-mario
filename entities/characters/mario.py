@@ -119,12 +119,16 @@ class Mario(LevelEntity):
         return self._active_effects & MarioEffects.Super
 
     @property
-    def is_invincible(self):
+    def is_invincible(self):  # note: NOT starman! this is for the invincibility period after taking damage
         return self._invincibility_period > 0.
 
     @property
     def invincibility_timer(self):
         return self._invincibility_period
+
+    @property
+    def is_starman(self):
+        return self._active_effects & MarioEffects.Star
 
 
 class _DirectionSet(NamedTuple):
@@ -161,7 +165,7 @@ class _MarioAnimation:
                               atlas.load_static("super_mario_stand_right")),
                 _DirectionSet(atlas.load_static("super_mario_fire_stand_left"),
                               atlas.load_static("super_mario_fire_stand_right")),
-            None))
+                None))
 
         self.walk = _Variation(
             # small walk variants
@@ -170,7 +174,7 @@ class _MarioAnimation:
                               atlas.load_animation("mario_walk_right")),
                 _DirectionSet(atlas.load_animation("mario_fire_walk_left"),
                               atlas.load_animation("mario_fire_walk_right")),
-            None),
+                None),
 
             # super walk variants
             _AnimationSet(
@@ -178,7 +182,7 @@ class _MarioAnimation:
                               atlas.load_animation("super_mario_walk_right")),
                 _DirectionSet(atlas.load_animation("super_mario_fire_walk_left"),
                               atlas.load_animation("super_mario_fire_walk_right")),
-            None))
+                None))
 
         self.run = _Variation(
             # small variants
@@ -255,9 +259,11 @@ class _MarioAnimation:
         # now, which animation set to use will depend on the most significant
         # flag set ..
         if mario.effects & MarioEffects.Star:
-            raise NotImplementedError
+            return variation.normal
+            #raise NotImplementedError
         elif mario.effects & MarioEffects.Fire:
-            raise NotImplementedError
+            return variation.normal
+            #raise NotImplementedError
         else:
             return variation.normal
 

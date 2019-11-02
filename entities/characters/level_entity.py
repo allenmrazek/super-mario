@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import NamedTuple
+from warnings import warn
 import warnings
 from entities.entity import Entity
 from util import make_vector
@@ -66,18 +67,29 @@ class LevelEntity(Entity):
 
         LevelEntity.Factories[name] = factory
 
-
-class MovementParameters(NamedTuple):
-    max_horizontal_velocity: float
-    max_vertical_velocity: float
-    jump_velocity: float
-    squash_bounce_velocity: float  # velocity applied to mario when he squashes this thing (if he can)
-    gravity: float
-
     @staticmethod
-    def create(hmax, vmax, jump, squash, gravity):
-        return MovementParameters(max_horizontal_velocity=hmax,
-                                  max_vertical_velocity=vmax,
-                                  jump_velocity=jump,
-                                  squash_bounce_velocity=squash,
-                                  gravity=gravity)
+    def create_generic_factory(cls):
+
+        def _factory(level, serialized_values):
+            try:
+                thing = cls(level)
+
+                deserialize = getattr(thing, "deserialize", None)
+
+                if serialized_values is not None and deserialize is not None:
+                    thing.deserialize(serialized_values)
+
+                return thing
+            except TypeError:
+                print("GenericFactory: failed to create {}".format(cls.__name__))
+                warn("GenericFactory failed to create a LevelEntity")
+                raise
+
+        name = cls.__name__
+
+        assert name not in LevelEntity.Factories
+
+        LevelEntity.Factories[name] = _factory
+        return _factory
+
+

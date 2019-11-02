@@ -7,15 +7,16 @@ from ..mario import Mario
 class Squashable(DamageMario):
     """Essentially a source for a callback when mario lands on top of a hitbox. If he moves into
     the hitbox in another way, Mario is damaged instead"""
-    def __init__(self, level, entity, hitbox_offset, hitbox_size, bounce_velocity, squash_callback):
-        super().__init__(level, entity, hitbox_offset, hitbox_size)
+    def __init__(self, level, entity, hitbox_offset, hitbox_size, bounce_velocity,
+                 on_squash_callback, on_mario_invincible):
+        super().__init__(level, entity, hitbox_offset, hitbox_size, on_mario_invincible)
 
-        assert squash_callback is not None
+        assert on_squash_callback is not None
 
         self._squashed = False
 
         self.bounce_velocity = bounce_velocity
-        self.on_squashed = squash_callback
+        self.on_squashed = on_squash_callback
 
     @property
     def squashed(self):

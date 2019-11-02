@@ -17,7 +17,7 @@ num_frames_hold_speed = 10
 
 # momentum constants
 momentum_velocity_threshold = mstpv_velocity('01900')
-momentum_start_jump_threshold = mstpv_velocity('01D000')
+momentum_start_jump_threshold = mstpv_velocity('01D00')
 
 momentum_forward_slow = mstpv_accel('00098')
 momentum_forward_fast = mstpv_accel('000E4')

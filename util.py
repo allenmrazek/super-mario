@@ -16,6 +16,9 @@ def mario_str_to_pixel_value(str_mario_value):
     if str_mario_value[0:2].lower() == "0x":
         str_mario_value = str_mario_value[2:]
 
+    if len(str_mario_value) != 5:
+        raise ValueError  # must be 5 digits (or 7 with 0x) precisely
+
     block_value = int(str_mario_value[:1], 16)
     pixel_value = int(str_mario_value[1:2], 16)
     subpixel_value = int(str_mario_value[2:3], 16)
@@ -116,10 +119,12 @@ def world_to_screen(position, view_rect):
     return make_vector(position[0] - view_rect.x, position[1] - view_rect.y)
 
 
-def get_corpse_position(entity_rect: pygame.Rect, corpse_rect: pygame.Rect):
-    corpse_rect.midbottom = entity_rect.midbottom
+def get_aligned_foot_position(entity_rect: pygame.Rect, to_align: pygame.Rect):
+    return make_vector(entity_rect.centerx - to_align.width // 2, entity_rect.midbottom[1] - to_align.height)
+    # return a position such that to_align is on the same surface as entity_rect
+    #to_align.midbottom = entity_rect.midbottom
 
-    return make_vector(*corpse_rect.topleft)
+    #return make_vector(*to_align.topleft)
 
 
 def rescale_vector(v):

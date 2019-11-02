@@ -107,6 +107,9 @@ class ColliderManager:
         collider.rect.x, collider.rect.y = collider.position.x, collider.position.y
         collisions = []
 
+        if collider.mask == 0:
+            return collisions  # optimization: no sense in wasting loops on something that never collides
+
         # check for collisions against world grid, if applicable
         if (collider.mask & constants.Block) != 0:
             collisions.extend(self.get_world_collisions(collider))

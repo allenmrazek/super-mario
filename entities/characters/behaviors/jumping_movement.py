@@ -11,6 +11,3 @@ class JumpingMovement(SimpleMovement):
 
         if not self.is_airborne:
             self.velocity.y = -self.parameters.jump_velocity
-
-    def destroy(self):
-        pass

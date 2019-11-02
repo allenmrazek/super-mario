@@ -1,14 +1,16 @@
 from .behavior import Behavior
-from util import make_vector
-from entities.characters.level_entity import MovementParameters
+from .gravity_movement import GravityMovement
+from util import make_vector, copy_vector
+from ..parameters import CharacterParameters
 from entities.collider import Collider
 import constants
 
 
 class SimpleMovement(Behavior):
-    """Side-to-side movement, moving left initially, changes direction on hitting an enemy or block
-    (to left or right)"""
-    def __init__(self, entity, collider_manager, parameters, movement_collider=None):
+    """Moves according to given velocity (leftwards), affected by gravity. Doesn't do anything by itself when it
+    hits something"""
+    def __init__(self, entity, collider_manager, parameters, movement_mask=constants.Block | constants.Enemy,
+                 on_collision_callback=None):
         assert entity is not None
         assert collider_manager is not None
         assert parameters is not None
@@ -17,89 +19,57 @@ class SimpleMovement(Behavior):
 
         self.entity = entity
         self.collider_manager = collider_manager
+        self.on_collision = on_collision_callback
 
-        self.movement_collider = movement_collider or \
-            Collider.from_entity(entity, collider_manager, constants.Block | constants.Enemy)
-        self.parameters = parameters  # type: MovementParameters
-        self.velocity = make_vector(-self.parameters.max_horizontal_velocity, 0.)
+        self.horizontal_movement_collider = Collider.from_entity(entity, collider_manager, movement_mask)
 
-        self.airborne_collider = Collider.from_entity(entity, collider_manager, constants.Block)
+        self.parameters = parameters  # type: CharacterParameters
+        self.velocity = make_vector(0., 0.)
+        self.vertical_movement = GravityMovement(entity, collider_manager, parameters)
+        self.vertical_movement.airborne_collider.mask = movement_mask & constants.Block
 
-        # allow other things to collider with our movement collider. Note they
+        # allow other things to collide with our movement collider. Note they
         # must have a mask that hits Layer.Enemy to do this
-        collider_manager.register(self.movement_collider)
-
-        # private state
-        self._airborne = False
-        self._reverse_direction = False
-
-    def finish(self):
-        self.collider_manager.unregister(self.movement_collider)
+        collider_manager.register(self.horizontal_movement_collider)
 
     def destroy(self):
-        self.finish()
+        self.collider_manager.unregister(self.horizontal_movement_collider)
 
     @property
     def is_airborne(self):
-        return self._airborne
+        return self.vertical_movement.is_airborne
 
-    def update(self, dt):
-        self._handle_vertical_movement(dt)
-        self._handle_horizontal_movement(dt)
+    @property
+    def velocity(self):
+        return self.entity.velocity or make_vector(0, 0)
 
-        if self._reverse_direction:
-            self.velocity.x *= -1.
-            self._reverse_direction = False
+    @velocity.setter
+    def velocity(self, vel):
+        self.entity.velocity = copy_vector(vel)
 
-    def draw(self, screen, view_rect):
+    def on_horizontal_collision(self, collision):
         pass
 
-    def _handle_vertical_movement(self, dt):
-        # todo: what if it jumps onto another enemy?
-        if self._reverse_direction:
-            self._reverse_direction = False
-            self.velocity.x *= -1.
+    def update(self, dt):
+        self.vertical_movement.update(dt)
+        self._handle_horizontal_movement(dt)
 
-        self._airborne = self.velocity.y < 0. or not any(
-            self.airborne_collider.test(self.entity.position + make_vector(0, 1)))
-
-        if not self._airborne:
-            self.velocity.y = 0
-        else:
-            self.velocity.y += (self.parameters.gravity * dt)
-
-            # limit downward velocity
-            if self.velocity.y > self.parameters.max_vertical_velocity:
-                self.velocity.y = self.parameters.max_vertical_velocity
-
-        vel = make_vector(0, self.velocity.y)
-        target_pos = self.entity.position + vel * dt
-        self.movement_collider.position = self.entity.position
-        self.movement_collider.try_move(target_pos, True)
-        self.entity.position = self.movement_collider.position
+    def draw(self, screen, view_rect):
+        self.vertical_movement.draw(screen, view_rect)
 
     def _handle_horizontal_movement(self, dt):
         vel = make_vector(self.velocity.x, 0)
-        self.movement_collider.position = self.entity.position
+        self.horizontal_movement_collider.position = self.entity.position
 
         target = self.entity.position + vel * dt
 
-        collisions = self.movement_collider.try_move(target, True)
+        collisions = self.horizontal_movement_collider.try_move(target, True)
 
         if collisions:
             for c in collisions:
-                self._on_hit(c)
+                self.on_horizontal_collision(c)
+
+                if self.on_collision:
+                    self.on_collision(c)
         else:
-            self.entity.position = self.movement_collider.position
-
-    def _on_hit(self, collision):
-        if collision.hit_block:
-            # we hit a block, but it could have been from above. Determine if block is left or right
-            is_left = any(self.airborne_collider.test(self.movement_collider.position - make_vector(1, 0)))
-            is_right = any(self.airborne_collider.test(self.movement_collider.position + make_vector(1, 0)))
-
-            # only flip directions if it will improve situation
-            if (is_left and self.velocity.x < 0.) or (is_right and self.velocity.x > 0.):
-                self._reverse_direction = True
-        elif collision.hit_collider is not None and collision.hit_collider.layer == constants.Enemy:
-            self._reverse_direction = True
+            self.entity.position = self.horizontal_movement_collider.position

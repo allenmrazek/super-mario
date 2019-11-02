@@ -28,15 +28,13 @@ class AirCoin(Corpse):  # weird right? I know
 
 
 class CoinBlock(SpawnBlock):
-    def __init__(self, level, position):
+    def __init__(self, level):
         self.level = level
         patlas = level.asset_manager.pickup_atlas
 
         self.coin_up = patlas.load_animation("coin_spin")
 
-        super().__init__(level, position)
-
-        self.position = position
+        super().__init__(level)
 
     def smashed(self):
         if not self._smashed:
@@ -61,13 +59,15 @@ class CoinBlock(SpawnBlock):
         return block
 
 
-def make_coin_block(level, values):
-    coin_block = CoinBlock(level, make_vector(0, 0))
+LevelEntity.create_generic_factory(CoinBlock)
 
-    if values is not None:
-        coin_block.deserialize(values)
-
-    return coin_block
-
-
-LevelEntity.register_factory(CoinBlock, make_coin_block)
+# def make_coin_block(level, values):
+#     coin_block = CoinBlock(level, make_vector(0, 0))
+#
+#     if values is not None:
+#         coin_block.deserialize(values)
+#
+#     return coin_block
+#
+#
+# LevelEntity.register_factory(CoinBlock, make_coin_block)

@@ -6,7 +6,7 @@ import constants
 
 
 class SpawnBlock(LevelEntity):
-    def __init__(self, level, position):
+    def __init__(self, level):
         self.level = level
         iatlas = level.asset_manager.interactive_atlas
 
@@ -14,8 +14,6 @@ class SpawnBlock(LevelEntity):
         self.empty = iatlas.load_static("coin_block_empty_ow")
 
         super().__init__(self.empty.get_rect())
-
-        self.position = position
 
         # note: Smashable assumes we're passing in UNSCALED values, so don't use our own rect size
         self.smashable = Smashable(level, self, self._on_smashed)

@@ -1,28 +1,30 @@
 from . import Enemy
 from entities.characters.corpse import Corpse
-from .level_entity import LevelEntity, MovementParameters
-from .behaviors import SimpleMovement, Squashable, DamageMario
-from util import make_vector, mario_str_to_pixel_value_acceleration as mstvpa
-from util import mario_str_to_pixel_value_velocity as mstvpv
-from util import get_corpse_position, world_to_screen
+from .level_entity import LevelEntity
+from .parameters import CharacterParameters
+from .behaviors import EnemyGroundMovement, Squashable, DamageMario
+from .projectile import Projectile
+from util import make_vector, mario_str_to_pixel_value_acceleration as mstpva
+from util import mario_str_to_pixel_value_velocity as mstpvv
+from util import get_aligned_foot_position, world_to_screen
 from scoring import labels
 import config
 
-# Goomba
-goomba_parameters = MovementParameters.create(100, mstvpv('04800'), mstvpv('04000'), 100, mstvpa('00300'))
+goomba_parameters = CharacterParameters(100, mstpvv('04800'), mstpva('00700'), 100, mstpvv('04200'))
 
 
 class Goomba(Enemy):
     POINT_VALUE = 200
 
-    def __init__(self, level, position):
+    def __init__(self, level):
         self.animation = level.asset_manager.character_atlas.load_animation("goomba")
 
-        super().__init__(level, position, self.animation.get_rect())
+        super().__init__(level, self.animation.get_rect())
 
-        self.movement = SimpleMovement(self, level.collider_manager, goomba_parameters)
+        self.movement = EnemyGroundMovement(self, level.collider_manager, goomba_parameters)
         self.parameters = goomba_parameters
-        self.squishy = Squashable(level, self, (3, 5), (10, 7), mstvpv('04000'), self.die)
+        self.squishy = Squashable(level, self, (3, 5), (10, 7), goomba_parameters.squash_bounce_velocity, self.squash,
+                                  self._on_mario_invincible_collision)
 
     def update(self, dt, view_rect):
         super().update(dt, view_rect)
@@ -41,20 +43,37 @@ class Goomba(Enemy):
         self.movement.draw(screen, view_rect)
         self.squishy.draw(screen, view_rect)
 
-    def die(self):
+    def _on_mario_invincible_collision(self, collision):
+        if self.level.mario.is_starman:
+            self.die()
+
+    def squash(self):
+        # goomba got squashed by mario
         self.destroy()
 
         self.level.stats.score += Goomba.POINT_VALUE
 
-        corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
-                        1., self.position)
-        self.level.asset_manager.sounds['stomp'].play()
+        corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"), 1.)
+        corpse.position = get_aligned_foot_position(self.rect, corpse.rect)
 
-        corpse.position = get_corpse_position(self.rect, corpse.rect)
+        self.level.asset_manager.sounds['stomp'].play()
+        self.level.entity_manager.register(corpse)
+
+    def die(self):
+        # goomba was flat-out killed (starman mario, shell, fireball)
+        self.destroy()
+        self.level.stats.score += Goomba.POINT_VALUE
+
+        # note the differerence: this corpse will actually fall off screen
+        corpse = Corpse.create_ghost_corpse_from_entity(self, self.animation, self.level, 5., Corpse.STANDARD)
+        corpse.position = get_aligned_foot_position(self.rect, corpse.rect)
+
+        self.level.asset_manager.sounds['stomp'].play()
 
         self.level.entity_manager.register(corpse)
 
     def destroy(self):
+        super().destroy()
         self.level.entity_manager.unregister(self)
         self.movement.destroy()
         self.squishy.destroy()
@@ -63,13 +82,4 @@ class Goomba(Enemy):
         return self.animation.image.copy()
 
     
-def make_goomba(level, values):
-    goomba = Goomba(level, make_vector(0, 0))
-
-    if values is not None:
-        goomba.deserialize(values)
-
-    return goomba
-
-
-LevelEntity.register_factory(Goomba, make_goomba)
+LevelEntity.create_generic_factory(Goomba)

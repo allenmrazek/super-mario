@@ -92,7 +92,7 @@ class TileMap:
                     self.tileset.blit(screen, (x * tw + x_offset, y * th + y_offset), tile.idx)
 
     def update(self, dt):
-        pass  # todo: update tileset tiles
+        pass  # todo: update tileset tiles? need a load_shared or similar in sprite atlas
 
     def set_tile(self, tile_position, idx):
         assert 0 <= tile_position[0] <= self.width

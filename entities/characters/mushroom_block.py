@@ -10,7 +10,7 @@ import constants
 
 
 class _RisingMushroom(Entity):
-    def __init__(self, level, position):
+    def __init__(self, level):
         pickup_atlas = level.asset_manager.pickup_atlas
         self.animation = pickup_atlas.load_static("mushroom_red")
 
@@ -20,7 +20,6 @@ class _RisingMushroom(Entity):
         # we won't just spawn there though, in case there are other blocks that would stop the mushroom from moving
         appears = level.asset_manager.sounds['powerup_appears']
 
-        self.position = position
         self.velocity = make_vector(0, -16 * config.rescale_factor / appears.get_length())
         self.collider = entities.collider.Collider.from_entity(self, level.collider_manager, constants.Block)
         self.level = level
@@ -51,14 +50,15 @@ class _RisingMushroom(Entity):
 
 
 class MushroomBlock(SpawnBlock):
-    def __init__(self, level, position):
-        super().__init__(level, position)
+    def __init__(self, level):
+        super().__init__(level)
         patlas = self.level.asset_manager.pickup_atlas
 
         self.mushroom = patlas.load_static("mushroom_red")
 
     def smashed(self):
-        # spawn a mushroom ... uh "ghost", which appears from behind the blocks
+        # spawn a mushroom "ghost", which appears from behind the blocks and rises up. Won't be interactive until
+        # it's clear of any collisionis
         self.level.asset_manager.sounds['powerup_appears'].play()
         self._smashed = True
         self.animation = self.empty
@@ -77,13 +77,4 @@ class MushroomBlock(SpawnBlock):
         super().destroy()
 
 
-def make_mushroom_block(level, values):
-    block = MushroomBlock(level, make_vector(0, 0))
-
-    if values is not None:
-        block.deserialize(values)
-
-    return block
-
-
-LevelEntity.register_factory(MushroomBlock, make_mushroom_block)
+LevelEntity.create_generic_factory(MushroomBlock)

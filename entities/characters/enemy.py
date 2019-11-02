@@ -4,12 +4,11 @@ import constants
 
 
 class Enemy(LevelEntity, ABC):
-    def __init__(self, level, position, rect):
+    def __init__(self, level, rect):
         super().__init__(rect)
 
         assert level is not None
 
-        self.position = position
         self.level = level
 
     @property

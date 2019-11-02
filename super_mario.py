@@ -6,6 +6,13 @@ from state import MainMenu
 import config
 from timer import game_timer
 from assets import AssetManager
+from state import RunLevel
+from assets.level import Level
+from event import GameEvents
+from state import PerformanceMeasurement
+from entities.entity_manager import EntityManager
+from assets.statistics import Statistics
+from scoring import Labels
 
 
 class _QuitListener(EventHandler):
@@ -28,9 +35,18 @@ def run():
 
     state_stack.push(MainMenu(assets))
 
-    game_timer.reset()
+    # stats = Statistics(Labels())
+    # lvl = Level(assets, EntityManager.create_default(), stats)
+    # lvl.load_from_path('levels/test.level')
+    #
+    # stats.reset()
+    #
+    # PerformanceMeasurement.measure(state_stack, RunLevel(GameEvents(), assets, lvl, stats))
+    #
+    # lvl.begin()
 
     # timer initialize
+    game_timer.reset()
     accumulator = 0.0
 
     while state_stack.top is not None:
@@ -39,7 +55,7 @@ def run():
 
         # todo: fixed time step, or max time step?
         accumulator += game_timer.elapsed
-        accumulator = min(0.20, accumulator)
+        accumulator = min(0.10, accumulator)
         while accumulator > config.PHYSICS_DT:
             state_stack.update(config.PHYSICS_DT)
             accumulator -= config.PHYSICS_DT
