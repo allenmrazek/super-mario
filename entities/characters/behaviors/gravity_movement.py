@@ -49,7 +49,7 @@ class GravityMovement(Behavior):
         self._airborne = self.velocity.y < 0. or not any(
             self.airborne_collider.test(self.entity.position + make_vector(0, 1)))
 
-        current_velocity = self.velocity
+        current_velocity = copy_vector(self.velocity)
 
         if not self._airborne:
             current_velocity.y = 0

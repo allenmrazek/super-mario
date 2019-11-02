@@ -24,7 +24,7 @@ class Mushroom(Entity):
             level, self, (0, 0), (16, 16), self.on_collected)
         self.movement = entities.characters.behaviors.simple_movement.SimpleMovement(
             self, level.collider_manager, mushroom_movement)
-        self.movement.movement_collider.mask = constants.Block  # exclude enemies
+        self.movement.horizontal_movement_collider.mask = constants.Block  # exclude enemies
 
         self.position = position
 

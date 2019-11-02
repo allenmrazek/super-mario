@@ -44,8 +44,13 @@ class Brick(LevelEntity):
     def die(self):
         self.destroy()
 
-        corpse = Corpse(self.level, self.level.asset_manager.interactive_atlas.load_static("brick_debris"),
-                        0.1, self.position)
+        # corpse = Corpse(self.level, self.level.asset_manager.interactive_atlas.load_static("brick_debris"),
+        #                 0.1, self.position)
+        corpse = Corpse.\
+            create_ghost_corpse_from_entity(self,
+                                            self.level.asset_manager.interactive_atlas.load_static("brick_debris"),
+                                            self.level, 0.1)
+
         self.level.asset_manager.sounds['breakblock'].play()
 
         corpse.position = get_aligned_foot_position(self.rect, corpse.rect)

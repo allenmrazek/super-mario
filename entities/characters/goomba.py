@@ -53,7 +53,8 @@ class Goomba(Enemy):
 
         self.level.stats.score += Goomba.POINT_VALUE
 
-        corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"), 1.)
+        corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
+                        Corpse.STATIONARY, 1.)
         corpse.position = get_aligned_foot_position(self.rect, corpse.rect)
 
         self.level.asset_manager.sounds['stomp'].play()

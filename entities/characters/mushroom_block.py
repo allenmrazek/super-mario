@@ -63,7 +63,8 @@ class MushroomBlock(SpawnBlock):
         self._smashed = True
         self.animation = self.empty
 
-        rising_mushroom = _RisingMushroom(self.level, self.position)
+        rising_mushroom = _RisingMushroom(self.level)
+        rising_mushroom.position = self.position
 
         self.level.entity_manager.register(rising_mushroom)
 
