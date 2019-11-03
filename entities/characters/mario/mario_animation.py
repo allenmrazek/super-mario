@@ -135,7 +135,7 @@ class MarioAnimation:
         if mario.effects & m.MarioEffectStar:
             return variation.normal
             #raise NotImplementedError
-        elif mario.effects & m.MarioEffectFire:
+        elif mario.effects & m.MarioEffectFire == m.MarioEffectFire:
             return variation.fire
         else:
             return variation.normal

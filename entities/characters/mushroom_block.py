@@ -9,10 +9,10 @@ import entities.characters.mushroom
 import constants
 
 
-class _RisingMushroom(Entity):
-    def __init__(self, level):
-        pickup_atlas = level.asset_manager.pickup_atlas
-        self.animation = pickup_atlas.load_static("mushroom_red")
+class _RisingPowerup(Entity):
+    def __init__(self, level, animation, on_finished_rising):
+        self.animation = animation
+        self.on_finished = on_finished_rising
 
         super().__init__(self.animation.rect)
 
@@ -33,9 +33,7 @@ class _RisingMushroom(Entity):
 
         if not self.collider.test(self.position):
             # not hitting anything -> ready to spawn
-            mushroom = entities.characters.mushroom.Mushroom(self.level, self.position)
-            self.level.entity_manager.register(mushroom)
-
+            self.on_finished(self.position)
             self.destroy()
 
     def draw(self, screen, view_rect):
@@ -57,16 +55,41 @@ class MushroomBlock(SpawnBlock):
         self.mushroom = patlas.load_static("mushroom_red")
 
     def smashed(self):
-        # spawn a mushroom "ghost", which appears from behind the blocks and rises up. Won't be interactive until
-        # it's clear of any collisionis
+        # spawn a powerup "ghost", which appears from behind the blocks and rises up. Won't be interactive until
+        # it's clear of any collisions
         self.level.asset_manager.sounds['powerup_appears'].play()
         self._smashed = True
         self.animation = self.empty
 
-        rising_mushroom = _RisingMushroom(self.level)
-        rising_mushroom.position = self.position
+        powerup = self.create_rising_powerup()
 
-        self.level.entity_manager.register(rising_mushroom)
+        self.level.entity_manager.register(powerup)
+
+    def create_rising_powerup(self):
+        # if mario isn't super, this will be a mushroom. Otherwise, it's a fire flower
+        patlas = self.level.asset_manager.pickup_atlas
+
+        if self.level.mario.is_super:
+            anim = patlas.load_animation("fire_flower")
+            cb = self.create_fire_flower_callback
+        else:
+            anim = patlas.load_static("mushroom_red")
+            cb = self.create_mushroom_callback
+
+        rising = _RisingPowerup(self.level, anim, cb)
+        rising.position = self.position
+
+        return rising
+
+    def create_mushroom_callback(self, position):
+        from .mushroom import Mushroom
+        mushroom = Mushroom(self.level, position)
+        self.level.entity_manager.register(mushroom)
+
+    def create_fire_flower_callback(self, position):
+        from .fire_flower import FireFlower
+        flower = FireFlower(self.level, position)
+        self.level.entity_manager.register(flower)
 
     def create_preview(self):
         block = super().create_preview()

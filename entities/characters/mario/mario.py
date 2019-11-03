@@ -10,7 +10,7 @@ import constants
 # plain ints because IntEnum is awful for performance surprisingly
 MarioEffectSmall = 0
 MarioEffectSuper = 1 << 0
-MarioEffectFire = 1 << 1 | MarioEffectSuper  # fire mario has to be super apparently
+MarioEffectFire = (1 << 1) | MarioEffectSuper  # fire mario has to be super apparently
 MarioEffectStar = 1 << 2
 
 

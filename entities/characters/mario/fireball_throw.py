@@ -26,7 +26,8 @@ class FireballThrow:
     def update(self, dt):
         from .mario import MarioEffectFire
 
-        if self.input_state.fire and self.level.mario.enabled and self.level.mario.effects & MarioEffectFire and\
+        if self.input_state.fire and self.level.mario.enabled and \
+                (self.level.mario.effects & MarioEffectFire) == MarioEffectFire and\
                 not self.level.mario.movement.crouching:
             if not self._fired and self._cooldown <= 0.:
                 self.launch_fireball()
