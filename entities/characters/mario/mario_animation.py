@@ -21,8 +21,16 @@ class _Variation(NamedTuple):
 
 
 class MarioAnimation:
+    SUPER_FIRE_THROW_DURATION = 0.075
+
     """This class merely figures out the appropriate mario animation to display"""
     def __init__(self, atlas):
+        self.fire_throw = atlas.load_static("super_mario_fire_throw_left"), \
+                          atlas.load_static("super_mario_fire_throw_right")
+
+        self.throw_timer = 0.
+        self.throw_image = self.fire_throw[0]
+
         self.stand = _Variation(
             # small mario variants
             _AnimationSet(
@@ -159,8 +167,17 @@ class MarioAnimation:
             else:
                 self.current = MarioAnimation._variation_to_set(mario, self.walk)[direction]
 
+        self.throw_timer = max(0., self.throw_timer - dt)
+        if not mario.is_super:
+            self.throw_timer = 0.  # can't throw fireballs unless super at the least
+
+        self.throw_image = self.fire_throw[0] if direction == 0 else self.fire_throw[1]
+
         self.current.update(dt)
 
     @property
     def image(self):
-        return self.current.image
+        return self.throw_image.image if self.throw_timer > 0. else self.current.image
+
+    def throw(self):
+        self.throw_timer = MarioAnimation.SUPER_FIRE_THROW_DURATION

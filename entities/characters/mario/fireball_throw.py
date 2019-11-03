@@ -55,3 +55,5 @@ class FireballThrow:
 
         self.level.entity_manager.register(fb)
         self.level.asset_manager.sounds['fireball'].play()
+
+        self.level.mario.animator.throw()
