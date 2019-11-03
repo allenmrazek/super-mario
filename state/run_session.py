@@ -1,3 +1,4 @@
+import json
 import pygame
 from .game_state import GameState
 from assets.statistics import Statistics
@@ -28,8 +29,18 @@ class RunSession(GameState, EventHandler):
         self.levels = [('level-1-1.level', "WORLD 1-1"),
                        ('level-1-2.level', "WORLD 1-2"),
                        ('level-1-3.level', "WORLD 1-3")]
+
+        self.load_level_info()
+
         self.current_level = None
         self.level_runner = None
+
+    @staticmethod
+    def load_level_info():
+        with open('levels/levels.json', 'r') as file:
+            result = json.loads(file.read())
+
+            print("result:", result)
 
     def update(self, dt):
         if not self.finished:

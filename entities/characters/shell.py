@@ -18,10 +18,10 @@ class Shell(Projectile):
 
     """Deadly version of the shell"""
 
-    def __init__(self, level, direction):
+    def __init__(self, level, direction, shell_animation):
         self.level = level
         self.sounds = level.asset_manager.sounds
-        self.shell = level.asset_manager.character_atlas.load_static("shell_green")
+        self.shell = shell_animation
 
         super().__init__(self.shell, level, deadly_shell_parameters, (1, 1), (14, 14),
                          constants.Block, constants.Enemy | constants.Mario)
@@ -67,7 +67,7 @@ class Shell(Projectile):
             deadly_to_mario = (rel_dir < 0 and self.movement.velocity.x < 0.) \
                 or (rel_dir > 0 and self.movement.velocity.x > 0.)
 
-            if deadly_to_mario:
+            if deadly_to_mario and not mario.is_invincible:
                 DamageMario.hurt_mario(self.level, mario)
 
         elif isinstance(hit_thing, Enemy):

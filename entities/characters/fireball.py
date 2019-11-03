@@ -5,6 +5,7 @@ from util import world_to_screen
 
 
 class Fireball(Entity):
+    """A fireball, thrown by mario"""
     LIFETIME = 10.
 
     def __init__(self, level, parameters, initial_velocity):
@@ -27,6 +28,7 @@ class Fireball(Entity):
         self._dead = False
 
         # todo: die when offscreen
+        # todo: limit to 2 at a time
 
     def draw(self, screen, view_rect):
         screen.blit(self.animation.image, world_to_screen(self.position, view_rect))
@@ -58,7 +60,7 @@ class Fireball(Entity):
                 die()
                 self.explode()
             else:
-                print("hit something, but no death function")
+                print(f"hit {thing_hit.__class__}, but it does not have a die function")
 
     def explode(self):
         self._dead = True
@@ -71,6 +73,6 @@ class Fireball(Entity):
 
         explosion = Corpse(self.level, explode_anim, Corpse.STATIONARY, explode_anim.duration, True)
         explosion.position = self.position + make_vector(self.rect.width // 2, self.rect.height // 2) -\
-                             make_vector(explosion.rect.width // 2, explosion.rect.height // 2)
+            make_vector(explosion.rect.width // 2, explosion.rect.height // 2)
 
         self.level.entity_manager.register(explosion)

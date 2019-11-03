@@ -1,10 +1,9 @@
-import math
 from .level_entity import LevelEntity
 from util import world_to_screen, mario_str_to_pixel_value_velocity as mstpvv
 import constants
 from .mario.mario_constants import air_max_vertical_velocity
 import config
-from util import get_aligned_foot_position, make_vector
+from util import make_vector
 
 
 class Platform(LevelEntity):
@@ -46,13 +45,11 @@ class Platform(LevelEntity):
     def detach_mario(self):
         self.level.mario.glued = False
 
-
     def update(self, dt, view_rect):
         self.collider.position = self.position
 
         # is mario standing on the platform?
         self.platform_tester.update(dt)
-
 
         mario = self.level.mario
         mario_foot_y = mario.movement.get_foot_position().y

@@ -39,6 +39,8 @@ class MainMenu(GameState, EventHandler):
 
         self.game_events.register(self)
 
+
+
     def update(self, dt):
         self.level.update(dt)
 
@@ -59,6 +61,7 @@ class MainMenu(GameState, EventHandler):
 
             screen.blit(btn, r)
 
+            # todo: fix this before release
             if r.collidepoint(*pygame.mouse.get_pos()):
                 self._selected = idx
 
@@ -105,3 +108,8 @@ class MainMenu(GameState, EventHandler):
 
     def activated(self):
         pygame.mixer_music.stop()
+
+        # todo: fix before release
+        #self._on_play()
+
+

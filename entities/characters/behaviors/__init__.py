@@ -6,6 +6,7 @@ from .interactive import Interactive
 from .smashable import Smashable
 from .gravity_movement import GravityMovement
 from .enemy_ground_movement import EnemyGroundMovement
+from .smart_enemy_ground_movement import SmartEnemyGroundMovement
 
 __all__ = ['SimpleMovement', 'JumpingMovement', 'DamageMario', 'Squashable', 'Interactive',
-           'Smashable', 'GravityMovement', 'EnemyGroundMovement']
+           'Smashable', 'GravityMovement', 'EnemyGroundMovement', 'SmartEnemyGroundMovement']

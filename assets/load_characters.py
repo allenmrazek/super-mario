@@ -8,12 +8,19 @@ def load_characters(atlas: SpriteAtlas, small, large):
     atlas.initialize_animation("goomba", *small, .25, config.transparent_color)
     atlas.initialize_static("goomba_squashed", config.transparent_color)
 
-    # koopa
+    # koopa (green)
     koopa_size = (16 * config.rescale_factor, 24 * config.rescale_factor)
+
     create_animation_with_flipped(atlas, "koopa_green_right", "koopa_green_left", koopa_size, 0.33)
     atlas.initialize_static("shell_green", config.transparent_color, *small)
     atlas.initialize_animation("shell_green", *small, 0.25, config.transparent_color)
     atlas.initialize_static("shell_green_dead", config.transparent_color, *small)
+
+    # koopa (red)
+    create_animation_with_flipped(atlas, "koopa_red_right", "koopa_red_left", koopa_size, 0.33)
+    atlas.initialize_static("shell_red", config.transparent_color, *small)
+    atlas.initialize_animation("shell_red", *small, 0.25, config.transparent_color)
+    atlas.initialize_static("shell_red_dead", config.transparent_color, *small)
 
     # piranha plant
     plant_size = (16 * config.rescale_factor, 24 * config.rescale_factor)

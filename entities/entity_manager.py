@@ -152,8 +152,6 @@ class EntityManager:
             self.layers[layer].clear()
 
         # load new data
-
-        # clear any existing values and load new ones from disk
         for layer in self.layers:
             # find entries for this layer
             layer_name = constants.layer_to_name(layer)

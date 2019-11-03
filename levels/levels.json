@@ -1,6 +1,10 @@
-# idea I have to deal with warp points/pipes, not currently functional
-
 {
-	"level-1-1": ("level-1-2", 0)
-	"level-1-1-1": ("level-1-1, 1)
+	"warp_descriptor": {
+		"level-1-1-1": ["level-1-1", 1, "vertical_pipe_emerge"],
+		"level-1-1-2": ["level-1-1", 1, "horizontal_pipe_emerge"]
+	},
+	
+	"ordering": [
+		["level-1-1", "WORLD 1-1"]
+	]
 }

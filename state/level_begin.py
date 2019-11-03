@@ -6,7 +6,7 @@ from util import make_vector, copy_vector
 
 
 class LevelBegin(GameState):
-    DURATION = 3.
+    DURATION = .03  # todo: fix before release
 
     def __init__(self, assets, level, scoring_labels: Labels, mario_stats):
         super().__init__()

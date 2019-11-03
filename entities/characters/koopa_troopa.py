@@ -154,12 +154,10 @@ class StunnedKoopaTroopa(Entity):
         if collision.hit_block:
             return
 
-        print("kicked")
-
         mario = self.level.mario
 
         # kick shell
-        shell = Shell(self.level, self.position.x - mario.position.x)
+        shell = Shell(self.level, self.position.x - mario.position.x, self.shell_animation)
         shell.position = get_aligned_foot_position(self.rect, shell.rect)
 
         self.level.entity_manager.register(shell)
