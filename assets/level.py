@@ -71,8 +71,6 @@ class Level(EventHandler):
         self.player_input.handle_event(evt, game_events)
 
     def spawn_mario(self, spawn_point=None):
-        print("spawning mario")
-
         spawn_point = spawn_point or self._find_spawn_point()
 
         assert isinstance(spawn_point, MarioSpawnPoint)
@@ -204,7 +202,11 @@ class Level(EventHandler):
         if visible:
             return visible[-1], visible.index(visible[-1])
 
-        # nothing visible, no checkpoints reached -> just don't spawn mario
+        # nothing visible, no checkpoints reached -> use first spawn point
+        if len(spawn_points) > 0:
+            return spawn_points[0], 0
+
+        print(f"*** warning *** no spawn points found for {self.filename}")
 
     @property
     def view_rect(self):

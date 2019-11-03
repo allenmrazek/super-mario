@@ -25,60 +25,61 @@ class Platform(LevelEntity):
         self.collider = Collider.from_entity(self, level.collider_manager, 0)
         level.collider_manager.register(self.collider)
 
+        # this collider used to determine if we hit another platform
+        self.push_collider = Collider.from_entity(self, level.collider_manager, constants.Block)
+        self.push_collider.on_collision = self.on_hit_block
+
         # now another collider to let us know when to drop the platform
         # remember: it assumes unscaled values, while animation has been scaled
         self.platform_tester = Interactive(level, self,
-                                           (0, -1),
+                                           (0, -3),
                                            (self.rect.width / config.rescale_factor,
-                                            self.rect.height / config.rescale_factor), self.attach_mario)
-
+                                            self.rect.height / config.rescale_factor),
+                                           self.attach_mario,
+                                           self.detach_mario)
 
         # state
         self._attached = False
+        self._pushed = False
 
     def attach_mario(self, collision):
         mario = self.level.mario
 
-        self._attached = mario.vertical_speed >= 0
-        
+        mario.glued = mario.vertical_speed >= 0 and air_max_vertical_velocity >= Platform.FALL_RATE
+
+    def detach_mario(self):
+        self.level.mario.glued = False
+
+    def on_hit_block(self, collision):
+        if collision.moved_collider and collision.moved_collider.entity and isinstance(collision.moved_collider.entity, Platform):
+            self._pushed = True
+            print("pushed")
+
     def update(self, dt, view_rect):
         # is mario standing on the platform?
+        self.platform_tester.update(dt)
+        self.push_collider.position = self.position
+
         mario = self.level.mario
-
-        if mario.vertical_speed >= 0. and self.pl
-
         mario_foot_y = mario.movement.get_foot_position().y
 
-        if self._dropping and math.fabs(mario_foot_y - self.position.y) < 1. and mario.vertical_speed >= 0.:
-            # mario's on the platform...
+        if mario.glued or self._pushed:
+            # mario has been glued onto the platform, we're responsible for moving him (ypos) now
+            # todo: platform can drag mario into solid blocks, fix
+
             pos = self.position
             pos.y += Platform.FALL_RATE * dt
+            #self.push_collider.try_move(pos, True)
+            #self.position = self.push_collider.position
             self.position = pos
-            self.collider.position = self.position
-
-            # align mario to the platform, unless platform drop rate exceeds mario's maximum velocity
-            if Platform.FALL_RATE <= air_max_vertical_velocity:
-                # if our fall rate doesn't exceed mario's gravity, glue his feet to the platform
-                # todo: this will drag him into solid blocks, so fix or don't put these platforms over solid blocks..
-
-                # want to align mario's feet with our top
-                new_foot = pos.y - (mario_foot_y - mario.position.y)
-                # #aligned = get_aligned_foot_position(self.rect, mario.rect)
-                # print("aligning")
-                #
-                mario.position = make_vector(mario.position.x, new_foot)  # only align y, don't center mario on plat
-                mario.movement.update_airborne_status()
-            elif mario.movement.is_airborne:
-                print("ab")
-        elif self._dropping:
-            print("dropping, with mario foot", mario_foot_y, " and us", self.position.y)
-
-
-    def on_mario_standing(self, collision):
-        self._dropping = True
+            
+            # want to align mario's feet with our top if he's glued onto the platform
+            if mario.glued:
+                mario.movement.set_foot_y_coord(pos.y)
 
     def draw(self, screen, view_rect):
         screen.blit(self.animation.image, world_to_screen(self.position, view_rect))
+        self.platform_tester.draw(screen, view_rect)
 
     @property
     def layer(self):

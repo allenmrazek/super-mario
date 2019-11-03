@@ -58,9 +58,9 @@ class LevelBegin(GameState):
         pygame.mixer_music.stop()
 
     def deactivated(self):
-        pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
-        pygame.mixer_music.play(-1)
+        # pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
+        # pygame.mixer_music.play(-1)
 
         self.level.begin()
 
-        print("playing theme music")
+        #print("playing theme music")

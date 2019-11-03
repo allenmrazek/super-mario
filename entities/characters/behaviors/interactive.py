@@ -7,7 +7,7 @@ import constants
 
 class Interactive(Behavior):
     """Invokes a callback when Mario intersects this entity's collider"""
-    def __init__(self, level, entity, hitbox_offset, hitbox_size, on_hit):
+    def __init__(self, level, entity, hitbox_offset, hitbox_size, on_hit, on_not_hit=None):
         super().__init__()
 
         assert level is not None
@@ -22,6 +22,7 @@ class Interactive(Behavior):
         self.hitbox_offset = rescale_vector(hitbox_offset)
         self.hitbox.position = entity.position + self.hitbox_offset
         self.on_hit = on_hit
+        self.on_not_hit = on_not_hit
 
     def update(self, dt):
         if self.on_hit is None:
@@ -31,6 +32,9 @@ class Interactive(Behavior):
 
         for c in collisions:
             self.on_hit(c)
+
+        if not collisions and self.on_not_hit:
+            self.on_not_hit()
 
     def draw(self, screen, view_rect):
         if config.debug_hitboxes:

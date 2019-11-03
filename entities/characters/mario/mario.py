@@ -29,6 +29,7 @@ class Mario(LevelEntity):
         self._enabled = False
         self._active_effects = MarioEffectSmall | MarioEffectFire | MarioEffectSuper
         self._invincibility_period = 0.
+        self._glued = False
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
@@ -62,6 +63,14 @@ class Mario(LevelEntity):
             self.movement.enabled = True
             self._enabled = True
 
+    @property
+    def glued(self):
+        return self._glued
+
+    @glued.setter
+    def glued(self, tf):
+        self._glued = tf
+
     def destroy(self):
         self.enabled = False
         self.level.entity_manager.unregister(self)
@@ -83,6 +92,7 @@ class Mario(LevelEntity):
 
     def reset(self):
         self.movement.reset()
+        self.glued = False
 
     @staticmethod
     def factory(level, values):

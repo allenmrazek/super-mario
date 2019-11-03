@@ -25,7 +25,7 @@ class RunSession(GameState, EventHandler):
         self.mario_stats = Statistics(self.scoring_labels)
         self.mario_stats.reset()
 
-        self.levels = [('level-1-1.level', "WORLD 1-1"),
+        self.levels = [('level-1-2.level', "WORLD 1-1"),
                        ('level-1-2.level', "WORLD 1-2"),
                        ('level-1-3.level', "WORLD 1-3")]
         self.current_level = None

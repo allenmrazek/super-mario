@@ -69,7 +69,7 @@ class MarioMovement:
     def is_airborne(self):
         """Returns true if mario is in the air. Note that checking velocity by itself is not sufficient: at the top
         of its arc, velocity y component may briefly be 0"""
-        return self._airborne
+        return self._airborne and not self.mario_entity.glued
 
     @property
     def is_facing_right(self):
@@ -331,25 +331,13 @@ class MarioMovement:
             self._use_skid_deceleration = False
             self._velocity.x = 0.
 
-    def update_airborne_status(self):
-        # airborne collider is essentially a teleport without movement, no need to update its position
-        current_hitbox = self._get_active_hitbox()
-
-        self.airborne_collider.rect.width = current_hitbox.rect.width
-        self.airborne_collider.rect.height = current_hitbox.rect.height
-
-        collisions = self.airborne_collider.test(
-            self.mario_entity.position + self._get_hitbox_offset() + make_vector(0, 1))
-
-        if collisions:
-            # todo: invoke callbacks for collisions? maybe this should be done in ColliderManager?
-
-            self._airborne = False
-            self._velocity.y = 0.
-        else:
-            self._airborne = True
-
     def _handle_vertical_movement(self, dt):
+        if self.mario_entity.glued and not self.input_state.jump and self._velocity.y >= 0.:
+            self._velocity.y = 0.
+            self._airborne = False
+
+            return
+
         """The main tricky bit with this is to remember that it's not just jumping that gets mario into the air:
         falling off ledges, off disappearing blocks, and enemy impact counts too"""
 
@@ -359,10 +347,25 @@ class MarioMovement:
         if self._velocity.y < 0.:
             self._airborne = True
         else:
-            self.update_airborne_status()
+            # airborne collider is essentially a teleport without movement, no need to update its position
+            current_hitbox = self._get_active_hitbox()
+
+            self.airborne_collider.rect.width = current_hitbox.rect.width
+            self.airborne_collider.rect.height = current_hitbox.rect.height
+
+            collisions = self.airborne_collider.test(
+                self.mario_entity.position + self._get_hitbox_offset() + make_vector(0, 1))
+
+            if collisions:
+                # todo: invoke callbacks for collisions? maybe this should be done in ColliderManager?
+
+                self._airborne = False
+                self._velocity.y = 0.
+            else:
+                self._airborne = True
 
         # if we're on the ground and haven't already responded to jump, begin a jump
-        if self.input_state.jump and not self.is_airborne and not self.jumped:
+        if self.input_state.jump and not self.is_airborne and (not self.jumped or self.mario_entity.glued):
             # jumping just consists of directly setting vertical velocity;
             # the actual velocity depends on mario's horizontal speed ...
             jump_stats = next((js for js in vertical_physics_parameters
@@ -446,3 +449,22 @@ class MarioMovement:
 
     def get_foot_position(self):
         return make_vector(*self._get_active_hitbox().rect.midbottom)
+
+    def set_foot_y_coord(self, ycoord):
+        r = self._get_active_hitbox().rect.copy()
+
+        r.bottom = ycoord
+
+        self.position = make_vector(self.position.x, r.top - self._get_hitbox_offset()[1])
+
+    def set_foot_position(self, foot_position):
+        r = self._get_active_hitbox().rect.copy()
+
+        r.midbottom = foot_position
+
+        self.position = make_vector(r.left - self._get_hitbox_offset()[0], r.top - self._get_hitbox_offset()[1])
+
+        # hb = self._get_active_hitbox()
+        # of = self._get_hitbox_offset()
+        #
+        # self.position = make_vector(foot_position.x - hb.rect.width // 2 + of.x, foot_position.y - hb.rect.height + of.y)

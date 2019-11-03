@@ -95,19 +95,19 @@ class LevelCleared(GameState):
     def _create_doppleganger(self, fake):
         ca = self.level.asset_manager.character_atlas
 
-        if fake.effects & MarioEffects.Super:
+        if self.level.mario.is_super:
             # super variant
-            if fake.effects & MarioEffects.Fire:
+            if (fake.effects & MarioEffectFire) == MarioEffectFire:
                 return ca.load_static("super_mario_fire_pole_right")
-            elif fake.effects & MarioEffects.Star:
+            elif (fake.effects & MarioEffectStar) == MarioEffectStar:
                 raise NotImplementedError
             else:  # just super mario
                 return ca.load_static("super_mario_pole_right")
         else:
             # small variants
-            if fake.effects & MarioEffects.Fire:
+            if (fake.effects & MarioEffectFire) == MarioEffectFire:
                 return ca.load_static("mario_fire_pole_right")
-            elif fake.effects & MarioEffects.Star:
+            elif (fake.effects & MarioEffectStar) == MarioEffectStar:
                 raise NotImplementedError
             else:
                 return ca.load_static("mario_pole_right")
