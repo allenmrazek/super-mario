@@ -50,6 +50,7 @@ class Corpse(Projectile):
 
     @staticmethod
     def create_corpse_animation(animation):
+        # creates a simple corpse by flipping current animation frame
         current_frame = animation.image
 
         corpse = pygame.transform.flip(current_frame, False, True)

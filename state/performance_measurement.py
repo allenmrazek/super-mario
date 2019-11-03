@@ -6,6 +6,7 @@ from entities.gui.element import Anchor
 from entities.gui.text import Text
 from entities.entity_manager import EntityManager
 from util import make_vector
+from event import EventHandler
 import config
 import constants
 
@@ -17,7 +18,7 @@ class _Measurement(NamedTuple):
     max_overall: int
 
 
-class PerformanceMeasurement(GameState):
+class PerformanceMeasurement(GameState, EventHandler):
     def __init__(self, state_stack, game_events, target_state: GameState):
         super().__init__(game_events)
 
@@ -31,6 +32,8 @@ class PerformanceMeasurement(GameState):
         text_position = make_vector(config.screen_rect.right, config.screen_rect.top)
 
         font = pygame.font.SysFont(None, 20)
+        self._finished = False
+        game_events.register(self)
 
         self.frame_rate = Text(text_position, "Frame Rate", anchor=Anchor.TOP_RIGHT, font=font)
 
@@ -115,7 +118,7 @@ class PerformanceMeasurement(GameState):
 
     @property
     def finished(self):
-        return self.target_state.finished
+        return self.target_state.finished or self._finished
 
     @staticmethod
     def measure(state_stack: GameStateStack, target_state: GameState):
@@ -150,3 +153,7 @@ class PerformanceMeasurement(GameState):
             self.update_rate.text = f"UPS: {avg_updates:.2f}"
         else:
             self.update_rate.text = "UPS: ???"
+
+    def handle_event(self, evt, game_events):
+        if evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE:
+            self._finished = True

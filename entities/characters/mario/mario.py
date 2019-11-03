@@ -3,6 +3,8 @@ from util import world_to_screen
 import entities.characters.behaviors
 from .mario_animation import MarioAnimation
 from .mario_movement import MarioMovement
+from .fireball_throw import FireballThrow
+
 import constants
 
 # plain ints because IntEnum is awful for performance surprisingly
@@ -23,14 +25,15 @@ class Mario(LevelEntity):
         self.movement = MarioMovement(self, self.input_state, self.cmanager,
                                       level.asset_manager.sounds['jump_small'],
                                       level.asset_manager.sounds['jump_super'])
-
+        self.fireballs = FireballThrow(level, input_state)
         self._enabled = False
-        self._active_effects = MarioEffectSmall | MarioEffectFire
+        self._active_effects = MarioEffectSmall | MarioEffectFire | MarioEffectSuper
         self._invincibility_period = 0.
 
     def update(self, dt, view_rect):
         self.movement.update(dt, view_rect)
         self.animator.update(self, dt)
+        self.fireballs.update(dt)
 
         self._invincibility_period = max(0., self._invincibility_period - dt)
 

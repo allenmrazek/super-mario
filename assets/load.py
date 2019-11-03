@@ -131,16 +131,17 @@ def load_interactive_atlas():
     kwargs = {"color_key": config.transparent_color}
 
     tinyw, tinyh = 8 * config.rescale_factor, 8 * config.rescale_factor
+    tilew, tileh = 16 * config.rescale_factor, 16 * config.rescale_factor
 
     atlas.initialize_static("brick", **kwargs)
     atlas.initialize_static("brick_debris", **kwargs)
 
-    atlas.initialize_animation("coin_block_ow", 16 * config.rescale_factor, 16 * config.rescale_factor, 1,
-                               config.transparent_color)
+    atlas.initialize_animation("coin_block_ow", tilew, tileh, 1, config.transparent_color)
     atlas.initialize_static("coin_block_empty_ow", **kwargs)
     atlas.initialize_static("flag", **kwargs)
     atlas.initialize_static("flag_pole", **kwargs)
     atlas.initialize_animation("fireball", tinyw, tinyh, 0.33, config.transparent_color)
+    atlas.initialize_animation("fireball_explode", tilew, tileh, 0.24, config.transparent_color)
 
     return atlas
 
@@ -172,5 +173,6 @@ def load_sound_fx():
     sounds['bump'] = load_sound('smb_bump.wav')
     sounds['coin'] = load_sound('smb_coin.wav')
     sounds['powerup_appears'] = load_sound('smb_powerup_appears.wav')
+    sounds['fireball'] = load_sound('smb_fireball.wav')
 
     return sounds

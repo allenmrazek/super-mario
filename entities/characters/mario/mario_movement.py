@@ -1,7 +1,7 @@
 import math
 from pygame import Vector2
 from .mario_constants import *
-from entities.collider import Collider
+from ...collider import Collider
 from util import make_vector, copy_vector
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer
 import config
@@ -439,4 +439,4 @@ class MarioMovement:
         self._velocity.y = new_y_velocity
 
     def get_head_position(self):
-        return make_vector(*self._get_active_hitbox().rect.topmiddle)
+        return make_vector(*self._get_active_hitbox().rect.midtop)

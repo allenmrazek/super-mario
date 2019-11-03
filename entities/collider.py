@@ -183,29 +183,29 @@ class ColliderManager:
         return dist
 
     def get_world_collisions(self, collider):
+        tw, th = self.tile_map.tile_width, self.tile_map.tile_height
+        tmw, tmh = self.tile_map.width, self.tile_map.height
+
         # determine which grid square(s) the collider is in
-        left, right = int(collider.rect.left / self.tile_map.tile_width), \
-                      int(collider.rect.right / self.tile_map.tile_width)
-        top, bottom = int(collider.rect.top / self.tile_map.tile_height),\
-            int(collider.rect.bottom / self.tile_map.tile_height)
+        left, right = int(collider.rect.left / tw), int(collider.rect.right / tw)
+        top, bottom = int(collider.rect.top / th), int(collider.rect.bottom / th)
+        r = Rect(left * tw, top * th, tw, th)
 
         collisions = []
-        r = Rect(left * self.tile_map.tile_width, top * self.tile_map.tile_height,
-                 self.tile_map.tile_width, self.tile_map.tile_height)
 
         # each of these tiles is potentially intersecting the collider
         for x in range(left, right + 1):
-            if x < 0 or x >= self.tile_map.width:
+            if x < 0 or x >= tmw:
                 continue
 
             for y in range(top, bottom + 1):
-                if y < 0 or y >= self.tile_map.height:
+                if y < 0 or y >= tmh:
                     continue
 
                 if not self.tile_map.get_passable((x, y)):
                     # a non-passable tile might be within range: now use a pixel-perfect collision test
-                    r.x = x * self.tile_map.tile_width
-                    r.y = y * self.tile_map.tile_height
+                    r.x = x * tw
+                    r.y = y * th
 
                     if collider.rect.colliderect(r):
                         collisions.append(Collision(moved_collider=collider, hit_thing=(x, y),

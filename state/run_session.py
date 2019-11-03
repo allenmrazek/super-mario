@@ -75,7 +75,9 @@ class RunSession(GameState, EventHandler):
 
                 # we'll control this state ourselves rather than pushing it onto the stack, so we can draw
                 # score on it
-                self.level_runner = RunLevel(self.game_events, self.assets, self.current_level, self.mario_stats)
+                from state.performance_measurement import PerformanceMeasurement
+
+                self.level_runner = PerformanceMeasurement.measure(state_stack, RunLevel(self.game_events, self.assets, self.current_level, self.mario_stats))
 
                 # overlay with level begin message
                 state_stack.push(LevelBegin(self.assets, self.current_level, self.scoring_labels, self.mario_stats))

@@ -1,5 +1,4 @@
 from entities.entity import Entity
-import entities.characters.behaviors.damage_mario
 from util import world_to_screen, make_vector
 import constants
 
@@ -16,12 +15,19 @@ class PiranhaPlant(Entity):
 
         super().__init__(self.animation.rect)
 
-        self.harm = entities.characters.behaviors.DamageMario(level, self, (3, 9), (12, 12), self.on_mario_invincible)
+        from entities.characters.behaviors import DamageMario
+        from entities.collider import Collider
+
+        self.position_collider = Collider.from_entity(self, level.collider_manager, 0)
+        self.level.collider_manager.register(self.position_collider)
+
+        self.harm = DamageMario(level, self, (3, 9), (12, 12), self.on_mario_invincible)
         self.visible_rect = visible_rect
 
         # state
         self._emerging = True
         self._timer = 0.
+        self._killself = False
 
     def update(self, dt, view_rect):
         super().update(dt, view_rect)
@@ -46,6 +52,7 @@ class PiranhaPlant(Entity):
                 self._emerging = True
 
         self.position = make_vector(self.visible_rect.left, self.visible_rect.top + self.rect.height * fraction_hidden)
+        self.position_collider.position = self.position
 
     def draw(self, screen, view_rect):
         draw_rect = self.rect.clip(self.visible_rect)
@@ -58,6 +65,7 @@ class PiranhaPlant(Entity):
         self.harm.draw(screen, view_rect)
 
     def destroy(self):
+        self.level.collider_manager.unregister(self.position_collider)
         self.level.entity_manager.unregister(self)
 
     def on_mario_invincible(self, collision):
@@ -72,4 +80,4 @@ class PiranhaPlant(Entity):
 
     @property
     def layer(self):
-        return constants.Background
+        return constants.Enemy

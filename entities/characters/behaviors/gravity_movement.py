@@ -8,7 +8,7 @@ class GravityMovement(Behavior):
     """Applies gravity motion only; does not affect horizontal velocity. This should be combined with some type of
     horizontal movement behavior because it does not register a collider in the world and thus is not interactive
     by itself"""
-    def __init__(self, entity, collider_manager, gravity_params):
+    def __init__(self, entity, collider_manager, gravity_params, on_hit_callback=None):
         assert entity is not None
         assert collider_manager is not None
 
@@ -20,6 +20,7 @@ class GravityMovement(Behavior):
         self.parameters = gravity_params
 
         self.airborne_collider = Collider.from_entity(entity, collider_manager, constants.Block)
+        self.on_hit = on_hit_callback
 
         # private state
         self._airborne = False
@@ -70,5 +71,8 @@ class GravityMovement(Behavior):
         if any(self.airborne_collider.try_move(target_pos, True)):
             self.airborne_collider.approach(target_pos)
             self._airborne = False
+
+            if self.on_hit:
+                self.on_hit()
 
         self.entity.position = self.airborne_collider.position

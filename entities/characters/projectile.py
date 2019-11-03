@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from entities.entity import Entity
-from .behaviors import SimpleMovement, Interactive
+# from .behaviors import SimpleMovement, Interactive
 from util import world_to_screen
 
 
@@ -9,6 +9,8 @@ class Projectile(Entity, ABC):
         self.animation = animation
 
         super().__init__(self.animation.rect)
+
+        from .behaviors import SimpleMovement, Interactive
 
         self.movement = SimpleMovement(
             self, level.collider_manager, parameters, movement_mask, self.on_movement_collision)

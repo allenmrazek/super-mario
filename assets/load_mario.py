@@ -73,3 +73,6 @@ def load_mario(atlas, small, large):
     atlas.initialize_static("fire_mario_pole_right", config.transparent_color)
     atlas.initialize_static("super_mario_pole_right", config.transparent_color)
     atlas.initialize_static("super_mario_fire_pole_right", config.transparent_color)
+
+    # fire super mario throw
+    create_static_with_flipped(atlas, "super_mario_fire_throw_right", "super_mario_fire_throw_left")
