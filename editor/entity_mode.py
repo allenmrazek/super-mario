@@ -43,7 +43,10 @@ class EntityMode(EditorMode):
                             self.level_map.tileset.tile_width, self.level_map.tileset.tile_height)
 
             for e in self.level.entity_manager.get_entities_inside_region(r):
-                e.destroy()
+                if getattr(e, "destroy") is not None:
+                    e.destroy()
+                else:
+                    print(f"warning: {e.__class__} does not define destroy()")
 
     def on_map_motion(self, evt, screen_mouse_pos):
         pass  # single click per entity

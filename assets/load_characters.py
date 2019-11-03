@@ -14,3 +14,7 @@ def load_characters(atlas: SpriteAtlas, small, large):
     atlas.initialize_static("shell_green", config.transparent_color, *small)
     atlas.initialize_animation("shell_green", *small, 0.25, config.transparent_color)
     atlas.initialize_static("shell_green_dead", config.transparent_color, *small)
+
+    # piranha plant
+    plant_size = (16 * config.rescale_factor, 24 * config.rescale_factor)
+    atlas.initialize_animation("piranha_plant", *plant_size, 0.25, config.transparent_color)

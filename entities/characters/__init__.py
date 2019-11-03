@@ -11,8 +11,9 @@ from .mushroom_block import MushroomBlock
 from .koopa_troopa import KoopaTroopa
 from .parameters import CharacterParameters
 from .projectile import Projectile
+from .piranha_plant import PiranhaPlant
 
 import entities.characters.triggers  # force triggers to be loaded
 
 __all__ = ['Mario', 'Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
-           'MushroomBlock', 'KoopaTroopa', 'Projectile']
+           'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant']

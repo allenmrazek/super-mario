@@ -183,6 +183,11 @@ class EntityManager:
 
         return found
 
+    def is_registered(self, entity):
+        layer = entity.layer
+
+        return entity in self.layers[entity]
+
     def get_entities_inside_region(self, rect: Rect):
         # return any entity, regardless of layer, that is intersecting with the given rect
         found = set()
