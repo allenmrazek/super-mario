@@ -8,7 +8,7 @@ import constants
 
 
 class MarioDisabler(LevelEntity):
-    """Hides mario when it intersects with his rect"""
+    """Hides mario when it intersects with his rect. Used to fake going inside castles"""
     SIZE = (64, 64)
 
     def __init__(self, level):

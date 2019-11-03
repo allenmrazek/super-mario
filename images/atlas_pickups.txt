@@ -1,3 +1,12 @@
 coin_spin = 0 16 64 16
 coin_world = 0 0 128 16
-mushroom_red = 0 32 16 16
+fire_flower = 0 32 64 16
+mushroom_green = 64 16 16 16
+mushroom_red = 80 16 16 16
+Pickup_tile_000 = 64 32 16 16
+Pickup_tile_001 = 80 32 16 16
+Pickup_tile_002 = 64 48 8 8
+Pickup_tile_003 = 96 16 8 8
+Pickup_tile_004 = 96 24 8 8
+Pickup_tile_005 = 104 16 8 8
+star = 0 48 64 16

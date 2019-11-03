@@ -138,16 +138,23 @@ class EntityManager:
     def deserialize(self, level, values):
         assert values["__class__"] == self.__class__.__name__
 
-        # clear any existing values and load new ones from disk
+        # clear existing entities
         for layer in self.layers:
             entity_list = self.layers[layer].copy()
 
             for existing_entity in entity_list:
-                if hasattr(existing_entity, "destroy"):
+                if self.is_registered(existing_entity) and hasattr(existing_entity, "destroy"):
                     existing_entity.destroy()
 
-            entity_list.clear()
+            if any(self.layers[layer]):
+                print("warning: one or more entities were not destroyed")
 
+            self.layers[layer].clear()
+
+        # load new data
+
+        # clear any existing values and load new ones from disk
+        for layer in self.layers:
             # find entries for this layer
             layer_name = constants.layer_to_name(layer)
 

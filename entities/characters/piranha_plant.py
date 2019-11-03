@@ -1,8 +1,5 @@
-from enum import Enum
-from . import Enemy
-from .level_entity import LevelEntity
 from entities.entity import Entity
-from .behaviors import DamageMario
+import entities.characters.behaviors.damage_mario
 from util import world_to_screen, make_vector
 import constants
 
@@ -19,7 +16,7 @@ class PiranhaPlant(Entity):
 
         super().__init__(self.animation.rect)
 
-        self.harm = DamageMario(level, self, (3, 9), (12, 12), self.on_mario_invincible)
+        self.harm = entities.characters.behaviors.DamageMario(level, self, (3, 9), (12, 12), self.on_mario_invincible)
         self.visible_rect = visible_rect
 
         # state
@@ -76,50 +73,3 @@ class PiranhaPlant(Entity):
     @property
     def layer(self):
         return constants.Background
-
-
-class PiranhaPlantSpawner(LevelEntity):
-    """Exists only to spawn a piranha plant in the level"""
-
-    def __init__(self, level):
-        self.mouth = level.asset_manager.character_atlas.load_animation("piranha_plant")
-        self.level = level
-
-        super().__init__(self.mouth.get_rect())
-
-        self._spawned = False
-
-    def update(self, dt, view_rect):
-        if not self._spawned:
-            plant = PiranhaPlant(self.level, self.rect)
-            plant.position = self.position
-            self.level.entity_manager.register(plant)
-
-            self.destroy()
-
-            self._spawned = True
-
-    def draw(self, screen, view_rect):
-        screen.blit(self.mouth.image, world_to_screen(self.position, view_rect))
-
-    def create_preview(self):
-        return self.mouth.image.copy()
-
-    @property
-    def layer(self):
-        return constants.Spawner
-
-    @property
-    def position(self):
-        return super().position
-
-    @position.setter
-    def position(self, val):
-        super(LevelEntity, self.__class__).position.fset(self, val)
-        self.mouth.position = val
-
-    def destroy(self):
-        self.level.entity_manager.unregister(self)
-
-
-LevelEntity.create_generic_factory(PiranhaPlantSpawner)

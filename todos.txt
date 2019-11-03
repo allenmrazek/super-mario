@@ -5,7 +5,7 @@ koopa, flying
 
 remainder of levels
 fire mario
-fire flower
+fire flower (mushroom blocks spawn fire flower if super mario)
 points rising from enemies
 swimming mario
 piranha plant
@@ -16,6 +16,7 @@ multi-coin block
 platforms
 50 pts per broken brick
 smashing bricks kills enemies on top of them
+smashing bricks collects coins on top of them
 extra points for chain reactions
 stop shells when stomping on them
 shells don't kill enemies offscreen, but can richochet
@@ -32,3 +33,5 @@ bugs:
 time doesn't reset between levels
 mario's transform can sometimes get him stuck
 something funny happens with input when mario transforms
+mushroom no longer moves
+spawn points don't work properly

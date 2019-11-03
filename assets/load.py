@@ -13,7 +13,7 @@ from .load_mario import load_mario
 def load_character_atlas():
     atlas = SpriteAtlas(get_atlas_path("characters"))
 
-    small_frame_width, small_frame_height = [16 * config.rescale_factor] * 2
+    small_frame_width, small_frame_height = [config.base_tile_dimensions[0] * config.rescale_factor] * 2
     large_frame_width, large_frame_height = small_frame_width, 2 * small_frame_height
 
     load_mario(atlas, (small_frame_width, small_frame_height),
@@ -130,6 +130,8 @@ def load_interactive_atlas():
     atlas = SpriteAtlas(get_atlas_path("interactive"), tf_use_rescale_factor=True)
     kwargs = {"color_key": config.transparent_color}
 
+    tinyw, tinyh = 8 * config.rescale_factor, 8 * config.rescale_factor
+
     atlas.initialize_static("brick", **kwargs)
     atlas.initialize_static("brick_debris", **kwargs)
 
@@ -138,6 +140,7 @@ def load_interactive_atlas():
     atlas.initialize_static("coin_block_empty_ow", **kwargs)
     atlas.initialize_static("flag", **kwargs)
     atlas.initialize_static("flag_pole", **kwargs)
+    atlas.initialize_animation("fireball", tinyw, tinyh, 0.33, config.transparent_color)
 
     return atlas
 

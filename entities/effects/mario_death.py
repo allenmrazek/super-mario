@@ -26,7 +26,9 @@ class MarioDeath(Entity, EventHandler):
     GRAVITY = mstpva('00200')
 
     def __init__(self, level, position):
-        self.animation = level.asset_manager.character_atlas.load_static("mario_dead")
+        animation_name = "mario_fire_dead" if level.mario.effects & entities.characters.mario.MarioEffectFire \
+            else "mario_dead"
+        self.animation = level.asset_manager.character_atlas.load_static(animation_name)
 
         super().__init__(self.animation.get_rect())
 
@@ -68,7 +70,7 @@ class MarioDeath(Entity, EventHandler):
             # if have more lives, display world start again
             if self.level.stats.lives > 0:
                 # reset any state mario might have had
-                self.level.mario.effects = entities.characters.mario.MarioEffects.Small
+                self.level.mario.effects = entities.characters.mario.MarioEffectSmall
 
                 # kludgy :( no time to do it the nice way though
                 run_session = state_stack.top

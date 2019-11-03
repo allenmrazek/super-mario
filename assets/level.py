@@ -7,6 +7,7 @@ import config
 from util import make_vector, copy_vector
 import entities.characters
 from entities.characters.spawners import MarioSpawnPoint
+from entities.characters.mario.mario import Mario
 from event import PlayerInputHandler
 from event.game_events import EventHandler
 import entities.effects.mario_death
@@ -33,7 +34,7 @@ class Level(EventHandler):
 
         self.asset_manager = assets
         self.player_input = PlayerInputHandler()
-        self.mario = entities.characters.mario.Mario(self.player_input, self)
+        self.mario = Mario(self.player_input, self)
         self.mario.enabled = False
 
         self._scroll_position = make_vector(0, 0)

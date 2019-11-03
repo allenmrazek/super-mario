@@ -1,7 +1,7 @@
 from .level_entity import LevelEntity
 from util import make_vector
 from .corpse import Corpse
-from .spawn_block import SpawnBlock
+from .spawners import SpawnBlock
 import config
 import constants
 from .parameters import CharacterParameters

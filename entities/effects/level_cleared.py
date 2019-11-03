@@ -1,4 +1,4 @@
-from entities.characters.mario import MarioEffects
+from entities.characters.mario import MarioEffectStar, MarioEffectFire, MarioEffectSuper, MarioEffectSmall
 from state.game_state import GameState
 from event.game_events import GameEvents
 import pygame

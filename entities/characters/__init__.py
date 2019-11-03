@@ -3,7 +3,6 @@ from .goomba import Goomba
 from .corpse import Corpse
 from .level_entity import LevelEntity
 from .parameters import CharacterParameters
-from .mario import Mario, MarioEffects
 from .brick import Brick
 from .coin import Coin
 from .coin_block import CoinBlock
@@ -15,5 +14,5 @@ from .piranha_plant import PiranhaPlant
 
 import entities.characters.triggers  # force triggers to be loaded
 
-__all__ = ['Mario', 'Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
+__all__ = ['Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
            'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant']

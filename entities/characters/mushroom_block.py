@@ -4,7 +4,7 @@ from util import world_to_screen
 from entities.entity import Entity
 import config
 import entities.collider
-from .spawn_block import SpawnBlock
+from .spawners.spawn_block import SpawnBlock
 import entities.characters.mushroom
 import constants
 

@@ -1,5 +1,5 @@
 from util import make_vector
-from entities.characters.mario import MarioEffects
+from entities.characters.mario import MarioEffectSmall, MarioEffectSuper, MarioEffectStar, MarioEffectFire
 from state.game_state import GameState, state_stack
 from animation import OneShotAnimation
 from util import world_to_screen
@@ -55,7 +55,7 @@ class MarioTransformSmall(GameState):
         screen.blit(self.animation.image, world_to_screen(self.mario.position, self.level.view_rect))
 
     def deactivated(self):
-        self.mario.effects = MarioEffects.Small  # mario loses all abilities
+        self.mario.effects = MarioEffectSmall  # mario loses all abilities
 
         # period of invincibility
         self.mario.make_invincible(.75)  # todo: put in a config somewhere

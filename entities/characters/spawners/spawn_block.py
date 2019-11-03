@@ -1,7 +1,7 @@
 from abc import abstractmethod
-from .level_entity import LevelEntity
+from ..level_entity import LevelEntity
 from util import world_to_screen
-from .behaviors import Smashable
+from ..behaviors.smashable import Smashable
 import constants
 
 

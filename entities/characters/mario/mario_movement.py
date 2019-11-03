@@ -1,6 +1,6 @@
 import math
 from pygame import Vector2
-from entities.characters.mario_constants import *
+from .mario_constants import *
 from entities.collider import Collider
 from util import make_vector, copy_vector
 from debug.mario_trajectory_visualizer import JumpTrajectoryVisualizer

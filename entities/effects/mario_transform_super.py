@@ -1,5 +1,5 @@
 from util import make_vector
-from entities.characters.mario import MarioEffects
+from entities.characters.mario import MarioEffectFire, MarioEffectSmall, MarioEffectStar, MarioEffectSuper
 from state.game_state import GameState, state_stack
 from animation import OneShotAnimation
 from util import world_to_screen
@@ -68,7 +68,7 @@ class MarioTransformSuper(GameState):
         screen.blit(self.animation.image, world_to_screen(self.mario.position + self._offset, self.level.view_rect))
 
     def deactivated(self):
-        self.mario.effects |= MarioEffects.Super
+        self.mario.effects |= MarioEffectSuper
 
         # the top-left coordinate of mario needs to be moved to account for a larger sprite
         self.mario.position = self.mario.position + self._offset
