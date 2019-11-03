@@ -46,9 +46,12 @@ class GravityMovement(Behavior):
     def draw(self, screen, view_rect):
         pass
 
-    def _handle_vertical_movement(self, dt):
+    def update_airborne(self):
         self._airborne = self.velocity.y < 0. or not any(
             self.airborne_collider.test(self.entity.position + make_vector(0, 1)))
+
+    def _handle_vertical_movement(self, dt):
+        self.update_airborne()
 
         current_velocity = copy_vector(self.velocity)
 

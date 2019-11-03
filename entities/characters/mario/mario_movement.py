@@ -331,6 +331,24 @@ class MarioMovement:
             self._use_skid_deceleration = False
             self._velocity.x = 0.
 
+    def update_airborne_status(self):
+        # airborne collider is essentially a teleport without movement, no need to update its position
+        current_hitbox = self._get_active_hitbox()
+
+        self.airborne_collider.rect.width = current_hitbox.rect.width
+        self.airborne_collider.rect.height = current_hitbox.rect.height
+
+        collisions = self.airborne_collider.test(
+            self.mario_entity.position + self._get_hitbox_offset() + make_vector(0, 1))
+
+        if collisions:
+            # todo: invoke callbacks for collisions? maybe this should be done in ColliderManager?
+
+            self._airborne = False
+            self._velocity.y = 0.
+        else:
+            self._airborne = True
+
     def _handle_vertical_movement(self, dt):
         """The main tricky bit with this is to remember that it's not just jumping that gets mario into the air:
         falling off ledges, off disappearing blocks, and enemy impact counts too"""
@@ -341,22 +359,7 @@ class MarioMovement:
         if self._velocity.y < 0.:
             self._airborne = True
         else:
-            # airborne collider is essentially a teleport without movement, no need to update its position
-            current_hitbox = self._get_active_hitbox()
-
-            self.airborne_collider.rect.width = current_hitbox.rect.width
-            self.airborne_collider.rect.height = current_hitbox.rect.height
-
-            collisions = self.airborne_collider.test(
-                self.mario_entity.position + self._get_hitbox_offset() + make_vector(0, 1))
-
-            if collisions:
-                # todo: invoke callbacks for collisions? maybe this should be done in ColliderManager?
-
-                self._airborne = False
-                self._velocity.y = 0.
-            else:
-                self._airborne = True
+            self.update_airborne_status()
 
         # if we're on the ground and haven't already responded to jump, begin a jump
         if self.input_state.jump and not self.is_airborne and not self.jumped:
@@ -440,3 +443,6 @@ class MarioMovement:
 
     def get_head_position(self):
         return make_vector(*self._get_active_hitbox().rect.midtop)
+
+    def get_foot_position(self):
+        return make_vector(*self._get_active_hitbox().rect.midbottom)

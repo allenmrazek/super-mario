@@ -14,8 +14,9 @@ from .mushroom_block import MushroomBlock
 from .koopa_troopa import KoopaTroopa
 
 from .piranha_plant import PiranhaPlant
+from .platform import Platform
 
 import entities.characters.triggers  # force triggers to be loaded
 
 __all__ = ['Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
-           'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant']
+           'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant', 'Platform']

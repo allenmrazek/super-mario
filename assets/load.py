@@ -136,6 +136,7 @@ def load_interactive_atlas():
 
     atlas.initialize_static("brick", **kwargs)
     atlas.initialize_static("brick_debris", **kwargs)
+    atlas.initialize_static("horizontal_platform", **kwargs)
 
     atlas.initialize_animation("coin_block_ow", tilew, tileh, 1, config.transparent_color)
     atlas.initialize_static("coin_block_empty_ow", **kwargs)

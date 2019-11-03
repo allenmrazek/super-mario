@@ -42,8 +42,8 @@ class FireballThrow:
     def _get_fireball_position(self):
         return self.level.mario.head_position
 
-        # determine where the fireball should appear on mario (depends on direction and size)
-
+        # todo: determine where the fireball should appear on mario (depends on direction and size)
+        
     def launch_fireball(self):
         # initial velocity of fireball depends on direction
         initial_velocity = make_vector(fireball_parameters.max_horizontal_velocity, fireball_parameters.max_vertical_velocity)\
