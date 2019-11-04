@@ -7,7 +7,7 @@ from util import make_vector
 
 
 class Platform(LevelEntity):
-    FALL_RATE = mstpvv('00500')
+    FALL_RATE = mstpvv('01500')
 
     """A horizontal platform that moves downward as mario stands on it"""
     def __init__(self, level):

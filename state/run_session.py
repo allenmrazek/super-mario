@@ -51,8 +51,7 @@ class RunSession(GameState, EventHandler):
 
     @property
     def finished(self):
-        return self._finished or\
-               (self.current_level is not None and self.mario_stats.lives <= 0) or not any(self.levels)
+        return self._finished
 
     def change_state(self):
         if self.current_level and self.current_level.timed_out:

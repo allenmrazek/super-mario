@@ -21,7 +21,10 @@ class Shell(Projectile):
     def __init__(self, level, direction, shell_animation):
         self.level = level
         self.sounds = level.asset_manager.sounds
-        self.shell = shell_animation
+
+        from animation import StaticAnimation
+
+        self.shell = StaticAnimation(shell_animation.image)
 
         super().__init__(self.shell, level, deadly_shell_parameters, (1, 1), (14, 14),
                          constants.Block, constants.Enemy | constants.Mario)
@@ -52,9 +55,6 @@ class Shell(Projectile):
 
         if collision.hit_block:
             return
-
-        if collision.hit_collider and collision.hit_collider.entity is not mario:
-            print("hit different thing")
 
         hit_thing = collision.hit_collider.entity
 

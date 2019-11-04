@@ -163,6 +163,7 @@ class StunnedKoopaTroopa(Entity):
         mario = self.level.mario
 
         # kick shell
+        self.shell_animation.frame = 0
         shell = Shell(self.level, self.position.x - mario.position.x, self.shell_animation)
         shell.position = get_aligned_foot_position(self.rect, shell.rect)
 
