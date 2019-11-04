@@ -115,8 +115,8 @@ class TilePickerDialog(Dialog):
 
     def _create_tileset_surface(self):
         # the raw tileset surface isn't suitable since it has gaps -> convert to a surface that does not have such gaps
-        s = pygame.Surface((self.tileset.tile_width * self.tileset.num_tiles_per_row,
-                            self.tileset.tile_height * self.tileset.num_tiles_per_col))
+        s = pygame.Surface((self.tileset.tile_width * (self.tileset.num_tiles_per_row + 1),
+                            self.tileset.tile_height * (self.tileset.num_tiles_per_col + 1)))
 
         for idx in range(self.tileset.tile_count):
             coords = tile_index_to_coords(idx, self.tileset)
