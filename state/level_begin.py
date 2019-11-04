@@ -44,6 +44,7 @@ class LevelBegin(GameState):
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
+
         self.scoring_labels.show_labels(screen)
         screen.blit(self.world_title, self.world_title_pos)
         screen.blit(self.x, self.x_pos)

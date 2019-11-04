@@ -1,4 +1,6 @@
 from state.game_state import GameState
+from .time_over import TimeOut
+from . import state_stack
 
 
 class RunLevel(GameState):
@@ -20,7 +22,7 @@ class RunLevel(GameState):
 
     @property
     def finished(self):
-        return self._finished or self.level.cleared or self.stats.lives <= 0
+        return self._finished or self.level.cleared or self.stats.lives <= 0 or self.level.timed_out
 
     def activated(self):
         self.game_events.register(self.level)

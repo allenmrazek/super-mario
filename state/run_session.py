@@ -1,4 +1,3 @@
-import json
 import pygame
 from .game_state import GameState
 from assets.statistics import Statistics
@@ -10,6 +9,7 @@ from scoring import Labels
 from event import EventHandler
 from .level_begin import LevelBegin
 from .game_over import GameOver
+from .time_over import TimeOut
 
 
 class RunSession(GameState, EventHandler):
@@ -31,17 +31,8 @@ class RunSession(GameState, EventHandler):
                        ('level-1-3.level', "WORLD 1-3"),
                        ('level-1-4.level', "WORLD 1-4")]
 
-        self.load_level_info()
-
         self.current_level = None
         self.level_runner = None
-
-    @staticmethod
-    def load_level_info():
-        with open('levels/levels.json', 'r') as file:
-            result = json.loads(file.read())
-
-            print("result:", result)
 
     def update(self, dt):
         if not self.finished:
@@ -64,10 +55,15 @@ class RunSession(GameState, EventHandler):
                (self.current_level is not None and self.mario_stats.lives <= 0) or not any(self.levels)
 
     def change_state(self):
+        if self.current_level and self.current_level.timed_out:
+            self.mario_stats.lives -= 1
+
         if self.mario_stats.lives == 0:
             state_stack.push(GameOver(self.scoring_labels))
             self._finished = True
         else:
+            show_timeout = self.current_level.timed_out if self.current_level else False
+
             # play again if didn't clear it or haven't tried yet
             self.current_level = self.current_level or Level(self.assets,
                                                              entities.entity_manager.EntityManager.create_default(),
@@ -89,8 +85,19 @@ class RunSession(GameState, EventHandler):
                 # score on it
                 self.level_runner = RunLevel(self.game_events, self.assets, self.current_level, self.mario_stats)
 
-                # overlay with level begin message
-                state_stack.push(LevelBegin(self.assets, self.current_level, self.scoring_labels, self.mario_stats))
+                if show_timeout:
+                    # overlay with level begin message
+
+                    # don't activate this state yet
+                    self.scoring_labels.prep_labels()
+                    state_stack.states.append(LevelBegin(self.assets, self.current_level, self.scoring_labels,
+                                                         self.mario_stats))
+
+                    state_stack.states.append(TimeOut(self.game_events, self.mario_stats, self.scoring_labels))
+                else:
+                    # overlay with level begin message
+                    state_stack.push(LevelBegin(self.assets, self.current_level, self.scoring_labels, self.mario_stats))
+
             else:
                 # todo: won the game!
                 print("won (some of) the game!")

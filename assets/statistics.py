@@ -85,3 +85,4 @@ class Statistics:
 
     def reset_time(self):
         self._elapsed = 0.
+        self._remaining_time = constants.TIME_PER_LEVEL

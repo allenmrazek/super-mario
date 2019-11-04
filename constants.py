@@ -1,4 +1,4 @@
-TIME_PER_LEVEL = 400
+TIME_PER_LEVEL = 10
 
 Background = 1 << 0  # behind blocks
 Block = 1 << 1  # layer blocks are drawn on

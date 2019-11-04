@@ -40,6 +40,7 @@ class Level(EventHandler):
         self._scroll_position = make_vector(0, 0)
         self._view_rect = Rect(0, 0, config.screen_rect.width, config.screen_rect.height)
         self._cleared = False
+        self._timed_out = False
 
     def add_entity(self, entity):
         self.entity_manager.register(entity)
@@ -60,6 +61,9 @@ class Level(EventHandler):
             if self.mario.position.y > self.tile_map.height_pixels + self.mario.rect.height * 4:
                 self.despawn_mario()
                 self.entity_manager.register(entities.effects.mario_death.MarioDeath(self, self.mario.position))
+
+        if self.stats.remaining_time <= 0:
+            self._timed_out = True
 
     def draw(self, screen):
         vr = self.view_rect  # send copy: don't want our private stuff messed with
@@ -155,14 +159,19 @@ class Level(EventHandler):
 
             self.load_from_path(self.loaded_from, current_spawn[1])  # want idx, not actual point
             self.stats.reset_time()
+            self._timed_out = False
+            self._cleared = False
 
-            print("reset level")
         else:
             print("warning: failed to reset level -- was not loaded from disk")
 
     @property
     def cleared(self):
         return self._cleared
+
+    @property
+    def timed_out(self):
+        return self._timed_out
 
     def load_from_path(self, filename, spawn_idx=0):
         self._cleared = False
