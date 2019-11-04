@@ -81,22 +81,19 @@ class RunSession(GameState, EventHandler):
                 self.current_level.load_from_path("levels/" + self.levels[0][0])
                 self.current_level.title = self.levels[0][1]
 
-                # we'll control this state ourselves rather than pushing it onto the stack, so we can draw
-                # score on it
-                self.level_runner = RunLevel(self.game_events, self.assets, self.current_level, self.mario_stats)
+                self.level_runner = RunLevel(self.game_events, self.assets, self.current_level, self.mario_stats,
+                                             self.scoring_labels)
+                state_stack.push(self.level_runner)
 
+                # add level begin message
+                state_stack.push(LevelBegin(self.assets, self.current_level, self.scoring_labels, self.mario_stats))
+
+                # show timeout on top of that, if we just timed out
                 if show_timeout:
                     # overlay with level begin message
-
-                    # don't activate this state yet
+                    # don't push, because it will deactivate level begin and start music early
                     self.scoring_labels.prep_labels()
-                    state_stack.states.append(LevelBegin(self.assets, self.current_level, self.scoring_labels,
-                                                         self.mario_stats))
-
                     state_stack.states.append(TimeOut(self.game_events, self.mario_stats, self.scoring_labels))
-                else:
-                    # overlay with level begin message
-                    state_stack.push(LevelBegin(self.assets, self.current_level, self.scoring_labels, self.mario_stats))
 
             else:
                 # todo: won the game!

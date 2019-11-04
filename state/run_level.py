@@ -4,12 +4,14 @@ from . import state_stack
 
 
 class RunLevel(GameState):
-    def __init__(self, game_events, assets, level, stats):
+    def __init__(self, game_events, assets, level, stats, labels):
         super().__init__(game_events)
 
         self.stats = stats
         self.assets = assets
         self.level = level
+        self.labels = labels
+
         self._finished = False
 
     def update(self, dt):
@@ -19,6 +21,7 @@ class RunLevel(GameState):
     def draw(self, screen):
         screen.fill(self.level.background_color)
         self.level.draw(screen)
+        self.labels.show_labels(screen)
 
     @property
     def finished(self):
