@@ -5,10 +5,11 @@ from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpv
     mario_str_to_pixel_value_velocity as mstpvv
 import entities.effects
 import constants
+from util import make_vector
 
 
 # todo: scale this by rescale factor?
-mushroom_movement = CharacterParameters(50, mstpvv('04000'), 0., 0., mstpva('00300'))
+mushroom_movement = CharacterParameters(50, mstpvv('03800'), mstpva('00300'), 0., mstpva('00300'))
 
 
 class Mushroom(Entity):
@@ -27,6 +28,7 @@ class Mushroom(Entity):
         self.movement.horizontal_movement_collider.mask = constants.Block  # exclude enemies
 
         self.position = position
+        self.movement.velocity = make_vector(-mushroom_movement.max_horizontal_velocity, 0.)
 
     def update(self, dt, view_rect):
         self.movement.update(dt)

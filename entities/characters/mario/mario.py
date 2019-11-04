@@ -30,6 +30,7 @@ class Mario(LevelEntity):
         #self._active_effects = MarioEffectSmall | MarioEffectFire | MarioEffectSuper | MarioEffectStar
         self._active_effects = MarioEffectStar
         self._invincibility_period = 0.
+        self._starman_period = 0.
         self._glued = False
 
     def update(self, dt, view_rect):
@@ -38,6 +39,7 @@ class Mario(LevelEntity):
         self.fireballs.update(dt)
 
         self._invincibility_period = max(0., self._invincibility_period - dt)
+        self.update_starman(dt)
 
     def draw(self, screen, view_rect):
         true_pos = world_to_screen(self.rect.topleft, view_rect)
@@ -141,5 +143,15 @@ class Mario(LevelEntity):
     def is_starman(self):
         return self._active_effects & MarioEffectStar
 
+    def update_starman(self, dt):
+        self._starman_period = max(0., self._starman_period - dt)
+
+        if self._starman_period <= 0. and self.effects & MarioEffectStar == MarioEffectStar:
+            self.effects &= (self.effects & ~MarioEffectStar)
+
+    def make_starman(self, duration):
+        self._starman_period = max(self._starman_period, duration)
+
+        self.effects |= MarioEffectStar
 
 LevelEntity.register_factory(Mario, Mario.factory)

@@ -93,7 +93,8 @@ class ColliderManager:
         self._colliders.add(collider)
 
     def unregister(self, collider: Collider):
-        self._colliders.remove(collider)
+        if collider in self._colliders:
+            self._colliders.remove(collider)
 
     def clear(self):
         self._colliders = set()

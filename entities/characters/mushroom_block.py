@@ -9,7 +9,7 @@ import entities.characters.mushroom
 import constants
 
 
-class _RisingPowerup(Entity):
+class RisingPowerup(Entity):
     def __init__(self, level, animation, on_finished_rising):
         self.animation = animation
         self.on_finished = on_finished_rising
@@ -76,7 +76,7 @@ class MushroomBlock(SpawnBlock):
             anim = patlas.load_static("mushroom_red")
             cb = self.create_mushroom_callback
 
-        rising = _RisingPowerup(self.level, anim, cb)
+        rising = RisingPowerup(self.level, anim, cb)
         rising.position = self.position
 
         return rising
@@ -84,6 +84,7 @@ class MushroomBlock(SpawnBlock):
     def create_mushroom_callback(self, position):
         from .mushroom import Mushroom
         mushroom = Mushroom(self.level, position)
+
         self.level.entity_manager.register(mushroom)
 
     def create_fire_flower_callback(self, position):

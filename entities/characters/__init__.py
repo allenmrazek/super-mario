@@ -11,6 +11,8 @@ from .brick import Brick
 from .coin import Coin
 from .coin_block import CoinBlock
 from .mushroom_block import MushroomBlock
+from .starman_block import StarmanBlock
+from .starman import Starman
 from .koopa_troopa import KoopaTroopa
 from .koopa_troopa_red import KoopaTroopaRed, WingedKoopaTroopaRed
 
@@ -22,4 +24,4 @@ import entities.characters.triggers  # force triggers to be loaded
 
 __all__ = ['Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
            'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant', 'Platform', 'KoopaTroopaRed',
-           'WingedKoopaTroopaRed', 'FakeBowser']
+           'WingedKoopaTroopaRed', 'FakeBowser', 'Starman', 'StarmanBlock']

@@ -27,6 +27,16 @@ class FireFlower(Entity):
         self.level.asset_manager.sounds['powerup'].play()
         self.level.entity_manager.unregister(self)
 
+        mario = self.level.mario
+
+        if not mario.is_super:
+            from ..effects.mario_transform_super import MarioTransformSuper
+
+            MarioTransformSuper.apply_transform(self.level, mario)
+        else:
+            from .mario.mario import MarioEffectFire
+            mario.effects |= MarioEffectFire
+
     @property
     def layer(self):
         return constants.Background
