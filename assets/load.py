@@ -145,6 +145,10 @@ def load_interactive_atlas():
     atlas.initialize_animation("fireball", tinyw, tinyh, 0.33, config.transparent_color)
     atlas.initialize_animation("fireball_explode", tilew, tileh, 0.24, config.transparent_color)
 
+    fireballw, fireballh = 24 * config.rescale_factor, 8 * config.rescale_factor
+
+    atlas.initialize_animation("bowser_fireball", fireballw, fireballh, 0.25, config.transparent_color)
+
     return atlas
 
 
@@ -176,5 +180,6 @@ def load_sound_fx():
     sounds['coin'] = load_sound('smb_coin.wav')
     sounds['powerup_appears'] = load_sound('smb_powerup_appears.wav')
     sounds['fireball'] = load_sound('smb_fireball.wav')
+    sounds['bowserfire'] = load_sound('smb_bowserfire.wav')
 
     return sounds

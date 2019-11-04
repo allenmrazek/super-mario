@@ -10,6 +10,7 @@ class Container(Frame):
         super().__init__(relative_position, rect, anchor)
 
         self._offset = make_vector(0, 0)
+        self.hidden_rect = rect
 
     def get_absolute_position(self):
         return super().get_absolute_position() - self._offset
@@ -20,6 +21,7 @@ class Container(Frame):
         cr = Rect(*(super().get_absolute_position()), self.width, self.height)
 
         screen.set_clip(cr)
+        self.hidden_rect = cr
         super().draw(screen, view_rect)
 
         screen.set_clip(existing_cr)

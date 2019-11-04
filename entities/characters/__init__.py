@@ -12,12 +12,14 @@ from .coin import Coin
 from .coin_block import CoinBlock
 from .mushroom_block import MushroomBlock
 from .koopa_troopa import KoopaTroopa
-from .koopa_troopa_red import KoopaTroopaRed
+from .koopa_troopa_red import KoopaTroopaRed, WingedKoopaTroopaRed
 
 from .piranha_plant import PiranhaPlant
 from .platform import Platform
+from .fake_bowser import FakeBowser
 
 import entities.characters.triggers  # force triggers to be loaded
 
 __all__ = ['Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
-           'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant', 'Platform', 'KoopaTroopaRed']
+           'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant', 'Platform', 'KoopaTroopaRed',
+           'WingedKoopaTroopaRed', 'FakeBowser']

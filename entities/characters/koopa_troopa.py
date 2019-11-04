@@ -34,7 +34,7 @@ class KoopaTroopa(Enemy):
                                      self.squash, self._on_mario_invincible)
 
     @property
-    def _animation(self):
+    def active_animation(self):
         return self.left_animation if self.movement.velocity.x <= 0. else self.right_animation
 
     def update(self, dt, view_rect):
@@ -42,10 +42,10 @@ class KoopaTroopa(Enemy):
         self.squashable.update(dt)
 
         if not self.movement.is_airborne:
-            self._animation.update(dt)  # only move legs if on the ground
+            self.active_animation.update(dt)  # only move legs if on the ground
 
     def draw(self, screen, view_rect):
-        screen.blit(self._animation.image, world_to_screen(self.position, view_rect))
+        screen.blit(self.active_animation.image, world_to_screen(self.position, view_rect))
         self.movement.draw(screen, view_rect)
         self.squashable.draw(screen, view_rect)
 

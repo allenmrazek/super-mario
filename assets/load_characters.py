@@ -22,6 +22,15 @@ def load_characters(atlas: SpriteAtlas, small, large):
     atlas.initialize_animation("shell_red", *small, 0.25, config.transparent_color)
     atlas.initialize_static("shell_red_dead", config.transparent_color, *small)
 
+    # koopa (red, winged)
+    create_animation_with_flipped(atlas, "koopa_red_winged_right", "koopa_red_winged_left", koopa_size, 0.33)
+
     # piranha plant
     plant_size = (16 * config.rescale_factor, 24 * config.rescale_factor)
     atlas.initialize_animation("piranha_plant", *plant_size, 0.25, config.transparent_color)
+
+    # bowser
+    bowser_size = (32 * config.rescale_factor, 32 * config.rescale_factor)
+
+    atlas.initialize_animation("bowser_left_mouth_closed", *bowser_size, 0.50, config.transparent_color)
+    atlas.initialize_animation("bowser_left_mouth_open", *bowser_size, 0.50, config.transparent_color)

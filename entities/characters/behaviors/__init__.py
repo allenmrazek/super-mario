@@ -7,6 +7,9 @@ from .smashable import Smashable
 from .gravity_movement import GravityMovement
 from .enemy_ground_movement import EnemyGroundMovement
 from .smart_enemy_ground_movement import SmartEnemyGroundMovement
+from .koopa_floating import KoopaFloating
+from .bowser_logic import BowserLogic
 
 __all__ = ['SimpleMovement', 'JumpingMovement', 'DamageMario', 'Squashable', 'Interactive',
-           'Smashable', 'GravityMovement', 'EnemyGroundMovement', 'SmartEnemyGroundMovement']
+           'Smashable', 'GravityMovement', 'EnemyGroundMovement', 'SmartEnemyGroundMovement', 'KoopaFloating',
+           'BowserLogic']

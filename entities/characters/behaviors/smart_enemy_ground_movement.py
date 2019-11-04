@@ -21,13 +21,14 @@ class SmartEnemyGroundMovement(EnemyGroundMovement):
         self._patrolled = 0.
 
     def update(self, dt):
-        # will we fall if we move a body length in the direction of movement?
-        offset = self._left_offset if self.velocity.x < 0. else self._right_offset
+        if not self.is_airborne:
+            # will we fall if we move a body length in the direction of movement?
+            offset = self._left_offset if self.velocity.x < 0. else self._right_offset
 
-        if self._patrolled > self.patrol_range or not self.edge_detector.test(self.entity.position + offset):
-            # flip direction
-            self.velocity *= -1.
-            self._patrolled = 0.
+            if self._patrolled > self.patrol_range or not self.edge_detector.test(self.entity.position + offset):
+                # flip direction
+                self.velocity *= -1.
+                self._patrolled = 0.
 
         super().update(dt)
 

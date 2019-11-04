@@ -35,7 +35,8 @@ class _FireBarLink(Entity):
         self.harm.draw(screen, view_rect)
 
     def destroy(self):
-        self.level.entity_manager.unregister(self)
+        if self.level.entity_manager.is_registered(self):
+            self.level.entity_manager.unregister(self)
 
     def on_mario_invincible(self, collision):
         # self-destruct if starman hits this link
@@ -66,12 +67,20 @@ class FireBar(LevelEntity):
         self.fb_dimensions = (self.distance_per_link, self.distance_per_link)
 
         self.preview = self._create_editor_sprite()
-        self.fireballs = self._create_fireballs()
+        self.fireballs = []
 
         self.update_child_positions(0.)  # set initial positions of fireballs
 
+        # state
+        self._spawned_fireballs = False
+
     def update(self, dt, view_rect):
         self.fireball.update(dt)
+
+        if not self._spawned_fireballs:
+            self.fireballs = self._create_fireballs()
+            self._spawned_fireballs = True
+
         self.update_child_positions(dt)
 
     def update_child_positions(self, dt):
@@ -83,7 +92,10 @@ class FireBar(LevelEntity):
             self.angle -= math.pi * 2.
 
         vx, vy = math.cos(self.angle), math.sin(self.angle)
-        px, py = self.position
+        #px, py = self.position[0] - self.fb_dimensions[0] // 2, self.position[1] - self.fb_dimensions[1] // 2
+
+        # calc center position from spawner top-left position
+        px, py = self.position[0] + self.fb_dimensions[0] // 2, self.position[1] + self.fb_dimensions[1] // 2
 
         for c, child in enumerate(self.fireballs):
             dist = self.distance_per_link * c
@@ -92,7 +104,7 @@ class FireBar(LevelEntity):
                 py + vy * dist - self.fb_dimensions[1] // 2)
 
     def draw(self, screen, view_rect):
-        draw_pos = self.position - make_vector(self.distance_per_link // 2, self.distance_per_link // 2)
+        draw_pos = self.position #- make_vector(self.distance_per_link // 2, self.distance_per_link // 2)
 
         screen.blit(self.preview, world_to_screen(draw_pos, view_rect))
 
@@ -109,6 +121,10 @@ class FireBar(LevelEntity):
     def destroy(self):
         super().destroy()
         self.level.entity_manager.unregister(self)
+
+        for ch in self.fireballs:
+            if self.level.entity_manager.is_registered(ch):
+                self.level.entity_manager.unregister(ch)
 
     def _create_editor_sprite(self):
         prototype = self.level.asset_manager.interactive_atlas.load_animation("fireball").image

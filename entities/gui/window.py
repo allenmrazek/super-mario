@@ -22,6 +22,7 @@ class Window(Frame):
         self.background = background
         self.background_mouseover = background_mouseover or background
         self.draggable = draggable
+        self.hidden_rect = None
 
         # event-related state
         self._is_dragging = False
@@ -45,6 +46,9 @@ class Window(Frame):
         # restore screen as we found it
         screen.set_clip(clipping_rect)
 
+    def is_mouse_over(self, x, y):
+        return self.get_absolute_rect().collidepoint(x, y) if self.hidden_rect is None else self.hidden_rect.collidepoint(x, y)
+
     def handle_event(self, evt, game_events):
         # let children have a shot at the event first
         super().handle_event(evt, game_events)
@@ -52,7 +56,8 @@ class Window(Frame):
         # handle own events
         if self._is_dragging or (not evt.consumed and self.draggable):
             # left-down inside window -> start a drag (assuming no children handled it)
-            if evt.type == pygame.MOUSEBUTTONDOWN and self.get_absolute_rect().collidepoint(*evt.pos):
+            #if evt.type == pygame.MOUSEBUTTONDOWN and self.get_absolute_rect().collidepoint(*evt.pos):
+            if evt.type == pygame.MOUSEBUTTONDOWN and self.is_mouse_over(*evt.pos):
                 self.consume(evt)  # always consume mousedown in a window
                 self._is_dragging = True
                 self.make_active()
@@ -75,4 +80,5 @@ class Window(Frame):
 
         # mouseover highlighting
         if evt.type == pygame.MOUSEMOTION:
-            self._mouseover = self.get_absolute_rect().collidepoint(*evt.pos)
+            #self._mouseover = self.get_absolute_rect().collidepoint(*evt.pos)
+            self._mouseover = self.is_mouse_over(*evt.pos)

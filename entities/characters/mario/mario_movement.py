@@ -450,6 +450,9 @@ class MarioMovement:
     def get_foot_position(self):
         return make_vector(*self._get_active_hitbox().rect.midbottom)
 
+    def get_center_of_mass(self):
+        return make_vector(*self._get_active_hitbox().rect.center)
+
     def set_foot_y_coord(self, ycoord):
         r = self._get_active_hitbox().rect.copy()
 
