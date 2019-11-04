@@ -1,6 +1,6 @@
 from .projectile import Projectile
 from .enemy import Enemy
-from .goomba import Goomba
+from .goomba import Goomba, GoombaUw
 from .parameters import CharacterParameters
 
 from .fireball import Fireball
@@ -23,6 +23,6 @@ from .floaty_points import FloatyPoints
 
 import entities.characters.triggers  # force triggers to be loaded
 
-__all__ = ['Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
+__all__ = ['Enemy', 'Goomba', 'GoombaUw', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
            'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant', 'Platform', 'KoopaTroopaRed',
            'WingedKoopaTroopaRed', 'FakeBowser', 'Starman', 'StarmanBlock', 'FloatyPoints']

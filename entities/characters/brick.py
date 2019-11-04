@@ -48,7 +48,7 @@ class Brick(LevelEntity):
 
         corpse = Corpse.\
             create_ghost_corpse_from_entity(self,
-                                            self.level.asset_manager.interactive_atlas.load_static("brick_debris"),
+                                            self.destroyed,
                                             self.level, 0.1)
 
         self.level.asset_manager.sounds['breakblock'].play()
@@ -69,6 +69,14 @@ class Brick(LevelEntity):
         return constants.Block
 
 
+class BrickUw(Brick):
+    def __init__(self, level, position):
+        super().__init__(level, position)
+
+        self.image = level.asset_manager.interactive_atlas.load_static("brick_uw").image
+        self.destroyed = level.asset_manager.interactive_atlas.load_static("brick_uw_debris")
+
+
 def make_brick(level, values):
     brick = Brick(level, make_vector(0, 0))
 
@@ -78,4 +86,14 @@ def make_brick(level, values):
     return brick
 
 
+def make_brick_uw(level, values):
+    brick = BrickUw(level, make_vector(0, 0))
+
+    if values is not None:
+        brick.deserialize(values)
+
+    return brick
+
+
 LevelEntity.register_factory(Brick, make_brick)
+LevelEntity.register_factory(BrickUw, make_brick_uw)

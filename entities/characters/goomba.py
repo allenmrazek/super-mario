@@ -18,6 +18,7 @@ class Goomba(Enemy):
 
     def __init__(self, level):
         self.animation = level.asset_manager.character_atlas.load_animation("goomba")
+        self.squashed = level.asset_manager.character_atlas.load_static("goomba_squashed")
 
         super().__init__(level, self.animation.get_rect())
 
@@ -53,7 +54,7 @@ class Goomba(Enemy):
 
         self.level.stats.score += Goomba.POINT_VALUE
 
-        corpse = Corpse(self.level, self.level.asset_manager.character_atlas.load_static("goomba_squashed"),
+        corpse = Corpse(self.level, self.squashed,
                         Corpse.STATIONARY, 1.)
         corpse.position = get_aligned_foot_position(self.rect, corpse.rect)
 
@@ -88,5 +89,14 @@ class Goomba(Enemy):
     def create_preview(self):
         return self.animation.image.copy()
 
-    
+
+class GoombaUw(Goomba):
+    def __init__(self, level):
+        super().__init__(level)
+
+        self.animation = level.asset_manager.character_atlas.load_animation("goomba_uw")
+        self.squashed = self.level.asset_manager.character_atlas.load_static("goomba_uw_squashed")
+
+
 LevelEntity.create_generic_factory(Goomba)
+LevelEntity.create_generic_factory(GoombaUw)

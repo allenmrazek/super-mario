@@ -35,7 +35,7 @@ class PickedEntity:
 
 class EntityPickerDialog(Dialog):
     SIZE = (312, 312)
-    BUTTON_SIZE = (250, 26)
+    BUTTON_SIZE = (240, 26)
 
     def __init__(self, level):
         font = pygame.font.SysFont(None, 24)

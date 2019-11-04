@@ -27,7 +27,7 @@ class Mario(LevelEntity):
                                       level.asset_manager.sounds['jump_super'])
         self.fireballs = FireballThrow(level, input_state)
         self._enabled = False
-        self._active_effects = MarioEffectSmall | MarioEffectFire
+        self._active_effects = MarioEffectSmall | MarioEffectFire | MarioEffectSuper
         self._invincibility_period = 0.
         self._starman_period = 0.
         self._glued = False

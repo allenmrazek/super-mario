@@ -28,7 +28,8 @@ class RunSession(GameState, EventHandler):
 
         self.levels = [('level-1-1.level', "WORLD 1-1"),
                        ('level-1-2.level', "WORLD 1-2"),
-                       ('level-1-3.level', "WORLD 1-3")]
+                       ('level-1-3.level', "WORLD 1-3"),
+                       ('level-1-4.level', "WORLD 1-4")]
 
         self.load_level_info()
 

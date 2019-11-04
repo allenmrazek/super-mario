@@ -5,6 +5,8 @@ import constants
 
 
 class Coin(LevelEntity):
+    POINT_VALUE = 100
+
     def __init__(self, level):
         self.level = level
 
@@ -32,7 +34,7 @@ class Coin(LevelEntity):
 
     def _on_collected(self, collision):
         self.level.stats.coins += 1
-        self.level.stats.score += constants.COIN_POINT_VALUE
+        self.level.stats.score += Coin.POINT_VALUE
 
         self.collect_sound.play()
 
