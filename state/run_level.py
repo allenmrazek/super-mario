@@ -1,7 +1,9 @@
+import pygame
 from state.game_state import GameState
+from event import EventHandler
 
 
-class RunLevel(GameState):
+class RunLevel(GameState, EventHandler):
     def __init__(self, game_events, assets, level, stats, labels):
         super().__init__(game_events)
 
@@ -27,6 +29,13 @@ class RunLevel(GameState):
 
     def activated(self):
         self.game_events.register(self.level)
+        self.game_events.register(self)
 
     def deactivated(self):
         self.game_events.unregister(self.level)
+        self.game_events.unregister(self)
+
+    def handle_event(self, evt, game_events):
+        if evt.type == pygame.QUIT or (evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE):
+            self.consume(evt)
+            self._finished = True
