@@ -121,10 +121,6 @@ def world_to_screen(position, view_rect):
 
 def get_aligned_foot_position(entity_rect: pygame.Rect, to_align: pygame.Rect):
     return make_vector(entity_rect.centerx - to_align.width // 2, entity_rect.midbottom[1] - to_align.height)
-    # return a position such that to_align is on the same surface as entity_rect
-    #to_align.midbottom = entity_rect.midbottom
-
-    #return make_vector(*to_align.topleft)
 
 
 def rescale_vector(v):

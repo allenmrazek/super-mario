@@ -11,8 +11,8 @@ from util import make_vector, copy_vector
 from .floaty_points import FloatyPoints
 
 # todo: tweak movement characteristics
-koopa_red_parameters = CharacterParameters(30, mstpvv('04800'), mstpva('00300'), 100, mstpvv('04200'))
-winged_koopa_red_parameters = CharacterParameters(30, mstpvv('04800'), mstpva('00300'), 100, mstpvv('08000'))
+koopa_red_parameters = CharacterParameters(40, mstpvv('04800'), mstpva('00300'), 100, mstpvv('04200'))
+winged_koopa_red_parameters = CharacterParameters(40, mstpvv('04800'), mstpva('00300'), 100, mstpvv('08000'))
 
 
 class KoopaTroopaRed(KoopaTroopa):

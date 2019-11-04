@@ -27,14 +27,12 @@ class FakeBowser(Enemy):
 
         from .behaviors.bowser_logic import BowserLogic
         from .behaviors.simple_movement import SimpleMovement
-        from ..collider import Collider
 
         self.level = level
         self.movement = SimpleMovement(self, level.collider_manager, bowser_parameters)
         self.logic = BowserLogic(self, level, self.movement)
 
         from .behaviors import DamageMario
-        from .behaviors import Interactive
 
         # not stompable
         self.head = DamageMario(level, self, (1, 1), (13, 14), self.on_mario_invincible)

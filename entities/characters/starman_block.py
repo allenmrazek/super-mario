@@ -1,13 +1,5 @@
 from .level_entity import LevelEntity
-from util import make_vector
-from util import world_to_screen
-from entities.entity import Entity
-import config
-import entities.collider
 from .spawners.spawn_block import SpawnBlock
-from .mushroom_block import MushroomBlock
-import entities.characters.mushroom
-import constants
 
 
 class StarmanBlock(SpawnBlock):

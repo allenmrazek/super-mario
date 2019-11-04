@@ -1,6 +1,5 @@
 import random
 from .behavior import Behavior
-from .gravity_movement import GravityMovement
 from util import make_vector
 import config
 
@@ -62,8 +61,10 @@ class BowserLogic(Behavior):
 
         # todo: don't fire if mario offscreen?
         fb = BowserFireball(self.level)
+
+        # offset mouth pos
         fb.position = make_vector(*self.entity.rect.midtop) + \
-                      make_vector(8 * config.rescale_factor - fb.rect.width, 10 * config.rescale_factor)  # offset mouth pos
+            make_vector(8 * config.rescale_factor - fb.rect.width, 10 * config.rescale_factor)
 
         self.level.entity_manager.register(fb)
         self.level.asset_manager.sounds['bowserfire'].play()

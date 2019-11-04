@@ -5,7 +5,6 @@ from ..level_entity import LevelEntity
 from entities import Entity
 from util import world_to_screen
 import entities.characters.behaviors.damage_mario as b
-import constants
 import config
 from util import make_vector
 
@@ -92,7 +91,6 @@ class FireBar(LevelEntity):
             self.angle -= math.pi * 2.
 
         vx, vy = math.cos(self.angle), math.sin(self.angle)
-        #px, py = self.position[0] - self.fb_dimensions[0] // 2, self.position[1] - self.fb_dimensions[1] // 2
 
         # calc center position from spawner top-left position
         px, py = self.position[0] + self.fb_dimensions[0] // 2, self.position[1] + self.fb_dimensions[1] // 2
@@ -104,7 +102,7 @@ class FireBar(LevelEntity):
                 py + vy * dist - self.fb_dimensions[1] // 2)
 
     def draw(self, screen, view_rect):
-        draw_pos = self.position #- make_vector(self.distance_per_link // 2, self.distance_per_link // 2)
+        draw_pos = self.position
 
         screen.blit(self.preview, world_to_screen(draw_pos, view_rect))
 

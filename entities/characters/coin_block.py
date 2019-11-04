@@ -26,8 +26,10 @@ class AirCoin(Corpse):  # weird right? I know
 
 class CoinBlock(SpawnBlock):
     COIN_UP_PARAMETERS = CharacterParameters(0., 1000,
-                                     950 * config.rescale_factor * config.rescale_factor,
-                                     325 * config.rescale_factor, 0.)
+                                             950 * config.rescale_factor * config.rescale_factor,
+                                             325 * config.rescale_factor, 0.)
+
+    POINT_VALUE = 100
 
     def __init__(self, level):
         self.level = level
@@ -38,21 +40,18 @@ class CoinBlock(SpawnBlock):
         super().__init__(level)
 
     def smashed(self):
-        #if not self._smashed:
+
         self.level.asset_manager.sounds['coin'].play()
         self._smashed = True
 
         self.animation = self.empty
-        self.level.stats.score += constants.COIN_POINT_VALUE
+        self.level.stats.score += CoinBlock.POINT_VALUE
         self.level.stats.coins += 1
 
         air_coin = AirCoin(self.level, self.coin_up)
         air_coin.position = get_aligned_foot_position(self.rect, air_coin.rect)
 
         self.level.entity_manager.register(air_coin)
-
-        #else:
-            #self.level.asset_manager.sounds['bump'].play()
 
     def create_preview(self):
         block = super().create_preview()

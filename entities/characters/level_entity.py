@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from typing import NamedTuple
 from warnings import warn
 import warnings
 from entities.entity import Entity
@@ -91,5 +90,3 @@ class LevelEntity(Entity):
 
         LevelEntity.Factories[name] = _factory
         return _factory
-
-

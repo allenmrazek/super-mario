@@ -1,4 +1,4 @@
-from .util import create_static_with_flipped, create_animation_with_flipped
+from .util import create_animation_with_flipped
 from .sprite_atlas import SpriteAtlas
 import config
 

@@ -1,11 +1,8 @@
 import math
 from util import make_vector
-from ..entity import Entity
 import constants
-from util import world_to_screen
 from .projectile import Projectile
 from .parameters import CharacterParameters
-from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import mario_str_to_pixel_value_velocity as mstpvv
 from ..collider import Collider
 import config

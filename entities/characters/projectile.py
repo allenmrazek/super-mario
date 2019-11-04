@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from entities.entity import Entity
-# from .behaviors import SimpleMovement, Interactive
 from util import world_to_screen
 
 

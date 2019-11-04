@@ -1,9 +1,8 @@
 import math
-from .behavior import Behavior
 from .squashable import Squashable
 from ...collider import Collider
 import constants
-from util import make_vector, world_to_screen, copy_vector
+from util import make_vector, world_to_screen
 import config
 
 

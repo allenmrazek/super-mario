@@ -1,5 +1,4 @@
 from .simple_movement import SimpleMovement
-import constants
 
 
 class JumpingMovement(SimpleMovement):

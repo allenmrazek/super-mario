@@ -13,7 +13,7 @@ from util import get_aligned_foot_position, world_to_screen, make_vector
 from .shell import Shell
 from .floaty_points import FloatyPoints
 
-koopa_parameters = CharacterParameters(10, mstpvv('04800'), mstpva('00300'), 100, mstpvv('04200'))
+koopa_parameters = CharacterParameters(35, mstpvv('04800'), mstpva('00300'), 100, mstpvv('04200'))
 
 # todo: red koopa, patrols a set area and doesn't suicide off ledges
 

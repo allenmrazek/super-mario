@@ -1,5 +1,4 @@
 from ..level_entity import LevelEntity
-from pygame import Rect
 import constants
 from util import world_to_screen
 

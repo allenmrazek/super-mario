@@ -1,5 +1,5 @@
 from util import make_vector
-from entities.characters.mario import MarioEffectSmall, MarioEffectSuper, MarioEffectStar, MarioEffectFire
+from entities.characters.mario import MarioEffectSmall
 from state.game_state import GameState, state_stack
 from animation import OneShotAnimation
 from util import world_to_screen

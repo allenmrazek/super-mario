@@ -1,6 +1,4 @@
 from state.game_state import GameState
-from .time_over import TimeOut
-from . import state_stack
 
 
 class RunLevel(GameState):

@@ -2,13 +2,10 @@ from . import Enemy
 from entities.characters.corpse import Corpse
 from .level_entity import LevelEntity
 from .parameters import CharacterParameters
-from .behaviors import EnemyGroundMovement, Squashable, DamageMario
-from .projectile import Projectile
-from util import make_vector, mario_str_to_pixel_value_acceleration as mstpva
+from .behaviors import EnemyGroundMovement, Squashable
+from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import mario_str_to_pixel_value_velocity as mstpvv
 from util import get_aligned_foot_position, world_to_screen
-from scoring import labels
-import config
 
 goomba_parameters = CharacterParameters(100, mstpvv('04800'), mstpva('00700'), 100, mstpvv('04200'))
 

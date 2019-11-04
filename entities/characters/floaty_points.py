@@ -1,8 +1,7 @@
 import pygame
 from .corpse import Corpse
-from util import world_to_screen, make_vector
+from util import make_vector
 from util import mario_str_to_pixel_value_velocity as mstpvv
-from util import mario_str_to_pixel_value_acceleration as mstpva
 from ..entity import Entity
 from .parameters import CharacterParameters
 
