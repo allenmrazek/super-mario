@@ -5,8 +5,6 @@ from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import make_vector
 from ..fireball import Fireball
 
-import constants
-
 fireball_parameters = CharacterParameters(mstpvv('03900'), mstpvv('02400'), mstpva('00300'), mstpvv('02400'), 0.)
 
 
@@ -24,11 +22,18 @@ class FireballThrow:
         self._cooldown = 0.
 
     def update(self, dt):
-        from .mario import MarioEffectFire
+        from .mario import MarioEffectFire, MarioEffectStar
 
-        if self.input_state.fire and self.level.mario.enabled and \
-                (self.level.mario.effects & MarioEffectFire) == MarioEffectFire and\
-                not self.level.mario.movement.crouching:
+        mario = self.level.mario
+
+        # only let mario throw fire if:
+        #  button pressed
+        #  he's super
+        #  he has fire effect
+        #  he is not starman
+        if self.input_state.fire and mario.enabled and \
+                (mario.effects & MarioEffectFire) == MarioEffectFire and\
+                not mario.movement.crouching and (mario.effects & MarioEffectStar) == 0:
             if not self._fired and self._cooldown <= 0.:
                 self.launch_fireball()
                 self._cooldown = FireballThrow.DELAY
@@ -46,7 +51,8 @@ class FireballThrow:
         
     def launch_fireball(self):
         # initial velocity of fireball depends on direction
-        initial_velocity = make_vector(fireball_parameters.max_horizontal_velocity, fireball_parameters.max_vertical_velocity)\
+        initial_velocity = make_vector(fireball_parameters.max_horizontal_velocity,
+                                       fireball_parameters.max_vertical_velocity)\
             if self.level.mario.movement.is_facing_right else \
             make_vector(-fireball_parameters.max_horizontal_velocity, fireball_parameters.max_vertical_velocity)
 

@@ -5,12 +5,14 @@ from .parameters import CharacterParameters
 from util import mario_str_to_pixel_value_velocity as mstpvv
 from util import mario_str_to_pixel_value_acceleration as mstpva
 from util import make_vector
+from .floaty_points import FloatyPoints
 
 starman_parameters = CharacterParameters(mstpvv('00750'), mstpvv('04000'), mstpva('00200'), mstpvv('02500'), 0.)
 
 
 class Starman(Entity):
     DURATION = 15.
+    POINT_VALUE = 2000
 
     def __init__(self, level, position):
         self.animation = level.asset_manager.pickup_atlas.load_animation("star")
@@ -41,6 +43,7 @@ class Starman(Entity):
 
         mario = self.level.mario
         mario.make_starman(Starman.DURATION)
+        FloatyPoints.display(self.level, Starman.POINT_VALUE, self)
 
     def destroy(self):
         self.movement.destroy()

@@ -1,6 +1,6 @@
+import pygame
 from entities.characters.level_entity import LevelEntity
 from util import world_to_screen
-import entities.characters.behaviors
 from .mario_animation import MarioAnimation
 from .mario_movement import MarioMovement
 from .fireball_throw import FireballThrow
@@ -27,8 +27,7 @@ class Mario(LevelEntity):
                                       level.asset_manager.sounds['jump_super'])
         self.fireballs = FireballThrow(level, input_state)
         self._enabled = False
-        #self._active_effects = MarioEffectSmall | MarioEffectFire | MarioEffectSuper | MarioEffectStar
-        self._active_effects = MarioEffectStar
+        self._active_effects = MarioEffectSmall | MarioEffectFire
         self._invincibility_period = 0.
         self._starman_period = 0.
         self._glued = False
@@ -149,9 +148,15 @@ class Mario(LevelEntity):
         if self._starman_period <= 0. and self.effects & MarioEffectStar == MarioEffectStar:
             self.effects &= (self.effects & ~MarioEffectStar)
 
+            pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
+            pygame.mixer_music.play(-1, 1.)
+
     def make_starman(self, duration):
         self._starman_period = max(self._starman_period, duration)
-
         self.effects |= MarioEffectStar
+
+        pygame.mixer_music.load("sounds/music/05-starman.ogg")
+        pygame.mixer_music.play(-1, 0.25)
+
 
 LevelEntity.register_factory(Mario, Mario.factory)

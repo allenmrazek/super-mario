@@ -19,9 +19,10 @@ from .koopa_troopa_red import KoopaTroopaRed, WingedKoopaTroopaRed
 from .piranha_plant import PiranhaPlant
 from .platform import Platform
 from .fake_bowser import FakeBowser
+from .floaty_points import FloatyPoints
 
 import entities.characters.triggers  # force triggers to be loaded
 
 __all__ = ['Enemy', 'Goomba', 'Corpse', 'LevelEntity', 'CharacterParameters', 'Brick', 'Coin', 'CoinBlock',
            'MushroomBlock', 'KoopaTroopa', 'Projectile', 'PiranhaPlant', 'Platform', 'KoopaTroopaRed',
-           'WingedKoopaTroopaRed', 'FakeBowser', 'Starman', 'StarmanBlock']
+           'WingedKoopaTroopaRed', 'FakeBowser', 'Starman', 'StarmanBlock', 'FloatyPoints']

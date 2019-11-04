@@ -1,6 +1,4 @@
-COIN_POINT_VALUE = 200
 TIME_PER_LEVEL = 400
-BRICK_VALUE = 50
 
 Background = 1 << 0  # behind blocks
 Block = 1 << 1  # layer blocks are drawn on

@@ -11,6 +11,7 @@ from entities.collider import Collider
 from .behaviors import SimpleMovement
 from util import get_aligned_foot_position, world_to_screen, make_vector
 from .shell import Shell
+from .floaty_points import FloatyPoints
 
 koopa_parameters = CharacterParameters(10, mstpvv('04800'), mstpva('00300'), 100, mstpvv('04200'))
 
@@ -18,6 +19,8 @@ koopa_parameters = CharacterParameters(10, mstpvv('04800'), mstpva('00300'), 100
 
 
 class KoopaTroopa(Enemy):
+    POINT_VALUE = 100  # when stomped into shell
+
     """Actively walking koopa, green, walks left until defeated or falls"""
     def __init__(self, level):
         self.level = level
@@ -77,7 +80,7 @@ class KoopaTroopa(Enemy):
         self.level.entity_manager.register(stunned)
 
         self.level.asset_manager.sounds['stomp'].play()
-
+        FloatyPoints.display(self.level, KoopaTroopa.POINT_VALUE, self)
         self.destroy()
 
     def die(self):
@@ -90,6 +93,8 @@ class KoopaTroopa(Enemy):
         self.level.entity_manager.register(corpse)
         self.level.asset_manager.sounds['stomp'].play()
 
+        FloatyPoints.display(self.level, KoopaTroopa.POINT_VALUE + StunnedKoopaTroopa.POINT_VALUE, self)
+
     @property
     def layer(self):
         return constants.Enemy
@@ -98,6 +103,7 @@ class KoopaTroopa(Enemy):
 class StunnedKoopaTroopa(Entity):
     RESPAWN_DELAY = 5  # 5 seconds to respawn
     WARNING_ANIMATION = 2  # when 2 seconds left to respawn, start playing the shell animation
+    POINT_VALUE = 400
 
     """This Koopa looks like a green shell on the ground. Does not harm mario. Spawns back into a regular
     koopa if alone long enough. Mario can kick it to turn it into a deadly projectile"""

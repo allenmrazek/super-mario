@@ -20,7 +20,7 @@ class MainMenu(GameState, EventHandler):
         self.assets = assets
 
         # create main menu
-        font = pygame.font.Font(None, 48)
+        font = pygame.font.Font("scoring/super_mario_font.ttf", 24)
         self._banner = assets.gui_atlas.load_static("mm_Smb")
         self._mushroom = assets.gui_atlas.load_static("menu_mushroom")
         self._scoring = Labels()

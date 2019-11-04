@@ -1,6 +1,7 @@
 from entities.entity import Entity
 from util import world_to_screen, make_vector
 import constants
+from .floaty_points import FloatyPoints
 
 
 class PiranhaPlant(Entity):
@@ -8,6 +9,7 @@ class PiranhaPlant(Entity):
     RETRACT_PARAMETERS = (0.25, 1.5)
     TIME = 1
     RETRACT_TIME = 1.25
+    POINT_VALUE = 200
 
     def __init__(self, level, visible_rect):
         self.animation = level.asset_manager.character_atlas.load_animation("piranha_plant")
@@ -77,6 +79,7 @@ class PiranhaPlant(Entity):
     def die(self):
         self.destroy()
         self.level.asset_manager.sounds['stomp'].play()  # just disappears? todo: investigate death of piranha plant
+        FloatyPoints.display(self.level, PiranhaPlant.POINT_VALUE, self)
 
     @property
     def layer(self):

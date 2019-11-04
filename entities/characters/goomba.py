@@ -14,7 +14,7 @@ goomba_parameters = CharacterParameters(100, mstpvv('04800'), mstpva('00700'), 1
 
 
 class Goomba(Enemy):
-    POINT_VALUE = 200
+    POINT_VALUE = 100
 
     def __init__(self, level):
         self.animation = level.asset_manager.character_atlas.load_animation("goomba")
@@ -60,6 +60,9 @@ class Goomba(Enemy):
         self.level.asset_manager.sounds['stomp'].play()
         self.level.entity_manager.register(corpse)
 
+        from .floaty_points import FloatyPoints
+        FloatyPoints.display(self.level, Goomba.POINT_VALUE, self)
+
     def die(self):
         # goomba was flat-out killed (starman mario, shell, fireball)
         self.destroy()
@@ -72,6 +75,9 @@ class Goomba(Enemy):
         self.level.asset_manager.sounds['stomp'].play()
 
         self.level.entity_manager.register(corpse)
+
+        from .floaty_points import FloatyPoints
+        FloatyPoints.display(self.level, Goomba.POINT_VALUE, self)
 
     def destroy(self):
         super().destroy()

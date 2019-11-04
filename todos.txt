@@ -1,19 +1,12 @@
 game state: out of time
 
-koopa, flying
-
-
 remainder of levels
-fire mario
-fire flower (mushroom blocks spawn fire flower if super mario)
 points rising from enemies
 swimming mario
-piranha plant
-fire chain
+
 coin blocks move when hit
 secret bricks with pickups
 multi-coin block
-platforms
 50 pts per broken brick
 smashing bricks kills enemies on top of them
 smashing bricks collects coins on top of them
@@ -22,16 +15,13 @@ stop shells when stomping on them
 shells don't kill enemies offscreen, but can richochet
 fireworks for extra points
 extra points for finish flag height
-patrol movement
-movement that doesn't suicide off cliffs
 random movement
-star movement
 rework level load logic, so transform game state sits on top of level state
 
 
+
 bugs:
-time doesn't reset between levels
+
 mario's transform can sometimes get him stuck
 something funny happens with input when mario transforms
-mushroom no longer moves
 spawn points don't work properly

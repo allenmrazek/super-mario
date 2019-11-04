@@ -6,7 +6,7 @@ from util import world_to_screen, mario_str_to_pixel_value_acceleration as mstpv
 import entities.effects
 import constants
 from util import make_vector
-
+from .floaty_points import FloatyPoints
 
 # todo: scale this by rescale factor?
 mushroom_movement = CharacterParameters(50, mstpvv('03800'), mstpva('00300'), 0., mstpva('00300'))
@@ -47,3 +47,4 @@ class Mushroom(Entity):
         self.level.stats.score += Mushroom.POINT_VALUE
 
         entities.effects.mario_transform_super.MarioTransformSuper.apply_transform(self.level, self.level.mario)
+        FloatyPoints.display(self.level, Mushroom.POINT_VALUE, self)

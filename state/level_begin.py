@@ -6,7 +6,7 @@ from util import make_vector, copy_vector
 
 
 class LevelBegin(GameState):
-    DURATION = .03  # todo: fix before release
+    DURATION = 3.  # todo: fix before release
 
     def __init__(self, assets, level, scoring_labels: Labels, mario_stats):
         super().__init__()
@@ -58,9 +58,8 @@ class LevelBegin(GameState):
         pygame.mixer_music.stop()
 
     def deactivated(self):
-        # pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
-        # pygame.mixer_music.play(-1)
+        pygame.mixer_music.load("sounds/music/01-main-theme-overworld.ogg")
+        pygame.mixer_music.play(-1, 1.)
 
         self.level.begin()
-
-        #print("playing theme music")
+        self.mario_stats.reset_time()

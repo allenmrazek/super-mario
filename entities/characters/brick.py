@@ -7,6 +7,8 @@ import constants
 
 
 class Brick(LevelEntity):
+    POINT_VALUE = 50
+
     def __init__(self, level, position):
         self.level = level
         self.image = level.asset_manager.interactive_atlas.load_static("brick").image
@@ -36,7 +38,7 @@ class Brick(LevelEntity):
         if mario.is_super:
             # destroy this brick
             self.die()
-            self.level.stats.score += constants.BRICK_VALUE
+            self.level.stats.score += Brick.POINT_VALUE
         else:
             # mario can't break it, small movement instead
             self.level.asset_manager.sounds['bump'].play()
@@ -44,8 +46,6 @@ class Brick(LevelEntity):
     def die(self):
         self.destroy()
 
-        # corpse = Corpse(self.level, self.level.asset_manager.interactive_atlas.load_static("brick_debris"),
-        #                 0.1, self.position)
         corpse = Corpse.\
             create_ghost_corpse_from_entity(self,
                                             self.level.asset_manager.interactive_atlas.load_static("brick_debris"),

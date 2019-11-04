@@ -61,6 +61,46 @@ def generate_starman_animation(animation):
 def generate_starman_direction_set(from_set):
     return _DirectionSet(generate_starman_animation(from_set.left), generate_starman_animation(from_set.right))
 
+# creating these is expensive, so only do it once
+stand_small = None
+stand_fire_small = None
+stand_starman_small = None
+stand_super = None
+stand_fire_super = None
+stand_starman_super = None
+
+walk_small = None
+walk_fire_small = None
+walk_starman_small = None
+walk_super = None
+walk_fire_super = None
+walk_starman_super = None
+
+run_small = None
+run_fire_small = None
+run_starman_small = None
+run_super = None
+run_fire_super = None
+run_starman_super = None
+
+jump_small = None
+jump_fire_small = None
+jump_starman_small = None
+jump_super = None
+jump_fire_super = None
+jump_starman_super = None
+
+crouch_super = None
+crouch_fire_super = None
+crouch_starman_super = None
+
+skid_small = None
+skid_fire_small = None
+skid_starman_small = None
+skid_super = None
+skid_fire_super = None
+skid_starman_super = None
+
 
 class MarioAnimation:
     SUPER_FIRE_THROW_DURATION = 0.075
@@ -73,19 +113,58 @@ class MarioAnimation:
         self.throw_timer = 0.
         self.throw_image = self.fire_throw[0]
 
+        global stand_small
+        global stand_fire_small
+        global stand_starman_small
+        global stand_super
+        global stand_fire_super
+        global stand_starman_super
+
+        global walk_small
+        global walk_fire_small
+        global walk_starman_small
+        global walk_super
+        global walk_fire_super
+        global walk_starman_super
+
+        global run_small
+        global run_fire_small
+        global run_starman_small
+        global run_super
+        global run_fire_super
+        global run_starman_super
+
+        global jump_small
+        global jump_fire_small
+        global jump_starman_small
+        global jump_super
+        global jump_fire_super
+        global jump_starman_super
+
+        global crouch_super
+        global crouch_fire_super
+        global crouch_starman_super
+
+        global skid_small
+        global skid_fire_small
+        global skid_starman_small
+        global skid_super
+        global skid_fire_super
+        global skid_starman_super
+
         ##################### Standing #####################
         # small mario variants
-        stand_small = _DirectionSet(atlas.load_static("mario_stand_left"), atlas.load_static("mario_stand_right"))
-        stand_fire_small = _DirectionSet(atlas.load_static("mario_fire_stand_left"),
+        stand_small = stand_small or _DirectionSet(atlas.load_static("mario_stand_left"), atlas.load_static("mario_stand_right"))
+        stand_fire_small = stand_fire_small or _DirectionSet(atlas.load_static("mario_fire_stand_left"),
                               atlas.load_static("mario_fire_stand_right"))
-        stand_starman_small = generate_starman_direction_set(stand_small)
+        stand_starman_small = stand_starman_small or generate_starman_direction_set(stand_small)
 
         # large stand variants
-        stand_super = _DirectionSet(atlas.load_static("super_mario_stand_left"),
+        stand_super = stand_super or _DirectionSet(atlas.load_static("super_mario_stand_left"),
                                     atlas.load_static("super_mario_stand_right"))
-        stand_fire_super = _DirectionSet(atlas.load_static("super_mario_fire_stand_left"),
+        stand_fire_super = stand_fire_super or _DirectionSet(atlas.load_static("super_mario_fire_stand_left"),
                               atlas.load_static("super_mario_fire_stand_right"))
-        stand_starman_super = generate_starman_direction_set(stand_super)
+        stand_starman_super = stand_starman_super or generate_starman_direction_set(stand_super)
 
         self.stand = _Variation(
             _AnimationSet(stand_small, stand_fire_small, stand_starman_small),
@@ -94,17 +173,17 @@ class MarioAnimation:
 
         ################### Walking ####################
         # small walk variants
-        walk_small = _DirectionSet(atlas.load_animation("mario_walk_left"), atlas.load_animation("mario_walk_right"))
-        walk_fire_small = _DirectionSet(atlas.load_animation("mario_fire_walk_left"),
+        walk_small = walk_small or _DirectionSet(atlas.load_animation("mario_walk_left"), atlas.load_animation("mario_walk_right"))
+        walk_fire_small = walk_fire_small or _DirectionSet(atlas.load_animation("mario_fire_walk_left"),
                               atlas.load_animation("mario_fire_walk_right"))
-        walk_starman_small = generate_starman_direction_set(walk_small)
+        walk_starman_small = walk_starman_small or generate_starman_direction_set(walk_small)
 
         # super walk variants
-        walk_super = _DirectionSet(atlas.load_animation("super_mario_walk_left"),
+        walk_super = walk_super or _DirectionSet(atlas.load_animation("super_mario_walk_left"),
                               atlas.load_animation("super_mario_walk_right"))
-        walk_fire_super = _DirectionSet(atlas.load_animation("super_mario_fire_walk_left"),
+        walk_fire_super = walk_fire_super or _DirectionSet(atlas.load_animation("super_mario_fire_walk_left"),
                               atlas.load_animation("super_mario_fire_walk_right"))
-        walk_starman_super = generate_starman_direction_set(walk_super)
+        walk_starman_super = walk_starman_super or generate_starman_direction_set(walk_super)
 
         self.walk = _Variation(
             _AnimationSet(walk_small, walk_fire_small, walk_starman_small),
@@ -112,16 +191,16 @@ class MarioAnimation:
         )
 
         ################### Running ####################
-        run_small = _DirectionSet(atlas.load_animation("mario_run_left"), atlas.load_animation("mario_run_right"))
-        run_fire_small = _DirectionSet(atlas.load_animation("mario_fire_run_left"),
+        run_small = run_small or _DirectionSet(atlas.load_animation("mario_run_left"), atlas.load_animation("mario_run_right"))
+        run_fire_small = run_fire_small or _DirectionSet(atlas.load_animation("mario_fire_run_left"),
                                   atlas.load_animation("mario_fire_run_right"))
-        run_starman_small = generate_starman_direction_set(run_small)
+        run_starman_small = run_starman_small or generate_starman_direction_set(run_small)
 
-        run_super = _DirectionSet(atlas.load_animation("super_mario_run_left"),
+        run_super = run_super or _DirectionSet(atlas.load_animation("super_mario_run_left"),
                                   atlas.load_animation("super_mario_run_right"))
-        run_fire_super = _DirectionSet(atlas.load_animation("super_mario_fire_run_left"),
+        run_fire_super = run_fire_super or _DirectionSet(atlas.load_animation("super_mario_fire_run_left"),
                                        atlas.load_animation("super_mario_fire_run_right"))
-        run_starman_super = generate_starman_direction_set(run_super)
+        run_starman_super = run_starman_super or generate_starman_direction_set(run_super)
 
         self.run = _Variation(
             _AnimationSet(run_small, run_fire_small, run_starman_small),
@@ -129,33 +208,33 @@ class MarioAnimation:
         )
 
         ################### Skidding ####################
-        skid_small = _DirectionSet(atlas.load_static("mario_skid_right"), atlas.load_static("mario_skid_left"))
-        skid_fire = _DirectionSet(atlas.load_static("mario_fire_skid_right"), atlas.load_static("mario_fire_skid_left"))
-        skid_starman = generate_starman_direction_set(skid_small)
+        skid_small = skid_small or _DirectionSet(atlas.load_static("mario_skid_right"), atlas.load_static("mario_skid_left"))
+        skid_fire_small = skid_fire_small or _DirectionSet(atlas.load_static("mario_fire_skid_right"), atlas.load_static("mario_fire_skid_left"))
+        skid_starman_small = skid_starman_small or generate_starman_direction_set(skid_small)
 
-        skid_super = _DirectionSet(atlas.load_static("super_mario_skid_right"),
+        skid_super = skid_super or _DirectionSet(atlas.load_static("super_mario_skid_right"),
                               atlas.load_static("super_mario_skid_left"))
-        skid_fire_super = _DirectionSet(atlas.load_static("super_mario_fire_skid_right"),
+        skid_fire_super = skid_fire_super or _DirectionSet(atlas.load_static("super_mario_fire_skid_right"),
                               atlas.load_static("super_mario_fire_skid_left"))
-        skid_starman_super = generate_starman_direction_set(skid_super)
+        skid_starman_super = skid_starman_super or generate_starman_direction_set(skid_super)
 
         self.skid = _Variation(
-            _AnimationSet(skid_small, skid_fire, skid_starman),
+            _AnimationSet(skid_small, skid_fire_small, skid_starman_small),
             _AnimationSet(skid_super, skid_fire_super, skid_starman_super)
         )
 
         ################### Jumping ####################
-        jump_small = _DirectionSet(atlas.load_static("mario_jump_left"),
+        jump_small = jump_small or _DirectionSet(atlas.load_static("mario_jump_left"),
                                         atlas.load_static("mario_jump_right"))
-        jump_fire_small = _DirectionSet(atlas.load_static("mario_fire_jump_left"),
+        jump_fire_small = jump_fire_small or _DirectionSet(atlas.load_static("mario_fire_jump_left"),
                                         atlas.load_static("mario_fire_jump_right"))
-        jump_starman_small = generate_starman_direction_set(jump_small)
+        jump_starman_small = jump_starman_small or generate_starman_direction_set(jump_small)
 
-        jump_super = _DirectionSet(atlas.load_static("super_mario_jump_left"),
+        jump_super = jump_super or _DirectionSet(atlas.load_static("super_mario_jump_left"),
                                         atlas.load_static("super_mario_jump_right"))
-        jump_fire_super = _DirectionSet(atlas.load_static("super_mario_fire_jump_left"),
+        jump_fire_super = jump_fire_super or _DirectionSet(atlas.load_static("super_mario_fire_jump_left"),
                                         atlas.load_static("super_mario_fire_jump_right"))
-        jump_starman_super = generate_starman_direction_set(jump_super)
+        jump_starman_super = jump_starman_super or generate_starman_direction_set(jump_super)
 
         self.jump = _Variation(
             _AnimationSet(jump_small, jump_super, jump_starman_small),
@@ -163,11 +242,11 @@ class MarioAnimation:
         )
 
         ################### Crouching ####################
-        crouch_super = _DirectionSet(atlas.load_static("super_mario_crouch_left"),
+        crouch_super = crouch_super or _DirectionSet(atlas.load_static("super_mario_crouch_left"),
                               atlas.load_static("super_mario_crouch_right"))
-        crouch_fire_super = _DirectionSet(atlas.load_static("super_mario_fire_crouch_left"),
+        crouch_fire_super = crouch_fire_super or _DirectionSet(atlas.load_static("super_mario_fire_crouch_left"),
                               atlas.load_static("super_mario_fire_crouch_right"))
-        crouch_starman_super = generate_starman_direction_set(crouch_super)
+        crouch_starman_super = crouch_starman_super or generate_starman_direction_set(crouch_super)
 
         self.crouch = _Variation(
             # super variants (these would be used for small, but that should never happen ...
@@ -176,39 +255,6 @@ class MarioAnimation:
             _AnimationSet(crouch_super, crouch_fire_super, crouch_starman_super)
         )
 
-        self.animations = [
-            stand_small,
-            stand_fire_small,
-            stand_starman_small,
-            stand_super,
-            stand_fire_super,
-            stand_starman_super,
-
-            walk_small,
-            walk_fire_small,
-            walk_starman_small,
-            walk_super,
-            walk_fire_super,
-            walk_starman_super,
-
-            run_small,
-            run_fire_small,
-            run_starman_small,
-            run_super,
-            run_fire_super,
-            run_starman_super,
-
-            jump_small,
-            jump_fire_small,
-            jump_starman_small,
-            jump_super,
-            jump_fire_super,
-            jump_starman_super,
-
-            crouch_super,
-            crouch_fire_super,
-            crouch_starman_super
-        ]
         self.current = self.stand.small.normal[1]
 
     @staticmethod
@@ -248,7 +294,6 @@ class MarioAnimation:
             self.throw_timer = 0.  # can't throw fireballs unless super at the least
 
         self.throw_image = self.fire_throw[0] if direction == 0 else self.fire_throw[1]
-
         self.current.update(dt)
 
     @property

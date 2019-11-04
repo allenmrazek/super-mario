@@ -6,6 +6,7 @@ from util import make_vector
 from util import world_to_screen
 import entities.characters.triggers.flag
 import entities.characters.mario
+from ..characters.floaty_points import FloatyPoints
 
 """
 Jumps on pole, left side
@@ -23,8 +24,10 @@ class _FakeInput:
 
 class LevelCleared(GameState):
     FLAG_SLIDE_TIME = .75  # in seconds
+    MAX_POINTS = 5000
+    MIN_POINTS = 1000
 
-    def __init__(self, level, game_state):
+    def __init__(self, level, game_state, flag_score_ratio):
         super().__init__(GameEvents())
 
         self.level = level
@@ -56,6 +59,12 @@ class LevelCleared(GameState):
         self.doppler.position = make_vector(self.pole.position.x - self.doppler.rect.width // 3,
                                             self.level.mario.position.y)
 
+        # calc score
+        points = int((LevelCleared.MAX_POINTS - LevelCleared.MIN_POINTS) * flag_score_ratio + LevelCleared.MIN_POINTS)
+
+        # round to nearest multiple of 100
+        self.points = round(points, -2)
+
         # keep track of state
         self.waiting = False
 
@@ -76,6 +85,13 @@ class LevelCleared(GameState):
                 self.mario.reset()
                 self.mario.enabled = True
                 self.mario.movement.input_state = _FakeInput()
+
+                # spawn point value
+                FloatyPoints.display(self.level, self.points, self.pole)
+
+                # add time and flag to score
+                self.level.stats.score += self.points
+                self.level.stats.score += self.level.stats.remaining_time
 
                 # now wait for fake mario to reach castle
                 # a trigger should be set up to hide him or move into a pipe

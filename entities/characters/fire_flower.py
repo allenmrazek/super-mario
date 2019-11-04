@@ -1,9 +1,12 @@
 from ..entity import Entity
 import constants
 from util import world_to_screen
+from .floaty_points import FloatyPoints
 
 
 class FireFlower(Entity):
+    POINT_VALUE = 1000
+
     def __init__(self, level, position):
         self.animation = level.asset_manager.pickup_atlas.load_animation("fire_flower")
 
@@ -36,6 +39,8 @@ class FireFlower(Entity):
         else:
             from .mario.mario import MarioEffectFire
             mario.effects |= MarioEffectFire
+
+        FloatyPoints.display(self.level, FireFlower.POINT_VALUE, self)
 
     @property
     def layer(self):

@@ -8,6 +8,7 @@ from util import get_aligned_foot_position
 from .behaviors.smart_enemy_ground_movement import SmartEnemyGroundMovement
 import config
 from util import make_vector, copy_vector
+from .floaty_points import FloatyPoints
 
 # todo: tweak movement characteristics
 koopa_red_parameters = CharacterParameters(30, mstpvv('04800'), mstpva('00300'), 100, mstpvv('04200'))
@@ -36,7 +37,7 @@ class KoopaTroopaRed(KoopaTroopa):
         self.level.entity_manager.register(stunned)
 
         self.level.asset_manager.sounds['stomp'].play()
-
+        FloatyPoints.display(self.level, KoopaTroopa.POINT_VALUE, self)
         self.destroy()
 
     def die(self):
@@ -48,6 +49,7 @@ class KoopaTroopaRed(KoopaTroopa):
 
         self.level.entity_manager.register(corpse)
         self.level.asset_manager.sounds['stomp'].play()
+        FloatyPoints.display(self.level, KoopaTroopa.POINT_VALUE + StunnedKoopaTroopa.POINT_VALUE, self)
 
 
 class StunnedKoopaTroopaRed(StunnedKoopaTroopa):
@@ -60,6 +62,7 @@ class StunnedKoopaTroopaRed(StunnedKoopaTroopa):
 class WingedKoopaTroopaRed(KoopaTroopaRed):
     FLY_HEIGHT = config.base_tile_dimensions[1] * config.rescale_factor * 3  # 6 tiles total
     FLY_FREQUENCY = 0.25
+    POINT_VALUE = 400
 
     def __init__(self, level):
         super().__init__(level)
@@ -100,6 +103,8 @@ class WingedKoopaTroopaRed(KoopaTroopaRed):
         self.level.asset_manager.sounds['stomp'].play()
 
         self.level.mario.bounce(winged_koopa_red_parameters.jump_velocity)
+
+        FloatyPoints.display(self.level, WingedKoopaTroopaRed.POINT_VALUE, self)
 
     def deserialize(self, values):
         super().deserialize(values)

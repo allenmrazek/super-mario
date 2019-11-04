@@ -24,8 +24,12 @@ class Flag(LevelEntity):
         super().update(dt, view_rect)
 
         if not self.level.cleared and self.mario.position.x + self.mario.rect.width > self.position.x:
-            print("**** flag victory ****")
-            state_stack.push(LevelCleared(self.level, state_stack.top))
+            flag_height = self.rect.height
+            delta_ground = max(0, self.rect.bottom - self.mario.rect.top)
+
+            ratio = max(0, min(1., delta_ground / flag_height))
+
+            state_stack.push(LevelCleared(self.level, state_stack.top, ratio))
 
     def draw(self, screen, view_rect):
         super().draw(screen, view_rect)
