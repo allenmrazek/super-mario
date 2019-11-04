@@ -22,6 +22,7 @@ def run():
 
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
+    pygame.display.set_icon(pygame.image.load('images/icon.png'))
     screen = pygame.display.set_mode(config.screen_size)
     pygame.display.set_caption("Super Mario")
     assets = AssetManager()
