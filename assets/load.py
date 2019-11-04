@@ -95,6 +95,7 @@ def load_gui_atlas():
     atlas.initialize_static("mm_Smb", **kwargs)
     atlas.initialize_static("menu_mushroom", **kwargs)
     atlas.initialize_static("bulb", **kwargs)
+    atlas.initialize_static("level_end_trigger", **kwargs)
 
     return atlas
 

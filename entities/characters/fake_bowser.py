@@ -15,6 +15,7 @@ bowser_parameters = CharacterParameters(
 
 class FakeBowser(Enemy):
     BOWSER_HITPOINTS = 5  # number of fireballs needed to kill
+    DELAY_LEVEL_END = 3.  # how long to wait after bowser dies to end the level
 
     def __init__(self, level):
         ca = level.asset_manager.character_atlas
@@ -39,7 +40,6 @@ class FakeBowser(Enemy):
         self.head = DamageMario(level, self, (1, 1), (13, 14), self.on_mario_invincible)
         self.body = DamageMario(level, self, (14, 9), (18, 22), self.on_mario_invincible)
 
-
         # state
         self.hitpoints = FakeBowser.BOWSER_HITPOINTS
 
@@ -50,7 +50,6 @@ class FakeBowser(Enemy):
         self.animation_open.update(dt)
         self.head.update(dt)
         self.body.update(dt)
-
 
     def draw(self, screen, view_rect):
         src = self.animation_open.image if self.logic.fired_recently else self.animation_close.image
@@ -91,6 +90,11 @@ class FakeBowser(Enemy):
         # destroy all existing bowser fireballs so player doesn't get screwed in their victory
         for fb in self.level.entity_manager.search_by_type(BowserFireball):
             fb.die()
+
+        # end the level
+        from .triggers.delay_level_end import DelayLevelEnd
+        delay = DelayLevelEnd(self.level, FakeBowser.DELAY_LEVEL_END)
+        self.level.entity_manager.register(delay)
 
     @property
     def layer(self):
