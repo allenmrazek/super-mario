@@ -1,4 +1,4 @@
-Super Mario
+![Super Mario](./screenshots/main_menu.PNG)
 
 Team Name: Mission: Find Luigi
 
