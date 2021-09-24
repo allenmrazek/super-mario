@@ -8,7 +8,7 @@ class Labels:
     font_large = None
 
     def __init__(self):
-        self.bg_color = (0, 0, (0, 0, 0))
+        self.bg_color = (0, 0, 0)
         self.text_color = (255, 255, 255)
 
         self.world = '1-1'
