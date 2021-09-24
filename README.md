@@ -18,3 +18,6 @@ Playing the Game
 Arrow keys for left and right movement, down arrow to crouch (if super)
 Spacebar to jump
 Shift dashes and throws fireballs
+
+![Gameplay](./screenshots/ingame.PNG)
+![Editor](./screenshots/editor.PNG)
